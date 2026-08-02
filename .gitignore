@@ -5,6 +5,8 @@ node_modules
 # Build output
 dist/
 packages/*/dist/
+.next/
+packages/*/.next/
 packages/*/dist-chrome/
 packages/*/dist-firefox/
 target/

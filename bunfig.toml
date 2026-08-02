@@ -1,4 +1,6 @@
-telemetry = false
+[workspace]
+members = ["packages/website"]
+
 
 [install]
 minimumReleaseAge = 259200 # 3 days in seconds
