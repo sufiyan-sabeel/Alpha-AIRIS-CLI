@@ -1,6 +1,6 @@
 # Native computer use
 
-`computer` captures and controls the desktop that is running `omp`. It uses native screen-capture and input APIs; it does not launch Chromium, use Puppeteer, or expose a DOM.
+`computer` captures and controls the desktop that is running `airis`. It uses native screen-capture and input APIs; it does not launch Chromium, use Puppeteer, or expose a DOM.
 
 Use it for visible desktop applications: IDEs, terminals, native apps, browser windows, menus, and system dialogs. Use [`browser`](./tools/browser.md) instead when you need headless/CDP browser tabs, DOM or ARIA inspection, selectors, JavaScript evaluation, or deterministic page automation.
 
@@ -9,7 +9,7 @@ Use it for visible desktop applications: IDEs, terminals, native apps, browser w
 
 ## Enable and configure
 
-The tool is disabled by default. Add this to `~/.omp/agent/config.yml`, a project `.omp/config.yml`, or a one-shot `--config` overlay:
+The tool is disabled by default. Add this to `~/.airis/agent/config.yml`, a project `.airis/config.yml`, or a one-shot `--config` overlay:
 
 ```yaml
 computer:
@@ -42,8 +42,8 @@ tools:
 You can also enable it globally from the CLI:
 
 ```bash
-omp config set computer.enabled true
-omp config get computer.enabled
+airis config set computer.enabled true
+airis config get computer.enabled
 ```
 
 Inside a running session, the `/computer` slash command (`/computer`, `/computer on|off|status`) toggles the tool for that session only; it never writes settings files. `/computer status` reports the effective enabled/active state, backend, display and capture limits, active model, and whether that model receives native or function exposure. Explicit enablement and the desktop controller stay active across model switches; exposure is recomputed for the new model, and a switch that crosses the coordinate-safe sizing boundary recreates the controller and resnapshots backend/display/image-size settings. Changing config alone does not; start a new session after a settings change.
@@ -202,7 +202,7 @@ See [Tool approval mode](./approval-mode.md) for general policy resolution.
 
 Open **System Settings → Privacy & Security**:
 
-1. Grant **Screen Recording** to the terminal or application that launches `omp`.
+1. Grant **Screen Recording** to the terminal or application that launches `airis`.
 2. Grant **Accessibility** to the same host for keyboard and pointer input.
 3. Fully restart that host and start a new OMP session.
 
@@ -217,7 +217,7 @@ For Wayland:
 - capture goes through XWayland, which can only read a **rooted** X server's root pixmap; the default rootless XWayland (GNOME/KDE/sway) has none, so capture fails at initialization with `DESKTOP_BACKEND_UNAVAILABLE`; and
 - even a rooted/rootful XWayland exposes only X11 clients — native Wayland windows are structurally invisible to X11 — and pure Wayland capture (portal/PipeWire) is not implemented, so Wayland desktops have no usable capture path today.
 
-The desktop backend is always bundled in the core `pi-natives` addon on every published Linux target (x64/arm64, glibc/musl). It opens no display connection until the tool runs, so headless hosts are unaffected; without a reachable X server the tool reports `DESKTOP_BACKEND_UNAVAILABLE`.
+The desktop backend is always bundled in the core `airis-natives` addon on every published Linux target (x64/arm64, glibc/musl). It opens no display connection until the tool runs, so headless hosts are unaffected; without a reachable X server the tool reports `DESKTOP_BACKEND_UNAVAILABLE`.
 
 ## Session and worker lifecycle
 

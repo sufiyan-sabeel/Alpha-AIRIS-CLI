@@ -18,18 +18,18 @@
  *     follow-up stays queued for the next explicit resume rather than auto-running.
  */
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import { Agent, type AgentMessage, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import type { ToolCall } from "@oh-my-pi/pi-ai";
-import { createMockModel, type MockModel, type MockResponse } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { IrcMessage } from "@oh-my-pi/pi-coding-agent/irc/bus";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { USER_INTERRUPT_LABEL } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { Snowflake, TempDir } from "@oh-my-pi/pi-utils";
+import { Agent, type AgentMessage, type AgentTool } from "@airis/airis-agent-core";
+import type { ToolCall } from "@airis/airis-ai";
+import { createMockModel, type MockModel, type MockResponse } from "@airis/airis-ai/providers/mock";
+import { getBundledModel } from "@airis/airis-catalog/models";
+import { ModelRegistry } from "@airis/airis-coding-agent/config/model-registry";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import type { IrcMessage } from "@airis/airis-coding-agent/irc/bus";
+import { AgentSession } from "@airis/airis-coding-agent/session/agent-session";
+import { AuthStorage } from "@airis/airis-coding-agent/session/auth-storage";
+import { USER_INTERRUPT_LABEL } from "@airis/airis-coding-agent/session/messages";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import { Snowflake, TempDir } from "@airis/airis-utils";
 import { type } from "arktype";
 
 interface MockYieldDetails {
@@ -73,7 +73,7 @@ describe("AgentSession advisor auto-resume suppression", () => {
 	const authStorages: AuthStorage[] = [];
 
 	beforeEach(() => {
-		tempDir = TempDir.createSync("@pi-advisor-suppress-");
+		tempDir = TempDir.createSync("@airs-advisor-suppress-");
 	});
 
 	afterEach(async () => {

@@ -16,17 +16,17 @@
  *   `CompactOptions.internalGuidance` instead.
  * - The `session_before_compact` hook event MUST see
  *   `customInstructions: undefined` for internal-guidance compactions.
- * - The native summarizer (invoked via `@oh-my-pi/pi-agent-core/compaction`)
+ * - The native summarizer (invoked via `@airis/airis-agent-core/compaction`)
  *   MUST still receive the plan guidance so the summary is directed.
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import * as compactionModule from "@oh-my-pi/pi-agent-core/compaction";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@airis/airis-agent-core";
+import * as compactionModule from "@airis/airis-agent-core/compaction";
+import { AssistantMessageEventStream } from "@airis/airis-ai/utils/event-stream";
+import { getBundledModel } from "@airis/airis-catalog/models";
+import { TempDir } from "@airis/airis-utils";
 import { ModelRegistry } from "../src/config/model-registry";
 import { Settings } from "../src/config/settings";
 import type { SessionBeforeCompactEvent } from "../src/extensibility/shared-events";
@@ -67,7 +67,7 @@ describe("AgentSession plan-mode compaction hook contract (issue #4359)", () => 
 	const cleanups: Array<() => Promise<void>> = [];
 
 	beforeEach(() => {
-		tempDir = TempDir.createSync("@pi-agent-session-plan-compact-hook-");
+		tempDir = TempDir.createSync("@airs-agent-session-plan-compact-hook-");
 		cleanups.length = 0;
 	});
 

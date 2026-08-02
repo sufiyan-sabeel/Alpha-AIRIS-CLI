@@ -1,5 +1,5 @@
 /**
- * Harness documentation index for the `omp://` protocol.
+ * Harness documentation index for the `airis://` protocol.
  *
  * Compiled binaries and the prepacked npm bundle inline a compressed index of the
  * docs (injected via `process.env.PI_DOCS_EMBED` at build time). The format is two lines:

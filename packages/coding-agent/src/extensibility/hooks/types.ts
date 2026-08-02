@@ -1,12 +1,12 @@
-import type { ImageContent, Message, Model, TextContent } from "@oh-my-pi/pi-ai";
-import type { Component, TUI } from "@oh-my-pi/pi-tui";
-import type { logger as PiLogger } from "@oh-my-pi/pi-utils";
+import type { ImageContent, Message, Model, TextContent } from "@airis/airis-ai";
+import type { Component, TUI } from "@airis/airis-tui";
+import type { logger as PiLogger } from "@airis/airis-utils";
 import type { Type } from "arktype";
 import type * as zod from "zod/v4";
 import type { ModelRegistry } from "../../config/model-registry";
 import type { EditToolDetails } from "../../edit";
 import type { ExecOptions, ExecResult } from "../../exec/exec";
-import type * as PiCodingAgent from "../../index";
+import type * as AirisCodingAgent from "../../index";
 import type { Theme } from "../../modes/theme/theme";
 import type { CustomMessagePayload, HookMessage } from "../../session/messages";
 import type { ReadonlySessionManager, SessionManager } from "../../session/session-manager";
@@ -182,7 +182,7 @@ export interface HookContext {
 	hasUI: boolean;
 	/** Current working directory */
 	cwd: string;
-	/** Session manager (read-only) - use pi.sendMessage()/pi.appendEntry() for writes */
+	/** Session manager (read-only) - use airs.sendMessage()/airs.appendEntry() for writes */
 	sessionManager: ReadonlySessionManager;
 	/** Model registry - use for API key resolution and model retrieval */
 	modelRegistry: ModelRegistry;
@@ -476,7 +476,7 @@ export interface RegisteredCommand {
 
 /**
  * HookAPI passed to hook factory functions.
- * Hooks use pi.on() to subscribe to events and pi.sendMessage() to inject messages.
+ * Hooks use airs.on() to subscribe to events and airs.sendMessage() to inject messages.
  */
 export interface HookAPI {
 	// Session events
@@ -548,10 +548,10 @@ export interface HookAPI {
 	 *
 	 * @example
 	 * // Store permission state
-	 * pi.appendEntry("permissions", { level: "full", grantedAt: Date.now() });
+	 * airs.appendEntry("permissions", { level: "full", grantedAt: Date.now() });
 	 *
 	 * // On reload, reconstruct state from entries
-	 * pi.on("session", async (event, ctx) => {
+	 * airs.on("session", async (event, ctx) => {
 	 *   if (event.reason === "start") {
 	 *     const entries = event.sessionManager.getEntries();
 	 *     const myEntries = entries.filter(e => e.type === "custom" && e.customType === "permissions");
@@ -589,14 +589,14 @@ export interface HookAPI {
 	/** Injected zod/v4 module for canonical hook validation. */
 	zod: typeof zod;
 	/** Injected pi-coding-agent exports */
-	pi: typeof PiCodingAgent;
+	airs: typeof AirisCodingAgent;
 }
 
 /**
  * Hook factory function type.
  * Hooks export a default function that receives the HookAPI.
  */
-export type HookFactory = (pi: HookAPI) => void;
+export type HookFactory = (airs: HookAPI) => void;
 
 // ============================================================================
 // Errors

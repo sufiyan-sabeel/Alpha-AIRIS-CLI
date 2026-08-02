@@ -17,11 +17,11 @@ import {
 	type AuthCredentialStore,
 	AuthStorage,
 	type StoredAuthCredential,
-} from "@oh-my-pi/pi-ai/auth-storage";
-import type { UsageLimit, UsageReport } from "@oh-my-pi/pi-ai/usage";
-import { alibabaTokenPlanUsageProvider } from "@oh-my-pi/pi-ai/usage/alibaba-token-plan";
-import * as claudeUsage from "@oh-my-pi/pi-ai/usage/claude";
-import { serializeAlibabaTokenPlanCredential } from "@oh-my-pi/pi-catalog/wire/alibaba-token-plan";
+} from "@airis/airis-ai/auth-storage";
+import type { UsageLimit, UsageReport } from "@airis/airis-ai/usage";
+import { alibabaTokenPlanUsageProvider } from "@airis/airis-ai/usage/alibaba-token-plan";
+import * as claudeUsage from "@airis/airis-ai/usage/claude";
+import { serializeAlibabaTokenPlanCredential } from "@airis/airis-catalog/wire/alibaba-token-plan";
 
 function anthropicReports(reports: UsageReport[] | null): UsageReport[] {
 	return (reports ?? []).filter(r => r.provider === "anthropic");

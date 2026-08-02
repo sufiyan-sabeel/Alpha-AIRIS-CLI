@@ -2,15 +2,15 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { getActiveSkills } from "@oh-my-pi/pi-coding-agent/extensibility/skills";
-import type { Skill } from "@oh-my-pi/pi-coding-agent/sdk";
-import { createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { removeSyncWithRetries } from "@oh-my-pi/pi-utils";
-import { getAgentDir, setAgentDir } from "@oh-my-pi/pi-utils/dirs";
+import { ModelRegistry } from "@airis/airis-coding-agent/config/model-registry";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import { getActiveSkills } from "@airis/airis-coding-agent/extensibility/skills";
+import type { Skill } from "@airis/airis-coding-agent/sdk";
+import { createAgentSession } from "@airis/airis-coding-agent/sdk";
+import { AuthStorage } from "@airis/airis-coding-agent/session/auth-storage";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import { removeSyncWithRetries } from "@airis/airis-utils";
+import { getAgentDir, setAgentDir } from "@airis/airis-utils/dirs";
 import { cleanupTempHome } from "./helpers/temp-home-cleanup";
 
 function createIsolatedSkillsSettings(): Settings {
@@ -51,13 +51,13 @@ describe("createAgentSession skills option", () => {
 
 	beforeEach(() => {
 		tempDir = path.join(os.tmpdir(), `pi-sdk-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
-		// Create skill in .omp/skills/ for native project-level discovery
-		skillsDir = path.join(tempDir, ".omp", "skills", "test-skill");
+		// Create skill in .airis/skills/ for native project-level discovery
+		skillsDir = path.join(tempDir, ".airis", "skills", "test-skill");
 		fs.mkdirSync(skillsDir, { recursive: true });
 		originalHome = process.env.HOME;
 		tempHomeDir = fs.mkdtempSync(path.join(os.tmpdir(), "pi-sdk-home-"));
 		process.env.HOME = tempHomeDir;
-		const nativeUserSkillsDir = path.join(tempHomeDir, ".omp", "agent", "skills");
+		const nativeUserSkillsDir = path.join(tempHomeDir, ".airis", "agent", "skills");
 		fs.mkdirSync(nativeUserSkillsDir, { recursive: true });
 
 		// Create a test skill in the pi skills directory
@@ -120,7 +120,7 @@ Loaded via symbolic link.
 	});
 
 	it("should still discover project skills when user skills directory is missing", async () => {
-		const userAgentDir = path.join(tempHomeDir, ".omp", "agent");
+		const userAgentDir = path.join(tempHomeDir, ".airis", "agent");
 		removeSyncWithRetries(path.join(userAgentDir, "skills"));
 		fs.writeFileSync(path.join(userAgentDir, "placeholder.txt"), "placeholder");
 
@@ -146,7 +146,7 @@ Loaded via symbolic link.
 
 		expect(session.skills.some((s: Skill) => s.name === "runtime-added-skill")).toBe(false);
 
-		const runtimeSkillDir = path.join(tempDir, ".omp", "skills", "runtime-added-skill");
+		const runtimeSkillDir = path.join(tempDir, ".airis", "skills", "runtime-added-skill");
 		fs.mkdirSync(runtimeSkillDir, { recursive: true });
 		fs.writeFileSync(
 			path.join(runtimeSkillDir, "SKILL.md"),
@@ -174,7 +174,7 @@ This skill is added after session creation.
 
 	it("manage_skill hot-registers managed skills in the active session", async () => {
 		const originalAgentDir = getAgentDir();
-		const managedAgentDir = path.join(tempHomeDir, ".omp", "agent");
+		const managedAgentDir = path.join(tempHomeDir, ".airis", "agent");
 		setAgentDir(managedAgentDir);
 		const settings = createIsolatedSkillsSettings();
 		settings.set("autolearn.enabled", true);

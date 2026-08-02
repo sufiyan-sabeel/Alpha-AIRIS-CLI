@@ -13,19 +13,19 @@ afterEach(async () => {
 
 describe("release publish", () => {
 	it("uses the packed manifest identity for an exact-version registry preflight", async () => {
-		const root = await fs.mkdtemp(path.join(os.tmpdir(), "omp-release-publish-test-"));
+		const root = await fs.mkdtemp(path.join(os.tmpdir(), "airis-release-publish-test-"));
 		temporaryDirectories.push(root);
 		const packageDir = path.join(root, "package");
 		await fs.mkdir(packageDir);
 		await Bun.write(
 			path.join(packageDir, "package.json"),
-			JSON.stringify({ name: "@oh-my-pi/pi-test", version: "1.2.3" }),
+			JSON.stringify({ name: "@airis/airis-test", version: "1.2.3" }),
 		);
 		const tarball = path.join(root, "test.tgz");
 		await $`tar -czf ${tarball} -C ${root} package`.quiet();
 
 		await expect(inspectPackedTarball(tarball)).resolves.toEqual({
-			name: "@oh-my-pi/pi-test",
+			name: "@airis/airis-test",
 			version: "1.2.3",
 			path: tarball,
 		});
@@ -42,12 +42,12 @@ describe("release publish", () => {
 	});
 
 	it("ships every file required by the lazy desktop export in the native core", async () => {
-		const root = await fs.mkdtemp(path.join(os.tmpdir(), "omp-native-core-publish-test-"));
+		const root = await fs.mkdtemp(path.join(os.tmpdir(), "airis-native-core-publish-test-"));
 		temporaryDirectories.push(root);
 		await Bun.write(
 			path.join(root, "package.json"),
 			JSON.stringify({
-				name: "@oh-my-pi/pi-natives",
+				name: "@airis/airis-natives",
 				version: "1.2.3",
 				exports: {
 					"./desktop": { types: "./native/desktop.d.ts", import: "./native/desktop.js" },

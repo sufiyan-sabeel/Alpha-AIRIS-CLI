@@ -1,14 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createLspWritethrough, type FileDiagnosticsResult, FileFormatResult } from "@oh-my-pi/pi-coding-agent/lsp";
-import * as lspClient from "@oh-my-pi/pi-coding-agent/lsp/client";
-import * as lspConfig from "@oh-my-pi/pi-coding-agent/lsp/config";
-import type { Diagnostic, LinterClient, LspClient, ServerConfig } from "@oh-my-pi/pi-coding-agent/lsp/types";
-import { fileToUri } from "@oh-my-pi/pi-coding-agent/lsp/utils";
-import type { DeferredDiagnosticsEntry, ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { WriteTool } from "@oh-my-pi/pi-coding-agent/tools/write";
-import { type ptree, TempDir } from "@oh-my-pi/pi-utils";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import { createLspWritethrough, type FileDiagnosticsResult, FileFormatResult } from "@airis/airis-coding-agent/lsp";
+import * as lspClient from "@airis/airis-coding-agent/lsp/client";
+import * as lspConfig from "@airis/airis-coding-agent/lsp/config";
+import type { Diagnostic, LinterClient, LspClient, ServerConfig } from "@airis/airis-coding-agent/lsp/types";
+import { fileToUri } from "@airis/airis-coding-agent/lsp/utils";
+import type { DeferredDiagnosticsEntry, ToolSession } from "@airis/airis-coding-agent/tools";
+import { WriteTool } from "@airis/airis-coding-agent/tools/write";
+import { type ptree, TempDir } from "@airis/airis-utils";
 
 const TEST_SERVER: ServerConfig = {
 	command: "test-lsp",
@@ -120,7 +120,7 @@ describe("LSP diagnostics freshness", () => {
 	let tempDir: TempDir;
 
 	beforeEach(() => {
-		tempDir = TempDir.createSync("@omp-lsp-freshness-");
+		tempDir = TempDir.createSync("@airis-lsp-freshness-");
 	});
 
 	afterEach(() => {
@@ -608,7 +608,7 @@ describe("LSP diagnostics freshness", () => {
 			...TEST_SERVER,
 			rootMarkers: ["package.json", "tsconfig.json", "jsconfig.json"],
 		};
-		const orphanDir = TempDir.createSync("@omp-lsp-orphan-");
+		const orphanDir = TempDir.createSync("@airis-lsp-orphan-");
 		try {
 			const filePath = path.join(orphanDir.path(), "scratch.ts");
 			const uri = fileToUri(filePath);

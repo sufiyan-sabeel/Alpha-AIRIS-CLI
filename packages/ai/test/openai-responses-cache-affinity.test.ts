@@ -2,18 +2,18 @@ import { afterEach, describe, expect, it, vi } from "bun:test";
 import {
 	type AzureOpenAIResponsesOptions,
 	streamAzureOpenAIResponses,
-} from "@oh-my-pi/pi-ai/providers/azure-openai-responses";
+} from "@airis/airis-ai/providers/azure-openai-responses";
 import {
 	buildParams,
 	type OpenAIResponsesOptions,
 	streamOpenAIResponses,
-} from "@oh-my-pi/pi-ai/providers/openai-responses";
-import { stream as streamModel, streamSimple } from "@oh-my-pi/pi-ai/stream";
-import type { Context, FetchImpl, Model, ProviderSessionState, SimpleStreamOptions } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { buildOpenAIResponsesCompat } from "@oh-my-pi/pi-catalog/compat/openai";
+} from "@airis/airis-ai/providers/openai-responses";
+import { stream as streamModel, streamSimple } from "@airis/airis-ai/stream";
+import type { Context, FetchImpl, Model, ProviderSessionState, SimpleStreamOptions } from "@airis/airis-ai/types";
+import { buildModel } from "@airis/airis-catalog/build";
+import { buildOpenAIResponsesCompat } from "@airis/airis-catalog/compat/openai";
 
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import { getBundledModel } from "@airis/airis-catalog/models";
 import { withEnv } from "./helpers";
 
 const model = getBundledModel("openai", "gpt-5-mini") as Model<"openai-responses">;
@@ -496,12 +496,12 @@ describe("OpenAI Responses explicit prompt cache policy", () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
-	it("defers explicit policy validation to the gateway-resolved model for pi-native transport", async () => {
+	it("defers explicit policy validation to the gateway-resolved model for airis-native transport", async () => {
 		const sidecarModel: Model<"openai-responses"> = {
 			...openAI56ResponsesModel,
 			id: "gateway-model",
 			baseUrl: "http://gateway.internal",
-			transport: "pi-native",
+			transport: "airis-native",
 			compat: buildOpenAIResponsesCompat({
 				id: "gpt-5.5",
 				name: "Gateway model",

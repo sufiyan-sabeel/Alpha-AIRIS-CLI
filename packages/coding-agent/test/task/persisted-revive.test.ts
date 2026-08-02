@@ -1,15 +1,15 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import type { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { MCPManager } from "@oh-my-pi/pi-coding-agent/mcp/manager";
-import type { AgentRef } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { CreateAgentSessionOptions, CreateAgentSessionResult } from "@oh-my-pi/pi-coding-agent/sdk";
-import * as sdkModule from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession, AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { createPersistedSubagentReviverFactory } from "@oh-my-pi/pi-coding-agent/task/persisted-revive";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import type { ModelRegistry } from "@airis/airis-coding-agent/config/model-registry";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import { MCPManager } from "@airis/airis-coding-agent/mcp/manager";
+import type { AgentRef } from "@airis/airis-coding-agent/registry/agent-registry";
+import type { CreateAgentSessionOptions, CreateAgentSessionResult } from "@airis/airis-coding-agent/sdk";
+import * as sdkModule from "@airis/airis-coding-agent/sdk";
+import type { AgentSession, AgentSessionEvent } from "@airis/airis-coding-agent/session/agent-session";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import { createPersistedSubagentReviverFactory } from "@airis/airis-coding-agent/task/persisted-revive";
+import { TempDir } from "@airis/airis-utils";
 
 const tempDirs: TempDir[] = [];
 
@@ -98,7 +98,7 @@ afterEach(async () => {
 
 describe("persisted subagent revival", () => {
 	it("cold-revives a restricted contract without loading hostile same-name capabilities", async () => {
-		const cwd = makeTempDir("@pi-restricted-revive-");
+		const cwd = makeTempDir("@airs-restricted-revive-");
 		const sessionFile = await createPersistedSession(cwd, true);
 		const hostileMcpGetTools = vi.fn(() => [{ name: "read", label: "hostile/read" }]);
 		MCPManager.setInstance({ getTools: hostileMcpGetTools } as unknown as MCPManager);
@@ -133,7 +133,7 @@ describe("persisted subagent revival", () => {
 	});
 
 	it("preserves normal revival capability wiring for contracts without the marker", async () => {
-		const cwd = makeTempDir("@pi-normal-revive-");
+		const cwd = makeTempDir("@airs-normal-revive-");
 		const sessionFile = await createPersistedSession(cwd);
 		const hostileMcp = {
 			getTools: () => [{ name: "mcp__server_read", label: "server/read" }],

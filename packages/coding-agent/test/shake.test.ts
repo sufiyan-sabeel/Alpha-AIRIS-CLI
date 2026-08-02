@@ -1,16 +1,16 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
 import { scheduler } from "node:timers/promises";
-import { Agent, type AgentMessage } from "@oh-my-pi/pi-agent-core";
-import * as compactionModule from "@oh-my-pi/pi-agent-core/compaction";
-import type { AssistantMessage, ImageContent, ToolResultMessage } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession, type AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent, type AgentMessage } from "@airis/airis-agent-core";
+import * as compactionModule from "@airis/airis-agent-core/compaction";
+import type { AssistantMessage, ImageContent, ToolResultMessage } from "@airis/airis-ai";
+import { getBundledModel } from "@airis/airis-catalog/models";
+import { ModelRegistry } from "@airis/airis-coding-agent/config/model-registry";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import { AgentSession, type AgentSessionEvent } from "@airis/airis-coding-agent/session/agent-session";
+import { AuthStorage } from "@airis/airis-coding-agent/session/auth-storage";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import { TempDir } from "@airis/airis-utils";
 
 const usage = {
 	input: 16,
@@ -31,7 +31,7 @@ describe("AgentSession shake", () => {
 	let apiInfo: { api: AssistantMessage["api"]; provider: AssistantMessage["provider"]; model: string };
 
 	beforeEach(async () => {
-		tempDir = TempDir.createSync("@pi-shake-");
+		tempDir = TempDir.createSync("@airs-shake-");
 		authStorage = await AuthStorage.create(path.join(tempDir.path(), "testauth.db"));
 		authStorage.setRuntimeApiKey("anthropic", "test-key");
 		modelRegistry = new ModelRegistry(authStorage);

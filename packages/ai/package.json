@@ -1,21 +1,21 @@
 {
   "type": "module",
-  "name": "@oh-my-pi/pi-ai",
+  "name": "@airis/airis-ai",
   "version": "17.2.1",
   "description": "Unified LLM API with automatic model discovery and provider configuration",
-  "homepage": "https://omp.sh",
-  "author": "Can Boluk",
+  "homepage": "https://airis.sh",
+  "author": "Umaiz Sufiyan",
   "contributors": [
     "Mario Zechner"
   ],
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/can1357/oh-my-pi.git",
+    "url": "git+https://github.com/sufiyan-sabeel/Alpha-AIRIS-CLI.git",
     "directory": "packages/ai"
   },
   "bugs": {
-    "url": "https://github.com/can1357/oh-my-pi/issues"
+    "url": "https://github.com/sufiyan-sabeel/Alpha-AIRIS-CLI/issues"
   },
   "keywords": [
     "ai",
@@ -38,9 +38,9 @@
   },
   "dependencies": {
     "@bufbuild/protobuf": "catalog:",
-    "@oh-my-pi/pi-catalog": "catalog:",
-    "@oh-my-pi/pi-utils": "catalog:",
-    "@oh-my-pi/pi-wire": "catalog:",
+    "@airis/airis-catalog": "catalog:",
+    "@airis/airis-utils": "catalog:",
+    "@airis/airis-wire": "catalog:",
     "arktype": "catalog:",
     "zod": "catalog:"
   },

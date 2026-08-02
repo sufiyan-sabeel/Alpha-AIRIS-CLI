@@ -1,4 +1,4 @@
-import { toNumber } from "@oh-my-pi/pi-catalog/utils";
+import { toNumber } from "@airis/airis-catalog/utils";
 import type {
 	CredentialRankingStrategy,
 	UsageAmount,

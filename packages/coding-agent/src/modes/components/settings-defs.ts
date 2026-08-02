@@ -9,7 +9,7 @@
  * (or `options: "runtime"` for runtime-injected lists like themes).
  */
 
-import { TERMINAL } from "@oh-my-pi/pi-tui";
+import { TERMINAL } from "@airis/airis-tui";
 import { Settings } from "../../config/settings";
 import {
 	type AnyUiMetadata,
@@ -109,9 +109,9 @@ const CONDITIONS: Record<string, () => boolean> = {
 			return false;
 		}
 	},
-	mnemopiActive: () => {
+	mnemosyneActive: () => {
 		try {
-			return Settings.instance.get("memory.backend") === "mnemopi";
+			return Settings.instance.get("memory.backend") === "mnemosyne";
 		} catch {
 			return false;
 		}

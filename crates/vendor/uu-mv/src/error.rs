@@ -3,7 +3,7 @@
 // For the full copyright and license information, please view the LICENSE
 // file that was distributed with this source code.
 //
-// pi-uutils: `translate!` calls literalized to plain English from the upstream
+// airis-uutils: `translate!` calls literalized to plain English from the upstream
 // `locales/en-US.ftl` so the crate no longer depends on `fluent`.
 use thiserror::Error;
 use uucore::error::UError;

@@ -1,5 +1,5 @@
-import { resolveVertexEndpointHost } from "@oh-my-pi/pi-catalog/hosts";
-import { $env } from "@oh-my-pi/pi-utils";
+import { resolveVertexEndpointHost } from "@airis/airis-catalog/hosts";
+import { $env } from "@airis/airis-utils";
 import * as AIError from "../error";
 import type { Context, Model, StreamFunction } from "../types";
 import type { AssistantMessageEventStream } from "../utils/event-stream";

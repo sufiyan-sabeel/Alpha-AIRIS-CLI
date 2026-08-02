@@ -1,13 +1,13 @@
 import { describe, expect, it } from "bun:test";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { streamGoogle } from "@oh-my-pi/pi-ai/providers/google";
-import type { GoogleGeminiCliOptions } from "@oh-my-pi/pi-ai/providers/google-gemini-cli";
-import { buildGoogleGenerateContentParams } from "@oh-my-pi/pi-ai/providers/google-shared";
-import { streamGoogleVertex } from "@oh-my-pi/pi-ai/providers/google-vertex";
-import { parseRequest as parsePiNativeRequest } from "@oh-my-pi/pi-ai/providers/pi-native-server";
-import { streamSimple } from "@oh-my-pi/pi-ai/stream";
-import type { ApiOptionsMap, AssistantMessageEvent, Context, FetchImpl, Model, Tool } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import * as AIError from "@airis/airis-ai/error";
+import { streamGoogle } from "@airis/airis-ai/providers/google";
+import type { GoogleGeminiCliOptions } from "@airis/airis-ai/providers/google-gemini-cli";
+import { buildGoogleGenerateContentParams } from "@airis/airis-ai/providers/google-shared";
+import { streamGoogleVertex } from "@airis/airis-ai/providers/google-vertex";
+import { parseRequest as parseairisNativeRequest } from "@airis/airis-ai/providers/airis-native-server";
+import { streamSimple } from "@airis/airis-ai/stream";
+import type { ApiOptionsMap, AssistantMessageEvent, Context, FetchImpl, Model, Tool } from "@airis/airis-ai/types";
+import { buildModel } from "@airis/airis-catalog/build";
 
 const CACHE_NAME = "cachedContents/caller-owned-corpus-abc";
 const VERTEX_CACHE_NAME = "projects/demo-project/locations/us-central1/cachedContents/caller-owned-corpus-abc";
@@ -85,7 +85,7 @@ function sseStop(usage?: Record<string, number>): Response {
 	});
 }
 
-function piNativeSseStop(): Response {
+function airisNativeSseStop(): Response {
 	const message = {
 		role: "assistant",
 		content: [],
@@ -109,8 +109,8 @@ function piNativeSseStop(): Response {
 	});
 }
 
-function piNativeGatewayModel<T extends "google-generative-ai" | "google-vertex">(model: Model<T>): Model<T> {
-	return { ...model, baseUrl: "http://pi-native-gateway.test", transport: "pi-native" };
+function airisNativeGatewayModel<T extends "google-generative-ai" | "google-vertex">(model: Model<T>): Model<T> {
+	return { ...model, baseUrl: "http://airis-native-gateway.test", transport: "airis-native" };
 }
 
 async function drain(stream: AsyncIterable<AssistantMessageEvent>): Promise<AssistantMessageEvent[]> {
@@ -230,16 +230,16 @@ describe("Google caller-owned cachedContent", () => {
 		expect(nonGoogle.calls()[0]?.body.cachedContent).toBeUndefined();
 	});
 
-	it("round-trips cachedContent through the pi-native gateway for Gemini and Vertex", async () => {
+	it("round-trips cachedContent through the airis-native gateway for Gemini and Vertex", async () => {
 		const requests: unknown[] = [];
 		const fetch: FetchImpl = async (_input, init) => {
 			requests.push(JSON.parse(String(init?.body ?? "{}")));
-			return piNativeSseStop();
+			return airisNativeSseStop();
 		};
 
 		for (const [model, cachedContent] of [
-			[piNativeGatewayModel(geminiModel), CACHE_NAME],
-			[piNativeGatewayModel(vertexModel), VERTEX_CACHE_NAME],
+			[airisNativeGatewayModel(geminiModel), CACHE_NAME],
+			[airisNativeGatewayModel(vertexModel), VERTEX_CACHE_NAME],
 		] as const) {
 			await drain(
 				streamSimple(model, cacheOnlyContext, {
@@ -251,7 +251,7 @@ describe("Google caller-owned cachedContent", () => {
 		}
 
 		expect(requests).toHaveLength(2);
-		expect(requests.map(request => parsePiNativeRequest(request).options.cachedContent)).toEqual([
+		expect(requests.map(request => parseairisNativeRequest(request).options.cachedContent)).toEqual([
 			CACHE_NAME,
 			VERTEX_CACHE_NAME,
 		]);

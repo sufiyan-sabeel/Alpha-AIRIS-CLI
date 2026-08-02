@@ -1,10 +1,10 @@
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { estimateTokens } from "@oh-my-pi/pi-agent-core/compaction";
-import type { AssistantMessage, ImageContent, TextContent } from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { raceWithSignal } from "@oh-my-pi/pi-ai/utils/abort";
-import { type CursorExecResolvedCarrier, kCursorExecResolved } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { logger } from "@oh-my-pi/pi-utils";
+import type { AgentMessage } from "@airis/airis-agent-core";
+import { estimateTokens } from "@airis/airis-agent-core/compaction";
+import type { AssistantMessage, ImageContent, TextContent } from "@airis/airis-ai";
+import * as AIError from "@airis/airis-ai/error";
+import { raceWithSignal } from "@airis/airis-ai/utils/abort";
+import { type CursorExecResolvedCarrier, kCursorExecResolved } from "@airis/airis-ai/utils/block-symbols";
+import { logger } from "@airis/airis-utils";
 import { obfuscateToolArguments, type SecretObfuscator } from "../secrets/obfuscator";
 import {
 	formatExecutionSourcePreview,
@@ -14,7 +14,7 @@ import {
 } from "../session/session-history-format";
 
 /**
- * Minimal slice of `Agent` the runtime drives — satisfied by pi-agent-core
+ * Minimal slice of `Agent` the runtime drives — satisfied by airis-agent-core
  * `Agent`. `state.error` mirrors `Agent.state.error`: provider/stream failures
  * the loop catches internally never reject `prompt()`, so the runtime reads
  * this field after every prompt to detect a failed turn.

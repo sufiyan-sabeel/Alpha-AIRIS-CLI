@@ -1,14 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import { Effort, type Model } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@airis/airis-agent-core";
+import { Effort, type Model } from "@airis/airis-ai";
+import { getBundledModel } from "@airis/airis-catalog/models";
+import { ModelRegistry } from "@airis/airis-coding-agent/config/model-registry";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import { AgentSession } from "@airis/airis-coding-agent/session/agent-session";
+import { AuthStorage } from "@airis/airis-coding-agent/session/auth-storage";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import { TempDir } from "@airis/airis-utils";
 
 describe("issue #775: per-model defaultLevel", () => {
 	let tempDir: TempDir;
@@ -16,7 +16,7 @@ describe("issue #775: per-model defaultLevel", () => {
 	const authStorages: AuthStorage[] = [];
 
 	beforeEach(() => {
-		tempDir = TempDir.createSync("@pi-issue-775-");
+		tempDir = TempDir.createSync("@airs-issue-775-");
 	});
 
 	afterEach(async () => {

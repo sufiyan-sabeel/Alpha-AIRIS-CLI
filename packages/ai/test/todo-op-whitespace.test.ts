@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import type { Tool } from "@oh-my-pi/pi-ai/types";
-import { validateToolArguments } from "@oh-my-pi/pi-ai/utils/validation";
+import type { Tool } from "@airis/airis-ai/types";
+import { validateToolArguments } from "@airis/airis-ai/utils/validation";
 import { z } from "zod/v4";
 
 describe("Tool argument whitespace normalization", () => {

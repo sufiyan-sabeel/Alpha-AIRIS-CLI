@@ -4,7 +4,7 @@
 // file that was distributed with this source code.
 //! Errors returned by tac during processing of a file.
 
-// pi-uutils: vendored from uutils/coreutils 0.8.0; `translate!` strings are
+// airis-uutils: vendored from uutils/coreutils 0.8.0; `translate!` strings are
 // literalized with the en-US locale text.
 
 use std::ffi::OsString;

@@ -1,7 +1,7 @@
-import type { DesktopAction, DesktopCapabilities, DesktopCapture, DesktopSessionOptions } from "@oh-my-pi/pi-natives";
-import { withTimeout } from "@oh-my-pi/pi-utils/async";
-import * as logger from "@oh-my-pi/pi-utils/logger";
-import { workerHostEntry } from "@oh-my-pi/pi-utils/worker-host";
+import type { DesktopAction, DesktopCapabilities, DesktopCapture, DesktopSessionOptions } from "@airis/airis-natives";
+import { withTimeout } from "@airis/airis-utils/async";
+import * as logger from "@airis/airis-utils/logger";
+import { workerHostEntry } from "@airis/airis-utils/worker-host";
 import { ToolAbortError, ToolError } from "../tool-errors";
 import {
 	COMPUTER_WORKER_ARG,

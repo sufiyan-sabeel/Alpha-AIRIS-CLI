@@ -1,17 +1,17 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Agent, AgentBusyError } from "@oh-my-pi/pi-agent-core";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { GoalTool } from "@oh-my-pi/pi-coding-agent/goals/tools/goal-tool";
-import { InteractiveMode } from "@oh-my-pi/pi-coding-agent/modes/interactive-mode";
-import { initTheme } from "@oh-my-pi/pi-coding-agent/modes/theme/theme";
-import type { AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { createTools, type Tool, type ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent, AgentBusyError } from "@airis/airis-agent-core";
+import { ModelRegistry } from "@airis/airis-coding-agent/config/model-registry";
+import { resetSettingsForTest, Settings } from "@airis/airis-coding-agent/config/settings";
+import { GoalTool } from "@airis/airis-coding-agent/goals/tools/goal-tool";
+import { InteractiveMode } from "@airis/airis-coding-agent/modes/interactive-mode";
+import { initTheme } from "@airis/airis-coding-agent/modes/theme/theme";
+import type { AgentSessionEvent } from "@airis/airis-coding-agent/session/agent-session";
+import { AgentSession } from "@airis/airis-coding-agent/session/agent-session";
+import { AuthStorage } from "@airis/airis-coding-agent/session/auth-storage";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import { createTools, type Tool, type ToolSession } from "@airis/airis-coding-agent/tools";
+import { TempDir } from "@airis/airis-utils";
 
 function createToolSession(cwd: string, settings: Settings, overrides: Partial<ToolSession> = {}): ToolSession {
 	return {
@@ -35,7 +35,7 @@ type GuidedGoalHarness = {
 
 async function createHarness(options?: { goalEnabled?: boolean }): Promise<GuidedGoalHarness> {
 	resetSettingsForTest();
-	const tempDir = TempDir.createSync("@pi-guided-goal-");
+	const tempDir = TempDir.createSync("@airs-guided-goal-");
 	await Settings.init({ inMemory: true, cwd: tempDir.path() });
 	const settings = Settings.isolated({
 		"compaction.enabled": false,

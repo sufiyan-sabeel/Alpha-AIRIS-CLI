@@ -2,10 +2,10 @@
  * Shared utilities for compaction and branch summarization.
  */
 
-import type { Message, ToolCall } from "@oh-my-pi/pi-ai";
-import { type Dialect, getDialectDefinition } from "@oh-my-pi/pi-ai/dialect";
-import { escapeHarmonyControlTokens } from "@oh-my-pi/pi-ai/utils/harmony-leak";
-import { formatGroupedPaths, prompt, stringifyJson } from "@oh-my-pi/pi-utils";
+import type { Message, ToolCall } from "@airis/airis-ai";
+import { type Dialect, getDialectDefinition } from "@airis/airis-ai/dialect";
+import { escapeHarmonyControlTokens } from "@airis/airis-ai/utils/harmony-leak";
+import { formatGroupedPaths, prompt, stringifyJson } from "@airis/airis-utils";
 import type { AgentMessage } from "../types";
 import fileOperationsTemplate from "./prompts/file-operations.md" with { type: "text" };
 import summarizationSystemPrompt from "./prompts/summarization-system.md" with { type: "text" };

@@ -2,9 +2,9 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { unregisterCustomApis } from "@oh-my-pi/pi-ai/api-registry";
-import { type AuthCredentialStore, AuthStorage, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai/auth-storage";
-import { createMockModel, type MockResponseSource, registerMockApi } from "@oh-my-pi/pi-ai/providers/mock";
+import { unregisterCustomApis } from "@airis/airis-ai/api-registry";
+import { type AuthCredentialStore, AuthStorage, SqliteAuthCredentialStore } from "@airis/airis-ai/auth-storage";
+import { createMockModel, type MockResponseSource, registerMockApi } from "@airis/airis-ai/providers/mock";
 import { $ } from "bun";
 import { ModelRegistry } from "../../src/config/model-registry";
 import { Settings } from "../../src/config/settings";
@@ -38,7 +38,7 @@ const gitAdapter: SecurityGitAdapter = {
 };
 
 beforeEach(async () => {
-	temporaryRoot = await fs.mkdtemp(path.join(os.tmpdir(), "omp-security-coordinator-"));
+	temporaryRoot = await fs.mkdtemp(path.join(os.tmpdir(), "airis-security-coordinator-"));
 	repositoryRoot = path.join(temporaryRoot, "repo");
 	stateRoot = path.join(temporaryRoot, "state");
 	await fs.mkdir(path.join(repositoryRoot, "src"), { recursive: true });
@@ -321,7 +321,7 @@ describe("native security coordinator", () => {
 		});
 		const interrupted: SecurityScanBundle = {
 			scan: {
-				documentType: "omp-security.scan",
+				documentType: "airis-security.scan",
 				schemaVersion: "1.0",
 				id: scanId,
 				projectKey: store.projectKey,

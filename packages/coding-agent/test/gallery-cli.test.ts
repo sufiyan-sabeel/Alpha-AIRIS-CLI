@@ -4,11 +4,11 @@ import {
 	parseGalleryStates,
 	renderGalleryState,
 	resolveFixture,
-} from "@oh-my-pi/pi-coding-agent/cli/gallery-cli";
-import type { GalleryFixture } from "@oh-my-pi/pi-coding-agent/cli/gallery-fixtures";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { initTheme, theme } from "@oh-my-pi/pi-coding-agent/modes/theme/theme";
-import { toolRenderers } from "@oh-my-pi/pi-coding-agent/tools/renderers";
+} from "@airis/airis-coding-agent/cli/gallery-cli";
+import type { GalleryFixture } from "@airis/airis-coding-agent/cli/gallery-fixtures";
+import { resetSettingsForTest, Settings } from "@airis/airis-coding-agent/config/settings";
+import { initTheme, theme } from "@airis/airis-coding-agent/modes/theme/theme";
+import { toolRenderers } from "@airis/airis-coding-agent/tools/renderers";
 
 beforeAll(async () => {
 	resetSettingsForTest();

@@ -1,22 +1,22 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { Agent, type AgentMessage } from "@oh-my-pi/pi-agent-core";
-import * as compactionModule from "@oh-my-pi/pi-agent-core/compaction";
-import type { AssistantMessage, Model } from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { loadAdvisorTranscriptCosts } from "@oh-my-pi/pi-coding-agent/advisor/transcript-recorder";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import { createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { getProjectAgentDir, TempDir } from "@oh-my-pi/pi-utils";
+import { Agent, type AgentMessage } from "@airis/airis-agent-core";
+import * as compactionModule from "@airis/airis-agent-core/compaction";
+import type { AssistantMessage, Model } from "@airis/airis-ai";
+import * as AIError from "@airis/airis-ai/error";
+import { createMockModel } from "@airis/airis-ai/providers/mock";
+import { getBundledModel } from "@airis/airis-catalog/models";
+import { loadAdvisorTranscriptCosts } from "@airis/airis-coding-agent/advisor/transcript-recorder";
+import { ModelRegistry } from "@airis/airis-coding-agent/config/model-registry";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import type { ExtensionRunner } from "@airis/airis-coding-agent/extensibility/extensions";
+import { createAgentSession } from "@airis/airis-coding-agent/sdk";
+import { AgentSession } from "@airis/airis-coding-agent/session/agent-session";
+import { AgentStorage } from "@airis/airis-coding-agent/session/agent-storage";
+import { AuthStorage } from "@airis/airis-coding-agent/session/auth-storage";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import { getProjectAgentDir, TempDir } from "@airis/airis-utils";
 
 describe("AgentSession advisor toggle", () => {
 	let sharedDir: TempDir;
@@ -26,7 +26,7 @@ describe("AgentSession advisor toggle", () => {
 	let replacementModel: Model;
 
 	beforeAll(async () => {
-		sharedDir = TempDir.createSync("@pi-advisor-toggle-shared-");
+		sharedDir = TempDir.createSync("@airs-advisor-toggle-shared-");
 		authStorage = await AuthStorage.create(path.join(sharedDir.path(), "testauth.db"));
 		authStorage.setRuntimeApiKey("anthropic", "test-key");
 		authStorage.setRuntimeApiKey("openai", "test-key");
@@ -52,7 +52,7 @@ describe("AgentSession advisor toggle", () => {
 	let sessionManager: SessionManager;
 
 	beforeEach(async () => {
-		tempDir = TempDir.createSync("@pi-advisor-toggle-");
+		tempDir = TempDir.createSync("@airs-advisor-toggle-");
 		sessionManager = SessionManager.create(tempDir.path(), tempDir.path());
 		const agent = new Agent({
 			initialState: {
@@ -684,7 +684,7 @@ describe("AgentSession advisor toggle", () => {
 			hasHandlers: (eventType: string) => eventType === "session_before_branch",
 			emit: async () => ({ skipConversationRestore: true }),
 		} as unknown as ExtensionRunner;
-		const branchDir = TempDir.createSync("@pi-advisor-branch-");
+		const branchDir = TempDir.createSync("@airs-advisor-branch-");
 		const branchManager = SessionManager.create(branchDir.path(), branchDir.path());
 		const branchSession = new AgentSession({
 			agent: new Agent({
@@ -727,7 +727,7 @@ describe("AgentSession advisor toggle", () => {
 				return undefined;
 			},
 		} as unknown as ExtensionRunner;
-		const branchDir = TempDir.createSync("@pi-advisor-branch-fail-");
+		const branchDir = TempDir.createSync("@airs-advisor-branch-fail-");
 		const branchManager = SessionManager.create(branchDir.path(), branchDir.path());
 		const branchSession = new AgentSession({
 			agent: new Agent({

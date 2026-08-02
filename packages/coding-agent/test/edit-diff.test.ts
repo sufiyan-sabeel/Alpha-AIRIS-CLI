@@ -7,15 +7,15 @@ import {
 	formatHashlineHeader,
 	InMemorySnapshotStore,
 	missingSnapshotTagMessage,
-} from "@oh-my-pi/hashline";
+} from "@airis/airis-hashline";
 import {
 	adjustIndentation,
 	computeEditDiff,
 	computeHashlineDiff,
 	DEFAULT_FUZZY_THRESHOLD,
 	findMatch,
-} from "@oh-my-pi/pi-coding-agent/edit";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+} from "@airis/airis-coding-agent/edit";
+import { removeWithRetries } from "@airis/airis-utils";
 
 describe("findMatch", () => {
 	describe("exact matching", () => {

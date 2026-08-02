@@ -39,7 +39,7 @@ export function gatewayResponseHeaders(
 		"request-id": info.requestId,
 		"x-litellm-model-id": model.id,
 	};
-	if (model.baseUrl) headers["x-litellm-model-api-base"] = model.baseUrl;
+	if (model.baseUrl) headers["x-litellm-model-aairis-base"] = model.baseUrl;
 	if (info.message) headers["x-litellm-response-cost"] = info.message.usage.cost.total.toString();
 	if (info.startedAt !== undefined) {
 		const elapsed = (performance.now() - info.startedAt).toFixed(0);
@@ -105,7 +105,7 @@ const PASSTHROUGH_HEADER_NAMES: Record<string, true> = {
 	"openai-organization": true,
 	"openai-project": true,
 	"openai-beta": true,
-	// Codex / ChatGPT-OAuth backend headers (see @oh-my-pi/pi-catalog/wire/codex).
+	// Codex / ChatGPT-OAuth backend headers (see @airis/airis-catalog/wire/codex).
 	// `session_id` and `conversation_id` thread the upstream session so prompt
 	// caching and per-conversation rate limiting work; `chatgpt-account-id` and
 	// `originator` identify the calling account and client surface.
@@ -197,7 +197,7 @@ const CORS_HEADERS: Record<string, string> = {
 	"Access-Control-Allow-Headers":
 		"authorization, content-type, anthropic-version, anthropic-beta, openai-organization, openai-project, x-stainless-*, x-api-key",
 	"Access-Control-Expose-Headers":
-		"x-request-id, request-id, x-litellm-model-id, x-litellm-model-api-base, x-litellm-response-cost, x-litellm-response-duration-ms, openai-processing-ms",
+		"x-request-id, request-id, x-litellm-model-id, x-litellm-model-aairis-base, x-litellm-response-cost, x-litellm-response-duration-ms, openai-processing-ms",
 	"Access-Control-Max-Age": "86400",
 };
 

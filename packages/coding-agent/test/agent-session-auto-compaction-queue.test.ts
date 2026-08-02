@@ -2,20 +2,20 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { scheduler } from "node:timers/promises";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { loadExtensions } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import { AgentSession, type AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import * as unexpectedStopClassifier from "@oh-my-pi/pi-coding-agent/session/unexpected-stop-classifier";
-import { getProjectAgentDir, TempDir, withTimeout } from "@oh-my-pi/pi-utils";
-import * as logger from "@oh-my-pi/pi-utils/logger";
+import { Agent } from "@airis/airis-agent-core";
+import { getBundledModel } from "@airis/airis-catalog/models";
+import { ModelRegistry } from "@airis/airis-coding-agent/config/model-registry";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import { loadExtensions } from "@airis/airis-coding-agent/extensibility/extensions/loader";
+import { ExtensionRunner } from "@airis/airis-coding-agent/extensibility/extensions/runner";
+import { AgentSession, type AgentSessionEvent } from "@airis/airis-coding-agent/session/agent-session";
+import { AuthStorage } from "@airis/airis-coding-agent/session/auth-storage";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import * as unexpectedStopClassifier from "@airis/airis-coding-agent/session/unexpected-stop-classifier";
+import { getProjectAgentDir, TempDir, withTimeout } from "@airis/airis-utils";
+import * as logger from "@airis/airis-utils/logger";
 
-const runtimeSignalStoreKey = "__ompRuntimeSignals";
+const runtimeSignalStoreKey = "__airisRuntimeSignals";
 
 type RuntimeSignalGlobal = typeof globalThis & { [runtimeSignalStoreKey]?: string[] };
 
@@ -39,7 +39,7 @@ describe("AgentSession auto-compaction queue resume", () => {
 	let modelRegistry: ModelRegistry;
 
 	beforeEach(async () => {
-		tempDir = TempDir.createSync("@pi-auto-compaction-queue-");
+		tempDir = TempDir.createSync("@airs-auto-compaction-queue-");
 		vi.useFakeTimers();
 
 		// Provide an extension that short-circuits compaction so the test doesn't
@@ -54,7 +54,7 @@ describe("AgentSession auto-compaction queue resume", () => {
 				'\tpi.on("session_before_compact", async (event) => {',
 				`\t\tconst signals = globalThis.${runtimeSignalStoreKey} ?? (globalThis.${runtimeSignalStoreKey} = []);`,
 				'\t\tsignals.push("before_compact:enter");',
-				"\t\tconst gate = globalThis.__ompManualCompactGate;",
+				"\t\tconst gate = globalThis.__airisManualCompactGate;",
 				"\t\tif (gate) await gate;",
 				"\t\treturn {",
 				"\t\t\tcompaction: {",
@@ -146,7 +146,7 @@ describe("AgentSession auto-compaction queue resume", () => {
 				await tempDir?.remove();
 			} finally {
 				getRuntimeSignals().length = 0;
-				(globalThis as typeof globalThis & { __ompManualCompactGate?: Promise<void> }).__ompManualCompactGate =
+				(globalThis as typeof globalThis & { __airisManualCompactGate?: Promise<void> }).__airisManualCompactGate =
 					undefined;
 				vi.restoreAllMocks();
 			}
@@ -307,7 +307,7 @@ describe("AgentSession auto-compaction queue resume", () => {
 		// Park compaction inside its awaited hook so we can queue a follow-up while
 		// the session is disconnected and abort has already run its finally.
 		const gate = Promise.withResolvers<void>();
-		(globalThis as typeof globalThis & { __ompManualCompactGate?: Promise<void> }).__ompManualCompactGate =
+		(globalThis as typeof globalThis & { __airisManualCompactGate?: Promise<void> }).__airisManualCompactGate =
 			gate.promise;
 
 		const compactPromise = session.compact();
@@ -358,7 +358,7 @@ describe("AgentSession auto-compaction queue resume", () => {
 		// #autoCompactionAbortController stays installed across the manual /compact
 		// startup abort below.
 		const gate = Promise.withResolvers<void>();
-		(globalThis as typeof globalThis & { __ompManualCompactGate?: Promise<void> }).__ompManualCompactGate =
+		(globalThis as typeof globalThis & { __airisManualCompactGate?: Promise<void> }).__airisManualCompactGate =
 			gate.promise;
 
 		const appendCompactionSpy = vi.spyOn(sessionManager, "appendCompaction");

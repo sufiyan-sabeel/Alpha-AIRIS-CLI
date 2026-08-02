@@ -21,11 +21,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { Agent, type AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { TextContent } from "@oh-my-pi/pi-ai";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent, type AgentMessage } from "@airis/airis-agent-core";
+import type { TextContent } from "@airis/airis-ai";
+import { AssistantMessageEventStream } from "@airis/airis-ai/utils/event-stream";
+import { getBundledModel } from "@airis/airis-catalog/models";
+import { TempDir } from "@airis/airis-utils";
 import { ModelRegistry } from "../src/config/model-registry";
 import { Settings } from "../src/config/settings";
 import { resolveLocalUrlToPath } from "../src/internal-urls";
@@ -84,7 +84,7 @@ describe("AgentSession plan-reference delivery tracking (issue #4094)", () => {
 	const cleanups: Array<() => Promise<void>> = [];
 
 	beforeEach(() => {
-		tempDir = TempDir.createSync("@pi-agent-session-plan-ref-setup-bail-");
+		tempDir = TempDir.createSync("@airs-agent-session-plan-ref-setup-bail-");
 		cleanups.length = 0;
 	});
 

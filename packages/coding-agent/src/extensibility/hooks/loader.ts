@@ -2,14 +2,14 @@
  * Hook loader - loads TypeScript hook modules using native Bun import.
  */
 import * as path from "node:path";
-import { logger } from "@oh-my-pi/pi-utils";
+import { logger } from "@airis/airis-utils";
 import * as arktype from "arktype";
 import * as zodModule from "zod/v4";
 import { hookCapability } from "../../capability/hook";
 import type { Hook } from "../../discovery";
 import { loadCapability } from "../../discovery";
 // Runtime self-reference: dereference this namespace only inside loader functions to keep the index.ts cycle safe.
-import * as PiCodingAgent from "../../index";
+import * as AirisCodingAgent from "../../index";
 import type { CustomMessagePayload } from "../../session/messages";
 import * as typebox from "../typebox";
 import { resolvePath, withHostGuard } from "../utils";
@@ -22,7 +22,7 @@ import type { ExecOptions, HookAPI, HookFactory, HookMessageRenderer, Registered
 type HandlerFn = (...args: unknown[]) => Promise<unknown>;
 
 /**
- * Send message handler type for pi.sendMessage().
+ * Send message handler type for airs.sendMessage().
  */
 export type SendMessageHandler = <T = unknown>(
 	message: CustomMessagePayload<T>,
@@ -30,7 +30,7 @@ export type SendMessageHandler = <T = unknown>(
 ) => void;
 
 /**
- * Append entry handler type for pi.appendEntry().
+ * Append entry handler type for airs.appendEntry().
  */
 export type AppendEntryHandler = <T = unknown>(customType: string, data?: T) => void;
 
@@ -52,9 +52,9 @@ export interface LoadedHook {
 	messageRenderers: Map<string, HookMessageRenderer>;
 	/** Map of command name to registered command */
 	commands: Map<string, RegisteredCommand>;
-	/** Set the send message handler for this hook's pi.sendMessage() */
+	/** Set the send message handler for this hook's airs.sendMessage() */
 	setSendMessageHandler: (handler: SendMessageHandler) => void;
-	/** Set the append entry handler for this hook's pi.appendEntry() */
+	/** Set the append entry handler for this hook's airs.appendEntry() */
 	setAppendEntryHandler: (handler: AppendEntryHandler) => void;
 }
 
@@ -125,7 +125,7 @@ async function createHookAPI(
 		// HookAPI.arktype is typed as the arktype `Type` constructor; expose it from the module namespace.
 		arktype: arktype.Type,
 		zod: zodModule,
-		pi: PiCodingAgent,
+		airs: AirisCodingAgent,
 	} as HookAPI;
 
 	return {
@@ -212,7 +212,7 @@ export async function loadHooks(paths: string[], cwd: string): Promise<LoadHooks
 /**
  * Discover and load hooks from all registered providers.
  * Uses the capability API to discover hook paths from:
- * 1. OMP native configs (.omp/.pi hooks/)
+ * 1. AIRIS native configs (.airis/ legacy-pi hooks/)
  * 2. Installed plugins
  * 3. Other editor/IDE configurations
  *

@@ -3,18 +3,18 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Effort, type FetchImpl, type Model } from "@oh-my-pi/pi-ai";
-import type { OAuthCredentials } from "@oh-my-pi/pi-ai/oauth/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { writeModelCache } from "@oh-my-pi/pi-catalog/model-cache";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { resolveOllamaModelCacheProviderId } from "@oh-my-pi/pi-catalog/provider-models";
-import type { ModelSpec, OpenAICompat } from "@oh-my-pi/pi-catalog/types";
-import { applyLlamaCppQwenThinking, discoveryProbeTimeoutMs } from "@oh-my-pi/pi-coding-agent/config/model-discovery";
-import { kNoAuth, ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resetSettingsForTest } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
+import { Effort, type FetchImpl, type Model } from "@airis/airis-ai";
+import type { OAuthCredentials } from "@airis/airis-ai/oauth/types";
+import { buildModel } from "@airis/airis-catalog/build";
+import { writeModelCache } from "@airis/airis-catalog/model-cache";
+import { getBundledModel } from "@airis/airis-catalog/models";
+import { resolveOllamaModelCacheProviderId } from "@airis/airis-catalog/provider-models";
+import type { ModelSpec, OpenAICompat } from "@airis/airis-catalog/types";
+import { applyLlamaCppQwenThinking, discoveryProbeTimeoutMs } from "@airis/airis-coding-agent/config/model-discovery";
+import { kNoAuth, ModelRegistry } from "@airis/airis-coding-agent/config/model-registry";
+import { resetSettingsForTest } from "@airis/airis-coding-agent/config/settings";
+import { AuthStorage } from "@airis/airis-coding-agent/session/auth-storage";
+import { removeSyncWithRetries, Snowflake } from "@airis/airis-utils";
 
 describe("ModelRegistry runtime discovery", () => {
 	let tempDir: string;
@@ -534,14 +534,14 @@ describe("ModelRegistry runtime discovery", () => {
 	});
 
 	test("keeps OLLAMA_BASE_URL precedence over OLLAMA_HOST", async () => {
-		using _baseUrl = withEnv("OLLAMA_BASE_URL", "http://omp-ollama.example:2222");
+		using _baseUrl = withEnv("OLLAMA_BASE_URL", "http://airis-ollama.example:2222");
 		using _host = withEnv("OLLAMA_HOST", "ollama-host.example:3333");
-		const fetchMock = mockOllamaDiscovery(["phi4-mini"], "http://omp-ollama.example:2222");
+		const fetchMock = mockOllamaDiscovery(["phi4-mini"], "http://airis-ollama.example:2222");
 		const registry = new ModelRegistry(authStorage, modelsJsonPath, { fetch: fetchMock });
 		await registry.refresh();
 
 		const model = registry.find("ollama", "phi4-mini");
-		expect(model?.baseUrl).toBe("http://omp-ollama.example:2222/v1");
+		expect(model?.baseUrl).toBe("http://airis-ollama.example:2222/v1");
 	});
 
 	test("refreshes implicit Ollama discovery when the configured endpoint changes", async () => {
@@ -1190,7 +1190,7 @@ describe("ModelRegistry runtime discovery", () => {
 		expect(qwen?.baseUrl).toBe("http://127.0.0.1:8080/v1");
 	});
 
-	test("applyLlamaCppQwenThinking keeps a pi-native gateway base URL without doubling /v1", () => {
+	test("applyLlamaCppQwenThinking keeps a airis-native gateway base URL without doubling /v1", () => {
 		const upgraded = applyLlamaCppQwenThinking(
 			buildModel({
 				id: "qwen3-8b",
@@ -1198,7 +1198,7 @@ describe("ModelRegistry runtime discovery", () => {
 				api: "openai-responses",
 				provider: "llama.cpp",
 				baseUrl: "http://gw:4000",
-				transport: "pi-native",
+				transport: "airis-native",
 				reasoning: false,
 				input: ["text"],
 				cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
@@ -1206,10 +1206,10 @@ describe("ModelRegistry runtime discovery", () => {
 				maxTokens: 4096,
 			}),
 		);
-		// streamPiNative appends `/v1/pi/stream`, so the gateway URL must stay bare
-		// rather than gaining a `/v1` that would double to `.../v1/v1/pi/stream`.
+		// streamairisNative appends `/v1/airis/stream`, so the gateway URL must stay bare
+		// rather than gaining a `/v1` that would double to `.../v1/v1/airis/stream`.
 		expect(upgraded.baseUrl).toBe("http://gw:4000");
-		expect(upgraded.transport).toBe("pi-native");
+		expect(upgraded.transport).toBe("airis-native");
 		expect(upgraded.reasoning).toBe(true);
 		expect((upgraded.compat as { reasoningDisableMode?: string }).reasoningDisableMode).toBe("qwen-template-false");
 	});

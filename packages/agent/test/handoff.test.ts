@@ -1,16 +1,16 @@
 import { afterEach, describe, expect, test, vi } from "bun:test";
-import type { AgentMessage, AgentTool } from "@oh-my-pi/pi-agent-core";
+import type { AgentMessage, AgentTool } from "@airis/airis-agent-core";
 import {
 	AUTO_HANDOFF_THRESHOLD_FOCUS,
 	generateHandoff,
 	generateHandoffFromContext,
 	renderHandoffPrompt,
-} from "@oh-my-pi/pi-agent-core/compaction";
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core/thinking";
-import type { AssistantMessage, Model, ToolCall } from "@oh-my-pi/pi-ai";
-import * as ai from "@oh-my-pi/pi-ai";
-import { Effort, z } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+} from "@airis/airis-agent-core/compaction";
+import { ThinkingLevel } from "@airis/airis-agent-core/thinking";
+import type { AssistantMessage, Model, ToolCall } from "@airis/airis-ai";
+import * as ai from "@airis/airis-ai";
+import { Effort, z } from "@airis/airis-ai";
+import { getBundledModel } from "@airis/airis-catalog/models";
 
 function createAssistantMessage(content: AssistantMessage["content"]): AssistantMessage {
 	return {

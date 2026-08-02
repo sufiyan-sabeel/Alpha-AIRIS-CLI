@@ -10,7 +10,7 @@ use std::{
 	io::{BufWriter, Write},
 };
 
-use pi_uutils_ctx::CtxStdout;
+use airis_uutils_ctx::CtxStdout;
 use uucore::error::UResult;
 
 /// `dired` Module Documentation
@@ -170,7 +170,7 @@ thread_local! {
 	 static DIRED_ARG_PRESENT: RefCell<bool> = const { RefCell::new(false) };
 }
 
-/// pi-uutils: records whether `--dired`/`-D` appears in the builtin's argv.
+/// airis-uutils: records whether `--dired`/`-D` appears in the builtin's argv.
 /// Called by `run` before clap parsing; replaces the upstream process-global
 /// argument scan, which would otherwise read the host process arguments.
 pub fn set_dired_arg_present(args: &[std::ffi::OsString]) {

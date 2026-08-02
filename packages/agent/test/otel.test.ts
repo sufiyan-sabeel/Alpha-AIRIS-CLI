@@ -6,7 +6,7 @@
  * lifecycle hook dispatch.
  */
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "bun:test";
-import { agentLoop } from "@oh-my-pi/pi-agent-core/agent-loop";
+import { agentLoop } from "@airis/airis-agent-core/agent-loop";
 import {
 	type AgentTelemetryConfig,
 	type ChatUsageEvent,
@@ -20,12 +20,12 @@ import {
 	recordManualChatTelemetry,
 	resolveTelemetry,
 	type TelemetryHookContext,
-} from "@oh-my-pi/pi-agent-core/telemetry";
-import type { AgentContext, AgentEvent, AgentLoopConfig, AgentMessage, AgentTool } from "@oh-my-pi/pi-agent-core/types";
-import type { Message } from "@oh-my-pi/pi-ai";
-import { z } from "@oh-my-pi/pi-ai";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import type { EventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
+} from "@airis/airis-agent-core/telemetry";
+import type { AgentContext, AgentEvent, AgentLoopConfig, AgentMessage, AgentTool } from "@airis/airis-agent-core/types";
+import type { Message } from "@airis/airis-ai";
+import { z } from "@airis/airis-ai";
+import { createMockModel } from "@airis/airis-ai/providers/mock";
+import type { EventStream } from "@airis/airis-ai/utils/event-stream";
 import { context, SpanStatusCode, trace } from "@opentelemetry/api";
 import { AsyncLocalStorageContextManager } from "@opentelemetry/context-async-hooks";
 import {
@@ -89,7 +89,7 @@ describe("agent-loop OTEL instrumentation", () => {
 		expect(exporter.getFinishedSpans()).toHaveLength(0);
 	});
 
-	it("emits invoke_agent → chat hierarchy with OTEL and pi.gen_ai extension attributes", async () => {
+	it("emits invoke_agent → chat hierarchy with OTEL and airs.gen_ai extension attributes", async () => {
 		const mock = createMockModel({
 			...MOCK_IDENT,
 			responses: [
@@ -245,7 +245,7 @@ describe("agent-loop OTEL instrumentation", () => {
 		expect(tool?.attributes[GenAIAttr.ToolDescription]).toBe("echoes input");
 		expect(tool?.status.code).toBe(SpanStatusCode.UNSET);
 
-		// pi.gen_ai.agent.step.count counts chat completions
+		// airs.gen_ai.agent.step.count counts chat completions
 		expect(invoke?.attributes[PiGenAIAttr.AgentStepCount]).toBe(2);
 	});
 
@@ -416,7 +416,7 @@ describe("agent-loop OTEL instrumentation", () => {
 		expect(chat?.attributes[GenAIAttr.OutputMessages]).toBeUndefined();
 	});
 
-	it("invokes costEstimator and stamps pi.gen_ai.cost.estimated_usd", async () => {
+	it("invokes costEstimator and stamps airs.gen_ai.cost.estimated_usd", async () => {
 		const mock = createMockModel({
 			...MOCK_IDENT,
 			responses: [
@@ -504,7 +504,7 @@ describe("agent-loop OTEL instrumentation", () => {
 		expect(deltas[0]?.stepNumber).toBe(0);
 	});
 
-	it("emits pi.gen_ai.cost.unavailable_reason when the estimator declines", async () => {
+	it("emits airs.gen_ai.cost.unavailable_reason when the estimator declines", async () => {
 		const mock = createMockModel({
 			...MOCK_IDENT,
 			responses: [{ content: ["ok"], stopReason: "stop" }],
@@ -942,7 +942,7 @@ describe("classifyGatewayResponseCacheStatus", () => {
 	});
 });
 
-describe("ChatUsageEvent.headers and pi.gen_ai.gateway.* span attributes", () => {
+describe("ChatUsageEvent.headers and airs.gen_ai.gateway.* span attributes", () => {
 	it("forwards captured response headers to onChatUsage", async () => {
 		const mock = createMockModel({
 			...MOCK_IDENT,
@@ -992,7 +992,7 @@ describe("ChatUsageEvent.headers and pi.gen_ai.gateway.* span attributes", () =>
 		expect(events[0]?.headers).toBeUndefined();
 	});
 
-	it("auto-stamps pi.gen_ai.gateway.* on the chat span when LiteLLM headers are present", async () => {
+	it("auto-stamps airs.gen_ai.gateway.* on the chat span when LiteLLM headers are present", async () => {
 		const mock = createMockModel({
 			...MOCK_IDENT,
 			responses: [
@@ -1076,7 +1076,7 @@ describe("ChatUsageEvent.headers and pi.gen_ai.gateway.* span attributes", () =>
 		expect(chat?.attributes[PiGenAIAttr.GatewayName]).toBe("litellm");
 	});
 
-	it("stamps pi.gen_ai.gateway.response_cache.status from cf-aig-cache-status without prompt-cache attrs", async () => {
+	it("stamps airs.gen_ai.gateway.response_cache.status from cf-aig-cache-status without prompt-cache attrs", async () => {
 		const mock = createMockModel({
 			...MOCK_IDENT,
 			responses: [

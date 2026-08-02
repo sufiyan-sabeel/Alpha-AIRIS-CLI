@@ -1,5 +1,5 @@
 /**
- * Regression for [#3749](https://github.com/can1357/oh-my-pi/issues/3749):
+ * Regression for [#3749](https://github.com/sufiyan-sabeel/Alpha-AIRIS-CLI/issues/3749):
  * the per-provider concurrency cap used to bracket the whole subagent
  * lifecycle (acquired before session creation, released only after the
  * subagent yielded), so any spawn tree wider than `maxConcurrency`
@@ -8,12 +8,12 @@
  * LLM HTTP request; this file exercises the new contract.
  */
 import { describe, expect, it } from "bun:test";
-import type { StreamFn } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, Model } from "@oh-my-pi/pi-ai";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { wrapStreamFnWithProviderConcurrency } from "@oh-my-pi/pi-coding-agent/task/provider-concurrency";
+import type { StreamFn } from "@airis/airis-agent-core";
+import type { AssistantMessage, Model } from "@airis/airis-ai";
+import { AssistantMessageEventStream } from "@airis/airis-ai/utils/event-stream";
+import { getBundledModel } from "@airis/airis-catalog/models";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import { wrapStreamFnWithProviderConcurrency } from "@airis/airis-coding-agent/task/provider-concurrency";
 
 interface Deferred {
 	promise: Promise<void>;

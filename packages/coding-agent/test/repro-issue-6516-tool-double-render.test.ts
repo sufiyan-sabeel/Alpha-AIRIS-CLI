@@ -1,18 +1,18 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { ReadToolGroupComponent } from "@oh-my-pi/pi-coding-agent/modes/components/read-tool-group";
-import { ToolExecutionComponent } from "@oh-my-pi/pi-coding-agent/modes/components/tool-execution";
-import { InteractiveMode } from "@oh-my-pi/pi-coding-agent/modes/interactive-mode";
-import { initTheme } from "@oh-my-pi/pi-coding-agent/modes/theme/theme";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { buildSessionContext } from "@oh-my-pi/pi-coding-agent/session/session-context";
-import type { SessionEntry } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@airis/airis-agent-core";
+import { ModelRegistry } from "@airis/airis-coding-agent/config/model-registry";
+import { resetSettingsForTest, Settings } from "@airis/airis-coding-agent/config/settings";
+import { ReadToolGroupComponent } from "@airis/airis-coding-agent/modes/components/read-tool-group";
+import { ToolExecutionComponent } from "@airis/airis-coding-agent/modes/components/tool-execution";
+import { InteractiveMode } from "@airis/airis-coding-agent/modes/interactive-mode";
+import { initTheme } from "@airis/airis-coding-agent/modes/theme/theme";
+import { AgentSession } from "@airis/airis-coding-agent/session/agent-session";
+import { AuthStorage } from "@airis/airis-coding-agent/session/auth-storage";
+import { buildSessionContext } from "@airis/airis-coding-agent/session/session-context";
+import type { SessionEntry } from "@airis/airis-coding-agent/session/session-entries";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import { TempDir } from "@airis/airis-utils";
 
 /**
  * Regression for issue #6516 — a tool call renders twice in the transcript.
@@ -70,7 +70,7 @@ describe("issue #6516 — tool output appears twice", () => {
 		}
 
 		resetSettingsForTest();
-		tempDir = TempDir.createSync("@pi-issue-6516-");
+		tempDir = TempDir.createSync("@airs-issue-6516-");
 		await Settings.init({ inMemory: true, cwd: tempDir.path() });
 		authStorage = await AuthStorage.create(path.join(tempDir.path(), "testauth.db"));
 		const modelRegistry = new ModelRegistry(authStorage);

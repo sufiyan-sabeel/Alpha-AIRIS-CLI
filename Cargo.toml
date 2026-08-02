@@ -1,14 +1,14 @@
 [workspace]
-members = ["crates/pi-*", "crates/vendor/*"]
+members = ["crates/airis-*", "crates/vendor/*"]
 resolver = "3"
 
 [workspace.package]
 version = "17.2.1"
 edition = "2024"
 license = "MIT"
-authors = ["Can Boluk"]
-homepage = "https://omp.sh/"
-repository = "https://github.com/can1357/oh-my-pi"
+authors = ["Umaiz Sufiyan"]
+homepage = "https://airis.sh/"
+repository = "https://github.com/sufiyan-sabeel/Alpha-AIRIS-CLI"
 
 [patch.crates-io]
 brush-core = { path = "crates/vendor/brush-core" }
@@ -21,8 +21,8 @@ codegen-units = 1
 strip = true
 # Unwind (not abort) so panics inside vendored code and native tasks stay
 # recoverable at the appropriate boundary: the uutils boundary
-# (pi-shell coreutils) turns a panic into a failed command, and the
-# `task::blocking` wrapper in `crates/pi-natives/src/task.rs` catches unwinds
+# (airis-shell coreutils) turns a panic into a failed command, and the
+# `task::blocking` wrapper in `crates/airis-natives/src/task.rs` catches unwinds
 # inside `Blocking::compute` before they cross napi-rs's async-work
 # `extern "C"` callback (napi `src/async_work.rs:109`) so they surface as
 # rejected JS Promises instead of forced process aborts under Rust's C-unwind
@@ -30,7 +30,7 @@ strip = true
 # per-call `catch_unwind` on the `Task`/`AsyncTask` path; the tokio-future
 # path (`env.spawn_future`) is guarded upstream. Recoverable uutils panics
 # are kept out of the crash report by the crash hook
-# (see crates/pi-natives/src/crash_handler.rs).
+# (see crates/airis-natives/src/crash_handler.rs).
 panic = "unwind"
 
 [profile.ci]
@@ -174,11 +174,11 @@ too_many_lines = "allow"     # Arbitrary limits don't account for necessary comp
 # ──────────────────────────────────────────────────────────────────────────────
 # Internal Libraries
 # ──────────────────────────────────────────────────────────────────────────────
-pi-ast = { path = "crates/pi-ast" }
-pi-iso = { path = "crates/pi-iso" }
-pi-shell = { path = "crates/pi-shell" }
-pi-voice = { path = "crates/pi-voice" }
-pi-walker = { path = "crates/pi-walker" }
+airis-ast = { path = "crates/airis-ast" }
+airis-iso = { path = "crates/airis-iso" }
+airis-shell = { path = "crates/airis-shell" }
+airis-voice = { path = "crates/airis-voice" }
+airis-walker = { path = "crates/airis-walker" }
 brush-core = { path = "crates/vendor/brush-core" }
 brush-builtins = { path = "crates/vendor/brush-builtins" }
 

@@ -1,14 +1,14 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import * as compactionModule from "@oh-my-pi/pi-agent-core/compaction";
-import type { AssistantMessage, Model, ProviderSessionState } from "@oh-my-pi/pi-ai";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession, type AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@airis/airis-agent-core";
+import * as compactionModule from "@airis/airis-agent-core/compaction";
+import type { AssistantMessage, Model, ProviderSessionState } from "@airis/airis-ai";
+import { ModelRegistry } from "@airis/airis-coding-agent/config/model-registry";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import { AgentSession, type AgentSessionEvent } from "@airis/airis-coding-agent/session/agent-session";
+import { AuthStorage } from "@airis/airis-coding-agent/session/auth-storage";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import { TempDir } from "@airis/airis-utils";
 
 describe("AgentSession context promotion", () => {
 	let tempDir: TempDir;
@@ -29,7 +29,7 @@ describe("AgentSession context promotion", () => {
 		// mechanism users configure promotion pairs with. gpt-5.4-mini is pinned
 		// text-only so the snapcompact-fallback case has a codex model on which
 		// snapcompact (vision-based) cannot run.
-		tempDir = TempDir.createSync("@pi-context-promotion-");
+		tempDir = TempDir.createSync("@airs-context-promotion-");
 		const modelsConfigPath = path.join(tempDir.path(), "models.json");
 		await Bun.write(
 			modelsConfigPath,

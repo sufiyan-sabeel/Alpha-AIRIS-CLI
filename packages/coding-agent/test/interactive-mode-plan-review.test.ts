@@ -1,30 +1,30 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { Agent, AgentBusyError, ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, Usage } from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { KeybindingsManager } from "@oh-my-pi/pi-coding-agent/config/keybindings";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { resolveLocalUrlToPath } from "@oh-my-pi/pi-coding-agent/internal-urls";
-import { AssistantMessageComponent } from "@oh-my-pi/pi-coding-agent/modes/components/assistant-message";
-import type { HookSelectorSlider } from "@oh-my-pi/pi-coding-agent/modes/components/hook-selector";
+import { Agent, AgentBusyError, ThinkingLevel } from "@airis/airis-agent-core";
+import type { AssistantMessage, Usage } from "@airis/airis-ai";
+import * as AIError from "@airis/airis-ai/error";
+import { KeybindingsManager } from "@airis/airis-coding-agent/config/keybindings";
+import { ModelRegistry } from "@airis/airis-coding-agent/config/model-registry";
+import { resetSettingsForTest, Settings } from "@airis/airis-coding-agent/config/settings";
+import { resolveLocalUrlToPath } from "@airis/airis-coding-agent/internal-urls";
+import { AssistantMessageComponent } from "@airis/airis-coding-agent/modes/components/assistant-message";
+import type { HookSelectorSlider } from "@airis/airis-coding-agent/modes/components/hook-selector";
 import {
 	type PlanReviewAnnotationState,
 	PlanReviewOverlay,
-} from "@oh-my-pi/pi-coding-agent/modes/components/plan-review-overlay";
-import { InteractiveMode } from "@oh-my-pi/pi-coding-agent/modes/interactive-mode";
-import { initTheme } from "@oh-my-pi/pi-coding-agent/modes/theme/theme";
-import type { SubmittedUserInput } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SILENT_ABORT_MARKER, USER_INTERRUPT_LABEL } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { AUTO_THINKING } from "@oh-my-pi/pi-coding-agent/thinking";
-import * as clipboard from "@oh-my-pi/pi-coding-agent/utils/clipboard";
-import { type OverlayHandle, type OverlayOptions, setKeybindings, Text } from "@oh-my-pi/pi-tui";
-import { formatNumber, TempDir } from "@oh-my-pi/pi-utils";
+} from "@airis/airis-coding-agent/modes/components/plan-review-overlay";
+import { InteractiveMode } from "@airis/airis-coding-agent/modes/interactive-mode";
+import { initTheme } from "@airis/airis-coding-agent/modes/theme/theme";
+import type { SubmittedUserInput } from "@airis/airis-coding-agent/modes/types";
+import { AgentSession } from "@airis/airis-coding-agent/session/agent-session";
+import { AuthStorage } from "@airis/airis-coding-agent/session/auth-storage";
+import { SILENT_ABORT_MARKER, USER_INTERRUPT_LABEL } from "@airis/airis-coding-agent/session/messages";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import { AUTO_THINKING } from "@airis/airis-coding-agent/thinking";
+import * as clipboard from "@airis/airis-coding-agent/utils/clipboard";
+import { type OverlayHandle, type OverlayOptions, setKeybindings, Text } from "@airis/airis-tui";
+import { formatNumber, TempDir } from "@airis/airis-utils";
 
 /**
  * Matches the plan-approved synthetic-prompt dispatch. `#approvePlan` calls
@@ -84,7 +84,7 @@ describe("InteractiveMode plan review rendering", () => {
 	beforeAll(async () => {
 		initTheme();
 		resetSettingsForTest();
-		sharedTempDir = TempDir.createSync("@pi-plan-review-shared-");
+		sharedTempDir = TempDir.createSync("@airs-plan-review-shared-");
 		await Settings.init({ inMemory: true, cwd: sharedTempDir.path() });
 		authStorage = await AuthStorage.create(path.join(sharedTempDir.path(), "testauth.db"));
 		authStorage.setRuntimeApiKey("anthropic", "test-key");
@@ -98,7 +98,7 @@ describe("InteractiveMode plan review rendering", () => {
 
 	beforeEach(async () => {
 		resetSettingsForTest();
-		tempDir = TempDir.createSync("@pi-plan-review-");
+		tempDir = TempDir.createSync("@airs-plan-review-");
 		await Settings.init({ inMemory: true, cwd: tempDir.path() });
 		const model = modelRegistry.find("anthropic", "claude-sonnet-4-5");
 		if (!model) {

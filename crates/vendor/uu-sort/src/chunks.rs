@@ -245,7 +245,7 @@ pub fn read<T: Read>(
 			);
 			Ok(ChunkContents { lines, line_data, token_buffer, line_count_hint })
 		});
-		// pi-uutils: diverge from upstream, which unwraps the send here and panics
+		// airis-uutils: diverge from upstream, which unwraps the send here and panics
 		// with `SendError(..)` when the receiver has disconnected (issue #6736).
 		// The receiver goes away when the consumer thread (sorter, merger, or
 		// checker) stops early after hitting an error or a closed output. Stop

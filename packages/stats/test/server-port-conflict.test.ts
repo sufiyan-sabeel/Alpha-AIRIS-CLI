@@ -18,7 +18,7 @@ async function startBunHolder(responseExpr: string, options?: { statsOwned?: boo
 
 	const source = `Bun.serve({ port: ${port}, fetch: () => ${responseExpr} }); process.stdout.write("ready"); await Promise.withResolvers().promise;`;
 	const args = [process.execPath, "-e", source];
-	if (options?.statsOwned) args.push("omp-stats");
+	if (options?.statsOwned) args.push("airis-stats");
 	const child = Bun.spawn(args, {
 		stdin: "ignore",
 		stdout: "pipe",
@@ -74,7 +74,7 @@ describe("startServer port conflicts", () => {
 	it("refuses to stop a foreign 200 responder", async () => {
 		const holder = await startBunHolder('Response.json({ app: "spa" })');
 
-		await expect(startServer(holder.port)).rejects.toThrow("not identifiable as an omp stats dashboard");
+		await expect(startServer(holder.port)).rejects.toThrow("not identifiable as an airis stats dashboard");
 		expect(holder.child.exitCode).toBeNull();
 		const response = await fetch(`http://127.0.0.1:${holder.port}/api/stats/models`);
 		expect(await response.json()).toEqual({ app: "spa" });
@@ -83,7 +83,7 @@ describe("startServer port conflicts", () => {
 	it("refuses to stop an unrelated Bun listener that fails the probe", async () => {
 		const holder = await startBunHolder('new Response("foreign", { status: 404 })');
 
-		await expect(startServer(holder.port)).rejects.toThrow("not identifiable as an omp stats dashboard");
+		await expect(startServer(holder.port)).rejects.toThrow("not identifiable as an airis stats dashboard");
 		expect(holder.child.exitCode).toBeNull();
 	});
 

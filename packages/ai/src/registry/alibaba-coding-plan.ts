@@ -5,8 +5,8 @@ import type { ProviderDefinition } from "./types";
 
 const DEFAULT_AUTH_URL = "https://modelstudio.console.alibabacloud.com/";
 const CHINA_AUTH_URL = "https://dashscope.console.aliyun.com/";
-const DEFAULT_API_BASE_URL = "https://coding-intl.dashscope.aliyuncs.com/v1";
-const CHINA_API_BASE_URL = "https://coding.dashscope.aliyuncs.com/v1";
+const DEFAULT_AAIRIS_BASE_URL = "https://coding-intl.dashscope.aliyuncs.com/v1";
+const CHINA_AAIRIS_BASE_URL = "https://coding.dashscope.aliyuncs.com/v1";
 const VALIDATION_MODEL = "qwen3.5-plus";
 
 export async function loginAlibabaCodingPlan(options: OAuthController): Promise<OAuthCredentials> {
@@ -30,7 +30,7 @@ export async function loginAlibabaCodingPlan(options: OAuthController): Promise<
 	let authUrl: string;
 	let instructions: string;
 	if (choice === "2") {
-		baseUrl = CHINA_API_BASE_URL;
+		baseUrl = CHINA_AAIRIS_BASE_URL;
 		authUrl = CHINA_AUTH_URL;
 		instructions = "Copy your API key from the Alibaba Cloud DashScope console (China mainland)";
 	} else if (choice === "3") {
@@ -46,7 +46,7 @@ export async function loginAlibabaCodingPlan(options: OAuthController): Promise<
 		authUrl = DEFAULT_AUTH_URL;
 		instructions = "Copy your API key from the Alibaba Cloud DashScope console";
 	} else {
-		baseUrl = DEFAULT_API_BASE_URL;
+		baseUrl = DEFAULT_AAIRIS_BASE_URL;
 		authUrl = DEFAULT_AUTH_URL;
 		instructions = "Copy your API key from the Alibaba Cloud DashScope console (International)";
 	}

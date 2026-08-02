@@ -1,25 +1,25 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Agent, type AgentMessage, type StreamFn } from "@oh-my-pi/pi-agent-core";
-import * as compactionModule from "@oh-my-pi/pi-agent-core/compaction";
-import type { AssistantMessage, Model, ToolCall } from "@oh-my-pi/pi-ai";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import { Agent, type AgentMessage, type StreamFn } from "@airis/airis-agent-core";
+import * as compactionModule from "@airis/airis-agent-core/compaction";
+import type { AssistantMessage, Model, ToolCall } from "@airis/airis-ai";
+import { createMockModel } from "@airis/airis-ai/providers/mock";
+import { AssistantMessageEventStream } from "@airis/airis-ai/utils/event-stream";
+import { getBundledModel } from "@airis/airis-catalog/models";
+import { ModelRegistry } from "@airis/airis-coding-agent/config/model-registry";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
 import {
 	ExtensionRunner,
 	loadExtensionFromFactory,
 	loadExtensions,
-} from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import { SecretObfuscator } from "@oh-my-pi/pi-coding-agent/secrets";
-import { AgentSession, type AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { TempDir } from "@oh-my-pi/pi-utils";
-import * as snapcompact from "@oh-my-pi/snapcompact";
+} from "@airis/airis-coding-agent/extensibility/extensions";
+import { SecretObfuscator } from "@airis/airis-coding-agent/secrets";
+import { AgentSession, type AgentSessionEvent } from "@airis/airis-coding-agent/session/agent-session";
+import { AuthStorage } from "@airis/airis-coding-agent/session/auth-storage";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import { EventBus } from "@airis/airis-coding-agent/utils/event-bus";
+import { TempDir } from "@airis/airis-utils";
+import * as snapcompact from "@airis/airis-snapcompact";
 
 const HANDOFF_SECRET = "HANDOFF_SECRET_TOKEN_12345";
 const UNRENDERABLE_SNAPCOMPACT_TEXT = "\uE000\uE001\uE002\uE003\uE004\uE005\uE006\uE007\uE008\uE009";
@@ -63,7 +63,7 @@ describe("AgentSession handoff", () => {
 	}
 
 	beforeAll(async () => {
-		sharedDir = TempDir.createSync("@pi-handoff-shared-");
+		sharedDir = TempDir.createSync("@airs-handoff-shared-");
 		authStorage = await AuthStorage.create(path.join(sharedDir.path(), "testauth.db"));
 		authStorage.setRuntimeApiKey("anthropic", "test-key");
 		modelRegistry = new ModelRegistry(authStorage);
@@ -83,7 +83,7 @@ describe("AgentSession handoff", () => {
 	});
 
 	beforeEach(async () => {
-		tempDir = TempDir.createSync("@pi-handoff-");
+		tempDir = TempDir.createSync("@airs-handoff-");
 		sessionManager = SessionManager.create(tempDir.path(), tempDir.path());
 		events = [];
 		obfuscator = new SecretObfuscator([{ type: "plain", content: HANDOFF_SECRET }]);
@@ -633,7 +633,7 @@ describe("AgentSession handoff", () => {
 	});
 
 	it("strips hook-supplied snapcompact data when persisting context-full compaction", async () => {
-		const localTempDir = TempDir.createSync("@pi-context-full-preserve-data-");
+		const localTempDir = TempDir.createSync("@airs-context-full-preserve-data-");
 		const localSessionManager = SessionManager.inMemory(localTempDir.path());
 		const firstKeptEntryId = localSessionManager.appendMessage({
 			role: "user",
@@ -704,7 +704,7 @@ describe("AgentSession handoff", () => {
 	});
 
 	it("strips hook-supplied snapcompact data when persisting auto context-full compaction", async () => {
-		const localTempDir = TempDir.createSync("@pi-auto-context-full-preserve-data-");
+		const localTempDir = TempDir.createSync("@airs-auto-context-full-preserve-data-");
 		const localSessionManager = SessionManager.inMemory(localTempDir.path());
 		const firstKeptEntryId = localSessionManager.appendMessage({
 			role: "user",

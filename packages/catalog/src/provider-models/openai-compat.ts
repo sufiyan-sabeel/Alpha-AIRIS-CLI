@@ -1,4 +1,4 @@
-import * as logger from "@oh-my-pi/pi-utils/logger";
+import * as logger from "@airis/airis-utils/logger";
 import {
 	fetchOpenAICompatibleModels,
 	type OpenAICompatibleModelMapperContext,
@@ -332,7 +332,7 @@ async function fetchOllamaNativeModels(
  * Ollama's cloud catalog reports for stock models.
  */
 const OLLAMA_FALLBACK_CONTEXT_WINDOW = 128_000;
-/** Cap max output tokens at a value that matches OMP's other openai-responses defaults. */
+/** Cap max output tokens at a value that matches AIRIS's other openai-responses defaults. */
 const OLLAMA_DEFAULT_MAX_TOKENS = 8192;
 
 interface OllamaResolvedMetadata {
@@ -1657,7 +1657,7 @@ export function zhipuCodingPlanModelManagerOptions(
  * deployment, but Kimi K2 (instruct / thinking / turbo) on Fireworks is
  * documented to ship long reasoning traces that should be bounded — capping
  * at 32,768 prevents handing callers a budget the router cannot honor.
- * See https://github.com/can1357/oh-my-pi/issues/1849.
+ * See https://github.com/sufiyan-sabeel/Alpha-AIRIS-CLI/issues/1849.
  */
 export const FIREWORKS_KIMI_MAX_TOKENS = 32_768;
 
@@ -3313,7 +3313,7 @@ export function coreWeaveModelManagerOptions(
 // 15.75 Meta Model API
 // ---------------------------------------------------------------------------
 
-const META_MODEL_API_BASE_URL = "https://api.meta.ai/v1";
+const META_MODEL_AAIRIS_BASE_URL = "https://api.meta.ai/v1";
 const META_MUSE_SPARK_COST = { input: 1.25, output: 4.25, cacheRead: 0.15, cacheWrite: 0 } as const;
 const META_MUSE_SPARK_THINKING: ThinkingConfig = {
 	mode: "effort",
@@ -3326,7 +3326,7 @@ export const META_MUSE_STATIC_MODELS: readonly ModelSpec<"openai-responses">[] =
 		name: "Muse Spark 1.1",
 		api: "openai-responses",
 		provider: "meta",
-		baseUrl: META_MODEL_API_BASE_URL,
+		baseUrl: META_MODEL_AAIRIS_BASE_URL,
 		reasoning: true,
 		input: ["text", "image"],
 		cost: META_MUSE_SPARK_COST,
@@ -3348,7 +3348,7 @@ export interface MetaModelManagerConfig {
 
 export function metaModelManagerOptions(config?: MetaModelManagerConfig): ModelManagerOptions<"openai-responses"> {
 	return {
-		...createSimpleOpenAIResponsesOptions("meta", META_MODEL_API_BASE_URL, config),
+		...createSimpleOpenAIResponsesOptions("meta", META_MODEL_AAIRIS_BASE_URL, config),
 		staticModels: META_MUSE_STATIC_MODELS,
 	};
 }

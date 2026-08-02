@@ -15,8 +15,8 @@ rust_library(
     proc_macro_deps = all_crate_deps(proc_macro = True),
     version = "0.8.0",
     deps = all_crate_deps(normal = True) + [
-        "//crates/pi-uutils-ctx",
-        "//crates/pi-walker",
+        "//crates/airis-uutils-ctx",
+        "//crates/airis-walker",
     ],
 )
 
@@ -40,6 +40,6 @@ rust_test(
     proc_macro_deps = all_crate_deps(proc_macro_dev = True),
     deps = all_crate_deps(normal_dev = True) + [
         ":uu-find",
-        "//crates/pi-uutils-ctx",
+        "//crates/airis-uutils-ctx",
     ],
 )

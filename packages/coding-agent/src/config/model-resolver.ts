@@ -15,18 +15,18 @@
  *   CLI flags, scope globs — onto that pipeline.
  */
 
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { Api, Effort, KnownProvider, Model, ModelSpec } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { modelMatchesHost } from "@oh-my-pi/pi-catalog/hosts";
-import { buildModelProviderPriorityRank } from "@oh-my-pi/pi-catalog/identity";
-import { stripThinkingVariantToken } from "@oh-my-pi/pi-catalog/identity/family";
-import { clampThinkingLevelForModel } from "@oh-my-pi/pi-catalog/model-thinking";
-import { modelsAreEqual } from "@oh-my-pi/pi-catalog/models";
-import { DEFAULT_MODEL_PER_PROVIDER } from "@oh-my-pi/pi-catalog/provider-models";
-import { resolveBareVariantAlias, resolveVariantAlias } from "@oh-my-pi/pi-catalog/variant-collapse";
-import { fuzzyMatch } from "@oh-my-pi/pi-tui";
-import { logger } from "@oh-my-pi/pi-utils";
+import { ThinkingLevel } from "@airis/airis-agent-core";
+import type { Api, Effort, KnownProvider, Model, ModelSpec } from "@airis/airis-ai";
+import { buildModel } from "@airis/airis-catalog/build";
+import { modelMatchesHost } from "@airis/airis-catalog/hosts";
+import { buildModelProviderPriorityRank } from "@airis/airis-catalog/identity";
+import { stripThinkingVariantToken } from "@airis/airis-catalog/identity/family";
+import { clampThinkingLevelForModel } from "@airis/airis-catalog/model-thinking";
+import { modelsAreEqual } from "@airis/airis-catalog/models";
+import { DEFAULT_MODEL_PER_PROVIDER } from "@airis/airis-catalog/provider-models";
+import { resolveBareVariantAlias, resolveVariantAlias } from "@airis/airis-catalog/variant-collapse";
+import { fuzzyMatch } from "@airis/airis-tui";
+import { logger } from "@airis/airis-utils";
 import chalk from "chalk";
 import MODEL_PRIO from "../priority.json" with { type: "json" };
 import {
@@ -1685,7 +1685,7 @@ export function resolveCliModel(options: {
 			model: undefined,
 			selector: undefined,
 			warning: undefined,
-			error: `Unknown provider "${cliProvider}". Run "omp models" to see available providers/models.`,
+			error: `Unknown provider "${cliProvider}". Run "airis models" to see available providers/models.`,
 		};
 	}
 
@@ -1770,7 +1770,7 @@ export function resolveCliModel(options: {
 					selector: undefined,
 					thinkingLevel: undefined,
 					warning: resolved.warning,
-					error: `Model "${trimmedModel}" not found. Run "omp models" to see available models.`,
+					error: `Model "${trimmedModel}" not found. Run "airis models" to see available models.`,
 				};
 			}
 		}
@@ -1827,7 +1827,7 @@ export function resolveCliModel(options: {
 			selector: undefined,
 			thinkingLevel: undefined,
 			warning,
-			error: `Model "${display}" not found. Run "omp models" to see available models.`,
+			error: `Model "${display}" not found. Run "airis models" to see available models.`,
 		};
 	}
 

@@ -5,14 +5,14 @@
 
 // spell-checker:ignore (ToDO) retcode
 
-// pi-uutils: vendored from uutils/coreutils 0.8.0 and patched to run in-process
+// airis-uutils: vendored from uutils/coreutils 0.8.0 and patched to run in-process
 // as a shell builtin. Every filesystem syscall resolves its path operand
-// against the shell working directory via `pi_uutils_ctx::resolve` AT THE CALL
+// against the shell working directory via `airis_uutils_ctx::resolve` AT THE CALL
 // SITE (FILE operands and the --relative-to/--relative-base option paths),
 // while the original operands are kept for display/error messages (GNU prints
 // operands as typed). All process-global stdio is routed through
-// `pi_uutils_ctx`, `translate!` strings are literalized, `show_if_err!` is
-// replaced by a context-stderr write plus `pi_uutils_ctx::set_exit_code`, and
+// `airis_uutils_ctx`, `translate!` strings are literalized, `show_if_err!` is
+// replaced by a context-stderr write plus `airis_uutils_ctx::set_exit_code`, and
 // the entry point no longer calls `std::process::exit`.
 
 use std::{
@@ -25,7 +25,7 @@ use clap::{
 	Arg, ArgAction, ArgMatches, Command,
 	builder::{TypedValueParser, ValueParserFactory},
 };
-use pi_uutils_ctx::format_usage;
+use airis_uutils_ctx::format_usage;
 use uucore::{
 	display::Quotable,
 	error::{FromIo, UResult},
@@ -63,7 +63,7 @@ impl TypedValueParser for NonEmptyOsStringParser {
 			let mut err = clap::Error::new(clap::error::ErrorKind::ValueValidation);
 			err.insert(
 				clap::error::ContextKind::Custom,
-				// pi-uutils: literalized `translate!("realpath-invalid-empty-operand")`
+				// airis-uutils: literalized `translate!("realpath-invalid-empty-operand")`
 				clap::error::ContextValue::String("invalid operand: empty string".to_string()),
 			);
 			return Err(err);
@@ -91,22 +91,22 @@ pub fn run(argv: Vec<OsString>) -> i32 {
 		Err(err) => {
 			let rendered = err.to_string();
 			if err.use_stderr() {
-				let _ = write!(pi_uutils_ctx::stderr(), "{rendered}");
+				let _ = write!(airis_uutils_ctx::stderr(), "{rendered}");
 				return 1;
 			}
-			let _ = write!(pi_uutils_ctx::stdout(), "{rendered}");
+			let _ = write!(airis_uutils_ctx::stdout(), "{rendered}");
 			return 0;
 		},
 	};
 	match realpath_main(&matches) {
-		// pi-uutils: per-file failures accumulate their exit code via
-		// `pi_uutils_ctx::set_exit_code` (upstream's `show!` machinery).
-		Ok(()) => pi_uutils_ctx::exit_code(),
+		// airis-uutils: per-file failures accumulate their exit code via
+		// `airis_uutils_ctx::set_exit_code` (upstream's `show!` machinery).
+		Ok(()) => airis_uutils_ctx::exit_code(),
 		Err(err) => {
 			let code = err.code();
 			let msg = err.to_string();
 			if !msg.is_empty() {
-				let _ = writeln!(pi_uutils_ctx::stderr(), "realpath: {msg}");
+				let _ = writeln!(airis_uutils_ctx::stderr(), "realpath: {msg}");
 			}
 			if code == 0 { 1 } else { code }
 		},
@@ -155,12 +155,12 @@ fn realpath_main(matches: &ArgMatches) -> UResult<()> {
 			relative_base.as_deref(),
 		);
 		if !quiet {
-			// pi-uutils: replacement for `show_if_err!` — report the error on
+			// airis-uutils: replacement for `show_if_err!` — report the error on
 			// the context stderr and record the exit code, then keep
 			// processing the remaining operands (upstream continue semantics).
 			if let Err(err) = result.map_err_context(|| path.maybe_quote().to_string()) {
-				let _ = writeln!(pi_uutils_ctx::stderr(), "realpath: {err}");
-				pi_uutils_ctx::set_exit_code(err.code());
+				let _ = writeln!(airis_uutils_ctx::stderr(), "realpath: {err}");
+				airis_uutils_ctx::set_exit_code(err.code());
 			}
 		}
 	}
@@ -318,11 +318,11 @@ fn canonicalize_relative(
 	can_mode: MissingHandling,
 	resolve: ResolveMode,
 ) -> std::io::Result<PathBuf> {
-	// pi-uutils: resolve the option path against the shell working directory;
+	// airis-uutils: resolve the option path against the shell working directory;
 	// `r` is kept by the caller for display. Resolving before `canonicalize`
 	// also keeps uucore's internal `env::current_dir()` fallback from being
 	// consulted.
-	let abs = canonicalize(pi_uutils_ctx::resolve(r), can_mode, resolve)?;
+	let abs = canonicalize(airis_uutils_ctx::resolve(r), can_mode, resolve)?;
 	if can_mode == MissingHandling::Existing && !abs.is_dir() {
 		abs.read_dir()?; // raise not a directory error
 	}
@@ -350,17 +350,17 @@ fn resolve_path(
 	relative_to: Option<&Path>,
 	relative_base: Option<&Path>,
 ) -> std::io::Result<()> {
-	// pi-uutils: resolve the operand against the shell working directory; `p`
+	// airis-uutils: resolve the operand against the shell working directory; `p`
 	// is kept by the caller for display. Resolving before `canonicalize` also
 	// keeps uucore's internal `env::current_dir()` fallback from being
 	// consulted.
-	let abs = canonicalize(pi_uutils_ctx::resolve(p), can_mode, resolve)?;
+	let abs = canonicalize(airis_uutils_ctx::resolve(p), can_mode, resolve)?;
 
 	let abs = process_relative(abs, relative_base, relative_to);
 
-	// pi-uutils: replacement for `print_verbatim` + process stdout — writes
+	// airis-uutils: replacement for `print_verbatim` + process stdout — writes
 	// the resolved path bytes verbatim to the context stdout.
-	let mut out = pi_uutils_ctx::stdout();
+	let mut out = airis_uutils_ctx::stdout();
 	out.write_all(
 		uucore::os_str_as_bytes(abs.as_os_str()).map_err(|e| std::io::Error::other(e.to_string()))?,
 	)?;
@@ -404,7 +404,7 @@ mod tests {
 	use std::{collections::HashMap, fs, io::Write, path::PathBuf, sync::Arc};
 
 	use parking_lot::Mutex;
-	use pi_uutils_ctx::ScopeIo;
+	use airis_uutils_ctx::ScopeIo;
 
 	use super::*;
 
@@ -442,7 +442,7 @@ mod tests {
 			.map(OsString::from)
 			.collect();
 
-		let code = pi_uutils_ctx::scope(io, || run(argv));
+		let code = airis_uutils_ctx::scope(io, || run(argv));
 
 		let out_str = String::from_utf8(stdout_buf.lock().clone()).unwrap();
 		let err_str = String::from_utf8(stderr_buf.lock().clone()).unwrap();
@@ -466,7 +466,7 @@ mod tests {
 		std::os::unix::fs::symlink("target", root.join("link")).unwrap();
 
 		// Relative operand + scope cwd differing from the process cwd: only
-		// the call-site `pi_uutils_ctx::resolve` patch makes this find the
+		// the call-site `airis_uutils_ctx::resolve` patch makes this find the
 		// symlink and print its canonical target.
 		let (code, stdout, stderr) = run_in(root.clone(), vec!["link"]);
 		assert_eq!(code, 0);

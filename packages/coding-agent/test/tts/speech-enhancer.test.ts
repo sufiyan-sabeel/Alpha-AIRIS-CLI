@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import * as ai from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { BlockAccumulator, SpeechEnhancer } from "@oh-my-pi/pi-coding-agent/tts/speech-enhancer";
+import * as ai from "@airis/airis-ai";
+import { getBundledModel } from "@airis/airis-catalog/models";
+import { BlockAccumulator, SpeechEnhancer } from "@airis/airis-coding-agent/tts/speech-enhancer";
 
 afterEach(() => {
 	vi.restoreAllMocks();

@@ -1,9 +1,9 @@
 {
-	"name": "pi-extension-with-deps",
+	"name": "airis-extension-with-deps",
 	"version": "1.0.0",
-	"homepage": "https://omp.sh",
+	"homepage": "https://airis.sh",
 	"type": "module",
-	"omp": {
+	"airis": {
 		"extensions": [
 			"./index.ts"
 		]

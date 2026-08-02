@@ -1,4 +1,4 @@
-import type { AgentTool, AgentToolResult } from "@oh-my-pi/pi-agent-core";
+import type { AgentTool, AgentToolResult } from "@airis/airis-agent-core";
 import { type } from "arktype";
 import memoryEditDescription from "../prompts/tools/memory-edit.md" with { type: "text" };
 import type { ToolSession } from ".";
@@ -21,20 +21,20 @@ export class MemoryEditTool implements AgentTool<typeof memoryEditSchema> {
 	readonly parameters = memoryEditSchema;
 	readonly strict = true;
 	readonly loadMode = "discoverable";
-	readonly summary = "Update, forget, or invalidate Mnemopi memories";
+	readonly summary = "Update, forget, or invalidate Mnemosyne memories";
 
 	constructor(private readonly session: ToolSession) {}
 
 	static createIf(session: ToolSession): MemoryEditTool | null {
 		const backend = session.settings.get("memory.backend");
-		if (backend !== "mnemopi") return null;
+		if (backend !== "mnemosyne") return null;
 		return new MemoryEditTool(session);
 	}
 
 	async execute(_id: string, params: MemoryEditParams): Promise<AgentToolResult> {
-		const state = this.session.getMnemopiSessionState?.();
+		const state = this.session.getMnemosyneSessionState?.();
 		if (!state) {
-			throw new Error("Mnemopi backend is not initialised for this session.");
+			throw new Error("Mnemosyne backend is not initialised for this session.");
 		}
 		if (params.op === "update" && params.content === undefined && params.importance === undefined) {
 			throw new Error("memory_edit update requires content or importance.");

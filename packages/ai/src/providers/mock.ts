@@ -2,11 +2,11 @@
  * Mock provider for tests.
  *
  * Implements `Model<"mock">` + `streamMock` so test code can drive
- * pi-agent-core / streamSimple-shaped consumers without an HTTP client.
+ * airis-agent-core / streamSimple-shaped consumers without an HTTP client.
  *
  * Usage:
  *
- *   import { createMockModel, registerMockApi } from "@oh-my-pi/pi-ai/providers/mock";
+ *   import { createMockModel, registerMockApi } from "@airis/airis-ai/providers/mock";
  *
  *   // 1. Array of responses, one per call.
  *   const mock = createMockModel({
@@ -203,7 +203,7 @@ export class MockModel implements Model<MockApi> {
 		return this;
 	}
 
-	/** A streamFn-compatible callable. Forward to `agentLoop` or pi `stream()`. */
+	/** A streamFn-compatible callable. Forward to `agentLoop` or airs `stream()`. */
 	stream = (_model: Model<Api>, context: Context, options?: SimpleStreamOptions): AssistantMessageEventStream =>
 		streamMock(this, context, options);
 
@@ -233,7 +233,7 @@ export function createMockModel(options: MockModelOptions = {}): MockModel {
 	return new MockModel(options);
 }
 
-/** Stream function for `Model<"mock">`. Matches the pi-ai per-provider stream signature. */
+/** Stream function for `Model<"mock">`. Matches the airis-ai per-provider stream signature. */
 export function streamMock(
 	model: Model<Api>,
 	context: Context,
@@ -257,7 +257,7 @@ export function streamMock(
 }
 
 /** Convenience: register the mock provider with the global custom API registry. */
-export function registerMockApi(sourceId = "pi-ai/mock"): void {
+export function registerMockApi(sourceId = "airis-ai/mock"): void {
 	registerCustomApi(MOCK_API, streamMock, sourceId);
 }
 

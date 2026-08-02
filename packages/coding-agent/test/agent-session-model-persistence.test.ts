@@ -1,18 +1,18 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import { type Api, type AssistantMessage, Effort, type Model } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { type CreateAgentSessionResult, createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { getRestorableSessionModels } from "@oh-my-pi/pi-coding-agent/session/session-context";
-import { EPHEMERAL_MODEL_CHANGE_ROLE } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { AUTO_THINKING } from "@oh-my-pi/pi-coding-agent/thinking";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@airis/airis-agent-core";
+import { type Api, type AssistantMessage, Effort, type Model } from "@airis/airis-ai";
+import { getBundledModel } from "@airis/airis-catalog/models";
+import { ModelRegistry } from "@airis/airis-coding-agent/config/model-registry";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import { type CreateAgentSessionResult, createAgentSession } from "@airis/airis-coding-agent/sdk";
+import { AgentSession } from "@airis/airis-coding-agent/session/agent-session";
+import { AuthStorage } from "@airis/airis-coding-agent/session/auth-storage";
+import { getRestorableSessionModels } from "@airis/airis-coding-agent/session/session-context";
+import { EPHEMERAL_MODEL_CHANGE_ROLE } from "@airis/airis-coding-agent/session/session-entries";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import { AUTO_THINKING } from "@airis/airis-coding-agent/thinking";
+import { TempDir } from "@airis/airis-utils";
 
 describe("AgentSession model persistence", () => {
 	let tempDir: TempDir;
@@ -26,7 +26,7 @@ describe("AgentSession model persistence", () => {
 	let sharedModelRegistry: ModelRegistry;
 
 	beforeAll(async () => {
-		sharedDir = TempDir.createSync("@pi-model-persistence-shared-");
+		sharedDir = TempDir.createSync("@airs-model-persistence-shared-");
 		sharedAuthStorage = await AuthStorage.create(path.join(sharedDir.path(), "auth.db"));
 		sharedAuthStorage.setRuntimeApiKey("anthropic", "test-key");
 		sharedModelRegistry = new ModelRegistry(sharedAuthStorage, path.join(sharedDir.path(), "models.yml"));
@@ -38,7 +38,7 @@ describe("AgentSession model persistence", () => {
 	});
 
 	beforeEach(() => {
-		tempDir = TempDir.createSync("@pi-model-persistence-");
+		tempDir = TempDir.createSync("@airs-model-persistence-");
 	});
 
 	afterEach(async () => {
@@ -477,7 +477,7 @@ describe("AgentSession model persistence", () => {
 			role: "assistant",
 			content: [],
 			stopReason: "aborted",
-			errorMessage: "Previous OMP process exited before completing the turn.",
+			errorMessage: "Previous AIRIS process exited before completing the turn.",
 		});
 		expect(
 			messages.some(

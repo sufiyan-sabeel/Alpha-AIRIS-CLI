@@ -1,5 +1,5 @@
-import type { Agent } from "@oh-my-pi/pi-agent-core";
-import { logger } from "@oh-my-pi/pi-utils";
+import type { Agent } from "@airis/airis-agent-core";
+import { logger } from "@airis/airis-utils";
 import type { Settings } from "../config/settings";
 import { disposeJuliaKernelSessionsByOwner } from "../eval/jl/executor";
 import { namespaceSessionId as namespacePythonSessionId } from "../eval/py";

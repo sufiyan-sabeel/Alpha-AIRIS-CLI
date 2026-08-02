@@ -6,23 +6,23 @@
  * behavior they have in the TUI.
  */
 import { afterEach, beforeEach, expect, it, spyOn } from "bun:test";
-import { Agent, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import { createMockModel, type MockModelOptions } from "@oh-my-pi/pi-ai/providers/mock";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { type SettingPath, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { EditTool } from "@oh-my-pi/pi-coding-agent/edit";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
+import { Agent, type AgentTool } from "@airis/airis-agent-core";
+import { createMockModel, type MockModelOptions } from "@airis/airis-ai/providers/mock";
+import { AssistantMessageEventStream } from "@airis/airis-ai/utils/event-stream";
+import { getBundledModel } from "@airis/airis-catalog/models";
+import { type SettingPath, Settings } from "@airis/airis-coding-agent/config/settings";
+import { EditTool } from "@airis/airis-coding-agent/edit";
+import { AgentSession } from "@airis/airis-coding-agent/session/agent-session";
 import type {
 	ClientBridge,
 	ClientBridgePermissionOutcome,
 	ClientBridgePermissionToolCall,
-} from "@oh-my-pi/pi-coding-agent/session/client-bridge";
-import { convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { dispatchXdevTool, resolveMountedXdevExecutable, type XdevState } from "@oh-my-pi/pi-coding-agent/tools/xdev";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@airis/airis-coding-agent/session/client-bridge";
+import { convertToLlm } from "@airis/airis-coding-agent/session/messages";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import type { ToolSession } from "@airis/airis-coding-agent/tools";
+import { dispatchXdevTool, resolveMountedXdevExecutable, type XdevState } from "@airis/airis-coding-agent/tools/xdev";
+import { TempDir } from "@airis/airis-utils";
 import { type } from "arktype";
 
 // ---------------------------------------------------------------------------
@@ -157,7 +157,7 @@ async function createSessionWithMockModel(
 }
 
 beforeEach(() => {
-	tempDir = TempDir.createSync("@pi-acp-permission-test-");
+	tempDir = TempDir.createSync("@airs-acp-permission-test-");
 });
 
 afterEach(async () => {

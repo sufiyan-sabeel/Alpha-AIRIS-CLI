@@ -3,12 +3,12 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import { stripVTControlCharacters } from "node:util";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { StatusLineComponent, type StatusLineSettings } from "@oh-my-pi/pi-coding-agent/modes/components/status-line";
-import { STATUS_LINE_PRESETS } from "@oh-my-pi/pi-coding-agent/modes/components/status-line/presets";
-import { initTheme } from "@oh-my-pi/pi-coding-agent/modes/theme/theme";
-import * as git from "@oh-my-pi/pi-coding-agent/utils/git";
-import { removeSyncWithRetries, setProjectDir } from "@oh-my-pi/pi-utils";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import { StatusLineComponent, type StatusLineSettings } from "@airis/airis-coding-agent/modes/components/status-line";
+import { STATUS_LINE_PRESETS } from "@airis/airis-coding-agent/modes/components/status-line/presets";
+import { initTheme } from "@airis/airis-coding-agent/modes/theme/theme";
+import * as git from "@airis/airis-coding-agent/utils/git";
+import { removeSyncWithRetries, setProjectDir } from "@airis/airis-utils";
 import { beginSettingsTest, restoreSettingsTestState, type SettingsTestState } from "./helpers/settings-test-state";
 
 let settingsState: SettingsTestState | undefined;
@@ -16,7 +16,7 @@ let projectDir = "";
 
 beforeEach(async () => {
 	settingsState = beginSettingsTest();
-	projectDir = fs.mkdtempSync(path.join(os.tmpdir(), "omp-status-line-settings-cache-"));
+	projectDir = fs.mkdtempSync(path.join(os.tmpdir(), "airis-status-line-settings-cache-"));
 	setProjectDir(projectDir);
 	await Settings.init({ inMemory: true, cwd: projectDir });
 	await initTheme();
@@ -82,7 +82,7 @@ describe("StatusLineComponent effective settings cache", () => {
 			{ preset: "minimal", sessionAccent: false },
 			{
 				preset: "custom",
-				leftSegments: ["pi", "model"],
+				leftSegments: ["airs", "model"],
 				rightSegments: ["session_name", "context_pct"],
 				separator: "pipe",
 				sessionAccent: false,
@@ -103,7 +103,7 @@ describe("StatusLineComponent effective settings cache", () => {
 	it("invalidates on updateSettings and reflects hook visibility changes", () => {
 		const component = makeComponent({
 			preset: "custom",
-			leftSegments: ["pi"],
+			leftSegments: ["airs"],
 			rightSegments: [],
 			separator: "none",
 			showHookStatus: false,
@@ -247,7 +247,7 @@ describe("StatusLineComponent effective settings cache", () => {
 		try {
 			const component = makeComponent({
 				preset: "custom",
-				leftSegments: ["pi"],
+				leftSegments: ["airs"],
 				rightSegments: ["session_name"],
 				sessionAccent: false,
 			});

@@ -1,10 +1,10 @@
 /** Provider-facing message, image, secret, and stream normalization for a session. */
 
-import type { Agent, AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { CompactionPreparation } from "@oh-my-pi/pi-agent-core/compaction";
-import type { AssistantMessage, ImageContent, Message, Model, SimpleStreamOptions, TextContent } from "@oh-my-pi/pi-ai";
-import { isRecord, logger } from "@oh-my-pi/pi-utils";
-import * as snapcompact from "@oh-my-pi/snapcompact";
+import type { Agent, AgentMessage } from "@airis/airis-agent-core";
+import type { CompactionPreparation } from "@airis/airis-agent-core/compaction";
+import type { AssistantMessage, ImageContent, Message, Model, SimpleStreamOptions, TextContent } from "@airis/airis-ai";
+import { isRecord, logger } from "@airis/airis-utils";
+import * as snapcompact from "@airis/airis-snapcompact";
 import type { ModelRegistry } from "../config/model-registry";
 import { formatModelString } from "../config/model-resolver";
 import type { Settings } from "../config/settings";

@@ -2,10 +2,10 @@ import { describe, expect, it } from "bun:test";
 import {
 	isOpenAICompletionsProgressChunk,
 	streamOpenAICompletions,
-} from "@oh-my-pi/pi-ai/providers/openai-completions";
-import type { Context, FetchImpl, Model, ModelSpec } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+} from "@airis/airis-ai/providers/openai-completions";
+import type { Context, FetchImpl, Model, ModelSpec } from "@airis/airis-ai/types";
+import { buildModel } from "@airis/airis-catalog/build";
+import { getBundledModel } from "@airis/airis-catalog/models";
 
 const openAICompletionsModel = {
 	...(getBundledModel("openai", "gpt-4o-mini") as Model<"openai-completions">),

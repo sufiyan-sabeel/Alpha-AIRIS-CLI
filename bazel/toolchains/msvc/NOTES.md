@@ -103,7 +103,7 @@ exec hosts. Replaces cargo-xwin.
 ## What to verify on can.internal (linux-x64)
 
 1. `bazel build //:natives-win32-x64-baseline` end-to-end link; check the
-   produced `pi_natives.win32-x64-baseline.node` imports (dumpbin/llvm-readobj:
+   produced `airis_natives.win32-x64-baseline.node` imports (dumpbin/llvm-readobj:
    expect VCRUNTIME140/api-ms-win-crt-* → `/MD`, no static CRT).
 2. LLVM 20.1.7 Linux-X64 binaries are built on a newish Ubuntu: confirm the
    kata runner image's glibc is ≥ 2.35-ish and has `libtinfo6`/`libstdc++6`

@@ -6,7 +6,7 @@
 // spell-checker:ignore strtime ; (format) DATEFILE MMDDhhmm ; (vars) datetime
 // datetimes getres AWST ACST AEST foobarbaz
 
-// pi-uutils: vendored from uutils/coreutils 0.8.0 and patched to run in-process
+// airis-uutils: vendored from uutils/coreutils 0.8.0 and patched to run in-process
 // as a shell builtin. The set-date capability (`--set`, clock_settime /
 // SetSystemTime) is removed entirely — a builtin must never mutate the host
 // system clock — and `--set` now reports "setting the date is not supported by
@@ -15,9 +15,9 @@
 // feature is not vendored, and the locale.rs default-format probe — which
 // calls the process-global setlocale(3) — is replaced by upstream's 24-hour
 // fallback format). File operands (`--file`, `--reference`) resolve against
-// the shell working directory via `pi_uutils_ctx::resolve` AT THE CALL SITE
+// the shell working directory via `airis_uutils_ctx::resolve` AT THE CALL SITE
 // while the original operands are kept for display/error messages, stdio is
-// routed through `pi_uutils_ctx`, and the entry point no longer calls
+// routed through `airis_uutils_ctx`, and the entry point no longer calls
 // `std::process::exit`. Time-zone handling stays process-global: jiff reads
 // the host TZ environment variable and tzdb (same behavior as upstream).
 
@@ -39,7 +39,7 @@ use jiff::{
 	fmt::strtime::{self, BrokenDownTime, Config, PosixCustom},
 	tz::{Offset, TimeZone, TimeZoneDatabase},
 };
-use pi_uutils_ctx::format_usage;
+use airis_uutils_ctx::format_usage;
 use uucore::{
 	display::Quotable,
 	error::{FromIo, UResult, USimpleError},
@@ -69,7 +69,7 @@ const OPT_UNIVERSAL: &str = "universal";
 const OPT_UNIVERSAL_2: &str = "utc";
 
 /// Settings for this program, parsed from the command line
-// pi-uutils: the upstream `set_to` field is gone with the set-date capability.
+// airis-uutils: the upstream `set_to` field is gone with the set-date capability.
 struct Settings {
 	utc:         bool,
 	format:      Format,
@@ -296,7 +296,7 @@ fn parse_military_timezone_with_offset(s: &str) -> Option<(i32, DayDelta)> {
 	Some((hours_from_midnight, day_delta))
 }
 
-/// pi-uutils: BSD `date` compatibility (macOS muscle memory).
+/// airis-uutils: BSD `date` compatibility (macOS muscle memory).
 ///
 /// BSD `date -r SECONDS` formats an epoch, whereas GNU `-r FILE` formats a
 /// file's mtime. We rewrite only an all-digit `-r` value for which no file
@@ -328,7 +328,7 @@ fn rewrite_bsd_invocation(argv: &[OsString]) -> Option<Result<Vec<OsString>, Str
 			"-r" => {
 				if let Some(value) = toks.get(i + 1)
 					&& is_bsd_epoch_reference(value)
-					&& std::fs::symlink_metadata(pi_uutils_ctx::resolve(Path::new(&argv[i + 1])))
+					&& std::fs::symlink_metadata(airis_uutils_ctx::resolve(Path::new(&argv[i + 1])))
 						.is_err_and(|err| err.kind() == std::io::ErrorKind::NotFound)
 				{
 					detected = true;
@@ -457,7 +457,7 @@ fn bsd_to_gnu_argv(
 			&& toks
 				.get(i + 1)
 				.is_some_and(|value| is_bsd_epoch_reference(value))
-			&& std::fs::symlink_metadata(pi_uutils_ctx::resolve(Path::new(&argv[i + 1])))
+			&& std::fs::symlink_metadata(airis_uutils_ctx::resolve(Path::new(&argv[i + 1])))
 				.is_err_and(|err| err.kind() == std::io::ErrorKind::NotFound)
 		{
 			rewritten.push(OsString::from("-d"));
@@ -530,13 +530,13 @@ fn parse_bsd_adjustment(value: &str) -> Result<String, String> {
 /// streams, and maps the `UResult` to an exit code, so it is safe to run inside
 /// the host shell process.
 pub fn run(argv: Vec<OsString>) -> i32 {
-	// pi-uutils: translate unambiguous BSD date forms before GNU clap parsing;
+	// airis-uutils: translate unambiguous BSD date forms before GNU clap parsing;
 	// see `rewrite_bsd_invocation`.
 	let argv = match rewrite_bsd_invocation(&argv) {
 		None => argv,
 		Some(Ok(rewritten)) => rewritten,
 		Some(Err(msg)) => {
-			let _ = writeln!(pi_uutils_ctx::stderr(), "date: {msg}");
+			let _ = writeln!(airis_uutils_ctx::stderr(), "date: {msg}");
 			return 1;
 		},
 	};
@@ -545,20 +545,20 @@ pub fn run(argv: Vec<OsString>) -> i32 {
 		Err(err) => {
 			let rendered = err.to_string();
 			if err.use_stderr() {
-				let _ = write!(pi_uutils_ctx::stderr(), "{rendered}");
+				let _ = write!(airis_uutils_ctx::stderr(), "{rendered}");
 				return 1;
 			}
-			let _ = write!(pi_uutils_ctx::stdout(), "{rendered}");
+			let _ = write!(airis_uutils_ctx::stdout(), "{rendered}");
 			return 0;
 		},
 	};
 	match date_main(&matches) {
-		Ok(()) => pi_uutils_ctx::exit_code(),
+		Ok(()) => airis_uutils_ctx::exit_code(),
 		Err(err) => {
 			let code = err.code();
 			let msg = err.to_string();
 			if !msg.is_empty() {
-				let _ = writeln!(pi_uutils_ctx::stderr(), "date: {msg}");
+				let _ = writeln!(airis_uutils_ctx::stderr(), "date: {msg}");
 			}
 			if code == 0 { 1 } else { code }
 		},
@@ -567,7 +567,7 @@ pub fn run(argv: Vec<OsString>) -> i32 {
 
 #[allow(clippy::cognitive_complexity)]
 fn date_main(matches: &ArgMatches) -> UResult<()> {
-	// pi-uutils: the set-date capability is removed — a shell builtin must
+	// airis-uutils: the set-date capability is removed — a shell builtin must
 	// never mutate the host system clock, so `--set` fails up front instead of
 	// parsing the operand and calling clock_settime(2)/SetSystemTime.
 	if matches.get_one::<String>(OPT_SET).is_some() {
@@ -644,7 +644,7 @@ fn date_main(matches: &ArgMatches) -> UResult<()> {
 	let debug_mode = matches.get_flag(OPT_DEBUG);
 
 	// Get the current time, either in the local time zone or UTC.
-	// pi-uutils: time-zone handling stays process-global — jiff reads the host
+	// airis-uutils: time-zone handling stays process-global — jiff reads the host
 	// TZ environment variable and system tzdb here, as upstream does.
 	let now = if utc {
 		Timestamp::now().to_zoned(TimeZone::UTC)
@@ -702,7 +702,7 @@ fn date_main(matches: &ArgMatches) -> UResult<()> {
 				};
 				if settings.debug {
 					let _ = writeln!(
-						pi_uutils_ctx::stderr(),
+						airis_uutils_ctx::stderr(),
 						"date: warning: using midnight as starting time: 00:00:00"
 					);
 				}
@@ -765,16 +765,16 @@ fn date_main(matches: &ArgMatches) -> UResult<()> {
 			let iter = std::iter::once(date);
 			Box::new(iter)
 		},
-		// pi-uutils: `-f -` reads the context stdin, not the process stdin.
+		// airis-uutils: `-f -` reads the context stdin, not the process stdin.
 		DateSource::Stdin => parse_dates_from_reader(
-			pi_uutils_ctx::stdin(),
+			airis_uutils_ctx::stdin(),
 			&now,
 			DebugOptions::new(settings.debug, true),
 		),
 		DateSource::File(path) => {
-			// pi-uutils: resolve the DATEFILE operand against the shell working
+			// airis-uutils: resolve the DATEFILE operand against the shell working
 			// directory; `path` is kept for display.
-			let resolved = pi_uutils_ctx::resolve(path);
+			let resolved = airis_uutils_ctx::resolve(path);
 			if resolved.is_dir() {
 				return Err(USimpleError::new(
 					2,
@@ -786,21 +786,21 @@ fn date_main(matches: &ArgMatches) -> UResult<()> {
 			parse_dates_from_reader(file, &now, DebugOptions::new(settings.debug, true))
 		},
 		DateSource::FileMtime(path) => {
-			// pi-uutils: resolve the --reference FILE against the shell working
+			// airis-uutils: resolve the --reference FILE against the shell working
 			// directory; `path` is kept for display.
-			let metadata = std::fs::metadata(pi_uutils_ctx::resolve(path))
+			let metadata = std::fs::metadata(airis_uutils_ctx::resolve(path))
 				.map_err_context(|| path.as_os_str().maybe_quote().to_string())?;
 			let mtime = metadata.modified()?;
 			let ts = Timestamp::try_from(mtime)
 				.map_err(|_| USimpleError::new(1, "cannot set date".to_string()))?;
-			// pi-uutils: process-global TZ lookup, as upstream.
+			// airis-uutils: process-global TZ lookup, as upstream.
 			let date = ts.to_zoned(TimeZone::try_system().unwrap_or(TimeZone::UTC));
 			let iter = std::iter::once(Ok(date));
 			Box::new(iter)
 		},
 		DateSource::Resolution => {
 			let resolution = get_clock_resolution();
-			// pi-uutils: process-global TZ lookup, as upstream.
+			// airis-uutils: process-global TZ lookup, as upstream.
 			let date = resolution.to_zoned(TimeZone::system());
 			let iter = std::iter::once(Ok(date));
 			Box::new(iter)
@@ -812,15 +812,15 @@ fn date_main(matches: &ArgMatches) -> UResult<()> {
 	};
 
 	let format_string = make_format_string(&settings);
-	// pi-uutils: buffered context stdout instead of the process stdout.
-	let mut stdout = BufWriter::new(pi_uutils_ctx::stdout());
+	// airis-uutils: buffered context stdout instead of the process stdout.
+	let mut stdout = BufWriter::new(airis_uutils_ctx::stdout());
 
 	// Format all the dates
 	let config = Config::new().custom(PosixCustom::new()).lenient(true);
 	for date in dates {
-		// pi-uutils: a DATEFILE/stdin stream can be arbitrarily long; observe
+		// airis-uutils: a DATEFILE/stdin stream can be arbitrarily long; observe
 		// host cancellation between lines.
-		if pi_uutils_ctx::is_cancelled() {
+		if airis_uutils_ctx::is_cancelled() {
 			break;
 		}
 		match date {
@@ -844,11 +844,11 @@ fn date_main(matches: &ArgMatches) -> UResult<()> {
 			},
 			Err((input, _err)) => {
 				let _ = stdout.flush();
-				// pi-uutils: upstream `show!` — report the bad line to the
+				// airis-uutils: upstream `show!` — report the bad line to the
 				// context stderr, record the failure exit code, and keep
 				// processing the remaining lines.
-				let _ = writeln!(pi_uutils_ctx::stderr(), "date: invalid date '{input}'");
-				pi_uutils_ctx::set_exit_code(1);
+				let _ = writeln!(airis_uutils_ctx::stderr(), "date: invalid date '{input}'");
+				airis_uutils_ctx::set_exit_code(1);
 			},
 		}
 	}
@@ -863,7 +863,7 @@ pub fn uu_app() -> Command {
 	Command::new("date")
 		.version(uucore::crate_version!())
 		.about("Print or set the system date and time")
-		// pi-uutils: the localized usage blob's FORMAT reference table moved to
+		// airis-uutils: the localized usage blob's FORMAT reference table moved to
 		// `after_help` below; the usage proper is just the two command lines.
 		.override_usage(format_usage(
 			"date [OPTION]... [+FORMAT]...\ndate [OPTION]... [MMDDhhmm[[CC]YY][.ss]]",
@@ -954,7 +954,7 @@ pub fn uu_app() -> Command {
 				.long(OPT_SET)
 				.value_name("STRING")
 				.allow_hyphen_values(true)
-				// pi-uutils: the set-date capability is removed; the option is
+				// airis-uutils: the set-date capability is removed; the option is
 				// still parsed so it fails with a clear message instead of a
 				// clap "unexpected argument" error.
 				.help("set time described by STRING (not supported by this builtin)"),
@@ -972,7 +972,7 @@ pub fn uu_app() -> Command {
 		.arg(Arg::new(OPT_FORMAT).num_args(0..))
 }
 
-// pi-uutils: literalized en-US FORMAT reference from the `date-usage` locale
+// airis-uutils: literalized en-US FORMAT reference from the `date-usage` locale
 // blob, rendered as plain text for clap's after_help.
 const FORMAT_HELP: &str = "\
 FORMAT controls the output.  Interpreted sequences are:
@@ -1041,7 +1041,7 @@ Examples:
   Show the time on the west coast of the US (use tzselect(1) to find TZ)
     TZ='America/Los_Angeles' date";
 
-/// pi-uutils: upstream's `format_date_with_locale_aware_months` minus the
+/// airis-uutils: upstream's `format_date_with_locale_aware_months` minus the
 /// optional icu locale-aware month/day name substitution (the i18n-datetime
 /// feature is not vendored, so no localization ever applies).
 fn format_date(
@@ -1080,7 +1080,7 @@ fn make_format_string(settings: &Settings) -> &str {
 		},
 		Format::Resolution => "%s.%N",
 		Format::Custom(fmt) => fmt,
-		// pi-uutils: upstream derives the default format from the process
+		// airis-uutils: upstream derives the default format from the process
 		// locale via setlocale(3)/nl_langinfo(3) (src/uu/date/src/locale.rs).
 		// setlocale mutates process-global state, which a builtin must not do,
 		// so upstream's 24-hour fallback format is used unconditionally.
@@ -1125,7 +1125,7 @@ static FIXED_OFFSET_ABBREVIATIONS: &[(&str, i32)] = &[
 /* spell-checker: enable */
 
 /// Lazy-loaded timezone abbreviation lookup map built from IANA database.
-// pi-uutils: `LazyLock` instead of upstream's `OnceLock` + `get_or_init`.
+// airis-uutils: `LazyLock` instead of upstream's `OnceLock` + `get_or_init`.
 static TZ_ABBREV_CACHE: LazyLock<HashMap<String, String>> = LazyLock::new(build_tz_abbrev_map);
 
 /// Build timezone abbreviation lookup map from IANA database.
@@ -1232,14 +1232,14 @@ fn parse_date<S: AsRef<str> + Clone>(
 	let input_str = s.as_ref();
 
 	if dbg_opts.debug {
-		let _ = writeln!(pi_uutils_ctx::stderr(), "date: input string: {input_str}");
+		let _ = writeln!(airis_uutils_ctx::stderr(), "date: input string: {input_str}");
 	}
 
 	// First, try to parse any timezone abbreviations
 	if let Some(zoned) = try_parse_with_abbreviation(input_str, now) {
 		if dbg_opts.debug {
-			// pi-uutils: context stderr instead of `stderr().lock()`.
-			let mut err = pi_uutils_ctx::stderr();
+			// airis-uutils: context stderr instead of `stderr().lock()`.
+			let mut err = airis_uutils_ctx::stderr();
 			let _ = writeln!(
 				err,
 				"date: parsed date part: (Y-M-D) {}",
@@ -1263,8 +1263,8 @@ fn parse_date<S: AsRef<str> + Clone>(
 			let result = date.timestamp().to_zoned(now.time_zone().clone());
 			if dbg_opts.debug {
 				// Show final parsed date and time
-				// pi-uutils: context stderr instead of `stderr().lock()`.
-				let mut err = pi_uutils_ctx::stderr();
+				// airis-uutils: context stderr instead of `stderr().lock()`.
+				let mut err = airis_uutils_ctx::stderr();
 				let _ = writeln!(
 					err,
 					"date: parsed date part: (Y-M-D) {}",
@@ -1335,7 +1335,7 @@ fn get_clock_resolution() -> Timestamp {
 	Timestamp::constant(0, 100)
 }
 
-// pi-uutils: upstream's `convert_for_set` and the `set_system_datetime`
+// airis-uutils: upstream's `convert_for_set` and the `set_system_datetime`
 // variants (clock_settime / SetSystemTime) are removed with the set-date
 // capability.
 
@@ -1344,7 +1344,7 @@ mod tests {
 	use std::{collections::HashMap, io::Write, path::PathBuf, sync::Arc};
 
 	use parking_lot::Mutex;
-	use pi_uutils_ctx::ScopeIo;
+	use airis_uutils_ctx::ScopeIo;
 
 	use super::*;
 
@@ -1382,7 +1382,7 @@ mod tests {
 			.map(OsString::from)
 			.collect();
 
-		let code = pi_uutils_ctx::scope(io, || run(argv));
+		let code = airis_uutils_ctx::scope(io, || run(argv));
 
 		let out_str = String::from_utf8(stdout_buf.lock().clone()).unwrap();
 		let err_str = String::from_utf8(stderr_buf.lock().clone()).unwrap();
@@ -1450,7 +1450,7 @@ mod tests {
 		assert_eq!(strip_parenthesized_comments("a(b)c(d)e(f"), "ace"); // Multiple groups, last unmatched
 	}
 
-	// --- pi-uutils behavior contracts ---
+	// --- airis-uutils behavior contracts ---
 
 	#[test]
 	fn utc_date_string_formats_exactly() {
@@ -1488,7 +1488,7 @@ mod tests {
 		std::fs::write(root.join("dates.txt"), "2026-01-02 03:04:05\n@0\n").unwrap();
 
 		// Relative operand + scope cwd differing from the process cwd: only the
-		// call-site `pi_uutils_ctx::resolve` patch makes this find the file.
+		// call-site `airis_uutils_ctx::resolve` patch makes this find the file.
 		let (code, stdout, stderr) = run_in(root, vec!["-u", "-f", "dates.txt", "+%F"]);
 		assert_eq!(code, 0);
 		assert_eq!(stdout, "2026-01-02\n1970-01-01\n");

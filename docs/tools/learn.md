@@ -26,9 +26,9 @@
 - Authored-skill name conflict returns `isError: true` after storing/queueing the lesson and reports `details = { skill: null, shadowed: true }`.
 
 ## Flow
-1. `LearnTool.createIf(...)` exposes the tool only when `autolearn.enabled` is true and `memory.backend` is `"hindsight"`, `"mnemopi"`, or `"local"`.
+1. `LearnTool.createIf(...)` exposes the tool only when `autolearn.enabled` is true and `memory.backend` is `"hindsight"`, `"mnemosyne"`, or `"local"`.
 2. `execute(...)` stores the lesson first:
-   - Mnemopi: calls `rememberScoped(...)` with `source: "coding-agent-learn"`, `importance: 0.8`, `scope: "bank"`, extraction enabled, `veracity: "tool"`, and `memoryType: "fact"`.
+   - Mnemosyne: calls `rememberScoped(...)` with `source: "coding-agent-learn"`, `importance: 0.8`, `scope: "bank"`, extraction enabled, `veracity: "tool"`, and `memoryType: "fact"`.
    - Local backend: appends through `localBackend.save(...)` with the same source and importance.
    - Hindsight: enqueues retention with `state.enqueueRetain(memory, context)`.
 3. If `skill` is absent, the tool returns after the memory write/queue.
@@ -38,11 +38,11 @@
 ## Modes / Variants
 - Memory-only lesson capture.
 - Lesson plus managed skill create/update for repeatable procedures worth codifying as `SKILL.md`.
-- Backend-specific memory persistence: queued Hindsight, scoped Mnemopi SQLite, or local file backend.
+- Backend-specific memory persistence: queued Hindsight, scoped Mnemosyne SQLite, or local file backend.
 
 ## Side Effects
-- Filesystem: local memory backend writes under the agent directory; managed skills write to `~/.omp/agent/managed-skills/<name>/SKILL.md`.
-- Network: Hindsight retention queues server-side work; Mnemopi/local paths do not make a network call from this tool directly.
+- Filesystem: local memory backend writes under the agent directory; managed skills write to `~/.airis/agent/managed-skills/<name>/SKILL.md`.
+- Network: Hindsight retention queues server-side work; Mnemosyne/local paths do not make a network call from this tool directly.
 - Session state: reads memory backend state, settings, cwd, and session id.
 - Background work: Hindsight retention may flush later.
 
@@ -53,8 +53,8 @@
 - Managed skills never override authored skills; authored skills win discovery.
 
 ## Errors
-- `Mnemopi backend is not initialised for this session.` when Mnemopi state is missing.
-- `Mnemopi did not store the lesson (no memory id returned).` when Mnemopi silently fails to write.
+- `Mnemosyne backend is not initialised for this session.` when Mnemosyne state is missing.
+- `Mnemosyne did not store the lesson (no memory id returned).` when Mnemosyne silently fails to write.
 - `Lesson was empty after sanitization; nothing stored.` for an empty local-backend lesson.
 - `Hindsight backend is not initialised for this session.` when Hindsight state is missing.
 - Managed-skill write failures are rethrown as `<lesson result>, but the managed skill could not be written: <reason>`.

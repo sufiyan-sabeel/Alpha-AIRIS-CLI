@@ -7,7 +7,7 @@ import type {
 	AgentToolContext,
 	AgentToolResult,
 	AgentToolUpdateCallback,
-} from "@oh-my-pi/pi-agent-core";
+} from "@airis/airis-agent-core";
 import type {
 	CursorMcpCall,
 	CursorMcpResource,
@@ -16,7 +16,7 @@ import type {
 	CursorTodoSnapshot,
 	CursorExecHandlers as ICursorExecHandlers,
 	ToolResultMessage,
-} from "@oh-my-pi/pi-ai";
+} from "@airis/airis-ai";
 import {
 	piEscapeRegexLiteral,
 	piGrepSkip,
@@ -25,8 +25,8 @@ import {
 	piLsPath,
 	piReadPath,
 	piTimeout,
-} from "@oh-my-pi/pi-ai/providers/cursor/exec-modern";
-import { sanitizeText } from "@oh-my-pi/pi-utils";
+} from "@airis/airis-ai/providers/cursor/exec-modern";
+import { sanitizeText } from "@airis/airis-utils";
 import type { MCPResourceReadResult } from "./mcp/types";
 import type { ApprovalMode } from "./tools/approval";
 import { resolveApproval } from "./tools/approval";
@@ -671,7 +671,7 @@ export class CursorExecHandlers implements ICursorExecHandlers {
 
 	/**
 	 * `literal` makes the pattern a fixed string; the local tool is regex-only,
-	 * so the pattern is escaped on the way in (same translation the legacy pi
+	 * so the pattern is escaped on the way in (same translation the legacy airs
 	 * shim does).
 	 *
 	 * `context` and `limit` are not expressible in the model-facing schema —

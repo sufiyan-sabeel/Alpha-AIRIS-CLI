@@ -1,14 +1,14 @@
 /**
  * Hello Tool - Minimal custom tool example
  *
- * Demonstrates using ExtensionAPI's logger, injected `pi.zod`, and pi module access.
+ * Demonstrates using ExtensionAPI's logger, injected `airs.zod`, and airs module access.
  */
-import type { ExtensionAPI } from "@oh-my-pi/pi-coding-agent";
+import type { ExtensionAPI } from "@airis/airis-coding-agent";
 
-export default function (pi: ExtensionAPI) {
-	const { z } = pi.zod;
+export default function (airs: ExtensionAPI) {
+	const { z } = airs.zod;
 
-	pi.registerTool({
+	airs.registerTool({
 		name: "hello",
 		label: "Hello",
 		description: "A simple greeting tool",
@@ -20,7 +20,7 @@ export default function (pi: ExtensionAPI) {
 			const { name } = params;
 
 			// Use logger for debugging
-			pi.logger.debug("Hello tool executed", { name });
+			airs.logger.debug("Hello tool executed", { name });
 
 			return {
 				content: [{ type: "text", text: `Hello, ${name}!` }],

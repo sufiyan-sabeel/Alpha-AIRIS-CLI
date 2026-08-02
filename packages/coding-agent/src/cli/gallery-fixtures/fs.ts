@@ -1,6 +1,6 @@
 // biome-ignore-all lint/suspicious/noTemplateCurlyInString: sample source-code strings (read fixtures) intentionally contain literal ${...}.
 // Gallery fixtures for the filesystem tools (read, write, glob).
-import type { Usage } from "@oh-my-pi/pi-ai";
+import type { Usage } from "@airis/airis-ai";
 import { ReadToolGroupComponent } from "../../modes/components/read-tool-group";
 import type { GalleryFixture, GalleryFixtureState, GalleryResult } from "./types";
 
@@ -149,7 +149,7 @@ export const fsFixtures: Record<string, GalleryFixture> = {
 			],
 			details: {
 				kind: "file",
-				resolvedPath: "/Users/dev/Projects/pi/packages/coding-agent/src/tools/glob.ts",
+				resolvedPath: "/Users/dev/Projects/alpha-airis-cli/packages/coding-agent/src/tools/glob.ts",
 				contentType: "text/typescript",
 				displayContent: { text: readSnippet, startLine: 437 },
 			},

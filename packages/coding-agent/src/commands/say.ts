@@ -8,8 +8,8 @@
  * streamed segments into one WAV. The first run downloads the configured local
  * model into the worker's cache.
  */
-import { getProjectDir } from "@oh-my-pi/pi-utils";
-import { Args, Command, Flags } from "@oh-my-pi/pi-utils/cli";
+import { getProjectDir } from "@airis/airis-utils";
+import { Args, Command, Flags } from "@airis/airis-utils/cli";
 import chalk from "chalk";
 import { Settings, settings } from "../config/settings";
 import { TTS_LOCAL_VOICE_VALUES } from "../tts/models";
@@ -33,9 +33,9 @@ export default class Say extends Command {
 	};
 
 	static examples = [
-		'omp say "hello world"',
-		"omp say --file notes.md --voice bm_fable",
-		'omp say "hello world" --out /tmp/hello.wav',
+		'airis say "hello world"',
+		"airis say --file notes.md --voice bm_fable",
+		'airis say "hello world" --out /tmp/hello.wav',
 	];
 
 	async run(): Promise<void> {
@@ -138,7 +138,7 @@ export default class Say extends Command {
 	#synthesisFailed(model: string): void {
 		process.stderr.write(
 			chalk.red(
-				`error: could not synthesize with local TTS model "${model}". Run \`omp setup speech\` to install it.\n`,
+				`error: could not synthesize with local TTS model "${model}". Run \`airis setup speech\` to install it.\n`,
 			),
 		);
 	}

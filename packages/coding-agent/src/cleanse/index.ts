@@ -1,4 +1,4 @@
-import { getProjectDir, sanitizeText } from "@oh-my-pi/pi-utils";
+import { getProjectDir, sanitizeText } from "@airis/airis-utils";
 import { shortenPath } from "../tools/render-utils";
 import { type CleanseAgentRuntime, createCleanseAgentRuntime } from "./agent";
 import { groupDiagnosticsByFile } from "./balance";
@@ -10,7 +10,7 @@ import type { CleanseAgentOutcome, CleanseAssignment, CleanseDiagnosticReport, C
 const DEFAULT_MODEL = "@smol";
 const DISPLAY_FILE_LIMIT = 50;
 
-/** User-facing options for `omp cleanse`. */
+/** User-facing options for `airis cleanse`. */
 export interface CleanseCommandOptions {
 	maxAgents?: number;
 	model?: string;

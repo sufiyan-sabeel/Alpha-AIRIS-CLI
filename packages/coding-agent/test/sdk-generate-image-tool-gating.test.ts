@@ -2,16 +2,16 @@ import { afterAll, afterEach, beforeAll, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AgentTool } from "@oh-my-pi/pi-agent-core";
-import { AuthStorage } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { CustomTool } from "@oh-my-pi/pi-coding-agent/extensibility/custom-tools/types";
-import { createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
+import type { AgentTool } from "@airis/airis-agent-core";
+import { AuthStorage } from "@airis/airis-ai";
+import { getBundledModel } from "@airis/airis-catalog/models";
+import { ModelRegistry } from "@airis/airis-coding-agent/config/model-registry";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import type { CustomTool } from "@airis/airis-coding-agent/extensibility/custom-tools/types";
+import { createAgentSession } from "@airis/airis-coding-agent/sdk";
+import type { AgentSession } from "@airis/airis-coding-agent/session/agent-session";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import { removeSyncWithRetries, Snowflake } from "@airis/airis-utils";
 import { type } from "arktype";
 
 // Regression for issue #5305: image-gen is registered as a custom tool, and

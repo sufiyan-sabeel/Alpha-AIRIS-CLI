@@ -1,19 +1,19 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Agent, type AgentMessage, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, TextContent, ToolCall } from "@oh-my-pi/pi-ai";
-import * as ai from "@oh-my-pi/pi-ai";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession, type AgentSessionConfig } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { TodoTool } from "@oh-my-pi/pi-coding-agent/tools";
-import { setInteractiveHost, TempDir } from "@oh-my-pi/pi-utils";
+import { Agent, type AgentMessage, type AgentTool } from "@airis/airis-agent-core";
+import type { AssistantMessage, TextContent, ToolCall } from "@airis/airis-ai";
+import * as ai from "@airis/airis-ai";
+import { AssistantMessageEventStream } from "@airis/airis-ai/utils/event-stream";
+import { getBundledModel } from "@airis/airis-catalog/models";
+import { ModelRegistry } from "@airis/airis-coding-agent/config/model-registry";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import { AgentSession, type AgentSessionConfig } from "@airis/airis-coding-agent/session/agent-session";
+import { AuthStorage } from "@airis/airis-coding-agent/session/auth-storage";
+import { convertToLlm } from "@airis/airis-coding-agent/session/messages";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import type { ToolSession } from "@airis/airis-coding-agent/tools";
+import { TodoTool } from "@airis/airis-coding-agent/tools";
+import { setInteractiveHost, TempDir } from "@airis/airis-utils";
 import { type } from "arktype";
 import eagerTodoPrompt from "../src/prompts/system/eager-todo.md" with { type: "text" };
 import { createAssistantMessage } from "./helpers/agent-session-setup";
@@ -217,7 +217,7 @@ describe("AgentSession eager todo enforcement", () => {
 	}
 
 	beforeEach(async () => {
-		tempDir = TempDir.createSync("@pi-agent-session-eager-todo-");
+		tempDir = TempDir.createSync("@airs-agent-session-eager-todo-");
 		streamCallCount = 0;
 		scriptedResponses = [];
 		observedCalls.length = 0;

@@ -6,8 +6,8 @@
  */
 import * as path from "node:path";
 import * as url from "node:url";
-import { isDefinitiveOAuthFailure, type TSchema } from "@oh-my-pi/pi-ai";
-import { logger } from "@oh-my-pi/pi-utils";
+import { isDefinitiveOAuthFailure, type TSchema } from "@airis/airis-ai";
+import { logger } from "@airis/airis-utils";
 import type { SourceMeta } from "../capability/types";
 import { resolveConfigValue } from "../config/resolve-config-value";
 import type { CustomTool } from "../extensibility/custom-tools/types";
@@ -243,7 +243,7 @@ export class MCPManager {
 	 * fanout, so listeners observe up-to-date manager and tool state. Unknown
 	 * or server-custom methods are also delivered, letting consumers bridge
 	 * server-initiated events into session-level behavior (e.g. an extension
-	 * injecting a steer via `pi.sendMessage`).
+	 * injecting a steer via `airs.sendMessage`).
 	 *
 	 * Notifications received before any listener attached are buffered
 	 * (bounded FIFO, cap {@link NOTIFICATION_BUFFER_CAP}, drop-oldest) and
@@ -599,7 +599,7 @@ export class MCPManager {
 			// Pending tasks without cached tools used to be awaited synchronously here,
 			// which gated the entire UI on the slowest server's per-request timeout
 			// (issue #2100: a single unresponsive MCP server blocked startup for the
-			// full 30 s `OMP_MCP_TIMEOUT_MS`). Leave them in flight — the background
+			// full 30 s `AIRIS_MCP_TIMEOUT_MS`). Leave them in flight — the background
 			// `void toolsPromise.then(...)` chain above registers their tools and
 			// fires `#onToolsChanged` once the connect finishes, or logs the failure
 			// after `allowBackgroundLogging` flips below.

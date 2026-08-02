@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { Ellipsis, truncateToWidth } from "@oh-my-pi/pi-tui/utils";
+import { Ellipsis, truncateToWidth } from "@airis/airis-tui/utils";
 
-// Regression test for https://github.com/can1357/oh-my-pi/issues/848
+// Regression test for https://github.com/sufiyan-sabeel/Alpha-AIRIS-CLI/issues/848
 //
 // On Windows, rendering a saved write tool record crashed with:
 //   Error: Failed to convert napi value Null into rust type `u8`

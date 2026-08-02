@@ -2,15 +2,15 @@ import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { StatusLineSegmentId } from "@oh-my-pi/pi-coding-agent/config/settings-schema";
-import { StatusLineComponent } from "@oh-my-pi/pi-coding-agent/modes/components/status-line";
-import type { SegmentContext } from "@oh-my-pi/pi-coding-agent/modes/components/status-line/segments";
-import { renderSegment } from "@oh-my-pi/pi-coding-agent/modes/components/status-line/segments";
-import { initTheme, theme } from "@oh-my-pi/pi-coding-agent/modes/theme/theme";
-import { getSessionAccentAnsi, getSessionAccentHex } from "@oh-my-pi/pi-coding-agent/utils/session-color";
-import { visibleWidth } from "@oh-my-pi/pi-tui";
-import { getProjectDir, setProjectDir } from "@oh-my-pi/pi-utils";
+import { resetSettingsForTest, Settings } from "@airis/airis-coding-agent/config/settings";
+import type { StatusLineSegmentId } from "@airis/airis-coding-agent/config/settings-schema";
+import { StatusLineComponent } from "@airis/airis-coding-agent/modes/components/status-line";
+import type { SegmentContext } from "@airis/airis-coding-agent/modes/components/status-line/segments";
+import { renderSegment } from "@airis/airis-coding-agent/modes/components/status-line/segments";
+import { initTheme, theme } from "@airis/airis-coding-agent/modes/theme/theme";
+import { getSessionAccentAnsi, getSessionAccentHex } from "@airis/airis-coding-agent/utils/session-color";
+import { visibleWidth } from "@airis/airis-tui";
+import { getProjectDir, setProjectDir } from "@airis/airis-utils";
 
 const originalProjectDir = getProjectDir();
 
@@ -128,7 +128,7 @@ describe("status line session accent", () => {
 		const component = new StatusLineComponent(createStatusLineSession("Named session"));
 		component.updateSettings({
 			preset: "custom",
-			leftSegments: ["pi"],
+			leftSegments: ["airs"],
 			rightSegments: ["session_name"],
 			separator: "powerline-thin",
 			sessionAccent,
@@ -166,7 +166,7 @@ describe("path segment truncation at varying maxLength", () => {
 	let tmpDir: string;
 
 	beforeAll(() => {
-		tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "omp-overflow-very-long-directory-name-for-testing-"));
+		tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "airis-overflow-very-long-directory-name-for-testing-"));
 		setProjectDir(tmpDir);
 	});
 
@@ -202,7 +202,7 @@ describe("overflow: path shrinks before git is dropped", () => {
 
 	beforeAll(() => {
 		// Long dir name guarantees the path segment is wide
-		tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "omp-overflow-a-very-long-worktree-directory-name-here-"));
+		tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "airis-overflow-a-very-long-worktree-directory-name-here-"));
 		setProjectDir(tmpDir);
 	});
 
@@ -314,7 +314,7 @@ describe("overflow: path shrinks before git is dropped", () => {
 
 	it("shrinks a short path when maxLength exceeds actual path length", () => {
 		// Short dir name — rendered path is well under the configured maxLength.
-		const shortDir = fs.mkdtempSync(path.join(os.tmpdir(), "omp-short-"));
+		const shortDir = fs.mkdtempSync(path.join(os.tmpdir(), "airis.short-"));
 		setProjectDir(shortDir);
 		try {
 			const maxLength = 160;
@@ -341,7 +341,7 @@ describe("overflow: path shrinks before git is dropped", () => {
 		}
 	});
 	it("preserves git when overflow is only 1-2 columns", () => {
-		const shortDir = fs.mkdtempSync(path.join(os.tmpdir(), "omp-narrow-ovf-"));
+		const shortDir = fs.mkdtempSync(path.join(os.tmpdir(), "airis-narrow-ovf-"));
 		setProjectDir(shortDir);
 		try {
 			const ctx = createCtx({ pathMaxLength: 80, branch: "main" });
@@ -371,7 +371,7 @@ describe("overflow: path shrinks before git is dropped", () => {
 
 describe("overflow: path survives before model", () => {
 	it("drops the model segment before the cwd path when both cannot fit", () => {
-		const root = fs.mkdtempSync(path.join(os.tmpdir(), "omp-statusline-overflow-"));
+		const root = fs.mkdtempSync(path.join(os.tmpdir(), "airis-statusline-overflow-"));
 		const cwd = path.join(root, "cwdxyz");
 		fs.mkdirSync(cwd);
 		setProjectDir(cwd);
@@ -386,7 +386,7 @@ describe("overflow: path survives before model", () => {
 		};
 		component.updateSettings({
 			preset: "custom",
-			leftSegments: ["pi", "model", "path"],
+			leftSegments: ["airs", "model", "path"],
 			rightSegments: [],
 			separator: "none",
 			sessionAccent: false,
@@ -405,7 +405,7 @@ describe("overflow: path survives before model", () => {
 				path: pathOptions,
 			},
 		} as SegmentContext;
-		const pi = renderSegment("pi", ctx).content;
+		const airs = renderSegment("airs", ctx).content;
 		const model = renderSegment("model", ctx).content;
 		const minPath = renderSegment("path", {
 			...ctx,

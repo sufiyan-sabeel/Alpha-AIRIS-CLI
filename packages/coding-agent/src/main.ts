@@ -7,8 +7,8 @@
 import * as fsSync from "node:fs";
 import * as os from "node:os";
 import { createInterface } from "node:readline/promises";
-import { EventLoopKeepalive } from "@oh-my-pi/pi-agent-core";
-import type { ImageContent } from "@oh-my-pi/pi-ai";
+import { EventLoopKeepalive } from "@airis/airis-agent-core";
+import type { ImageContent } from "@airis/airis-ai";
 import {
 	$env,
 	directoryExists,
@@ -20,7 +20,7 @@ import {
 	setInteractiveHost,
 	setProjectDir,
 	VERSION,
-} from "@oh-my-pi/pi-utils";
+} from "@airis/airis-utils";
 import chalk from "chalk";
 import { reset as resetCapabilities } from "./capability";
 import { type Args, reportUnrecognizedFlags } from "./cli/args";
@@ -49,7 +49,7 @@ import {
 	preloadPluginRoots,
 	resolveActiveProjectRegistryPath,
 } from "./discovery/helpers";
-import { injectOmpExtensionCliRoots } from "./discovery/omp-extension-roots";
+import { injectAirisExtensionCliRoots } from "./discovery/airis-extension-roots";
 import { formatExtensionLoadNotifications } from "./extensibility/extensions/load-errors";
 import { ExtensionRunner } from "./extensibility/extensions/runner";
 import type { ExtensionUIContext } from "./extensibility/extensions/types";
@@ -112,7 +112,7 @@ async function checkForNewVersion(currentVersion: string): Promise<string | unde
 		return;
 	}
 	try {
-		const response = await fetch("https://registry.npmjs.org/@oh-my-pi/pi-coding-agent/latest", {
+		const response = await fetch("https://registry.npmjs.org/@airis/airis-coding-agent/latest", {
 			signal: withTimeoutSignal(5_000),
 		});
 		if (!response.ok) return undefined;
@@ -166,7 +166,7 @@ const RPC_BACKGROUND_DEFAULTED_SETTING_PATHS: SettingPath[] = [
 ];
 
 // Protocol-mode hosts opt into a small set of paths whose host-default we
-// re-apply at startup so embedders inherit OMP's neutral defaults instead of
+// re-apply at startup so embedders inherit AIRIS's neutral defaults instead of
 // the local user's globally-persisted preferences for interactive use. The
 // guard preserves any explicit configuration — caller `Settings.isolated`
 // overrides, project `.claude/settings.yml`, `--config` overlays, or global
@@ -497,7 +497,7 @@ async function runInteractiveMode(
 		}
 	}
 
-	// `omp join <link>`: dispatch through the same builtin path as a typed
+	// `airis join <link>`: dispatch through the same builtin path as a typed
 	// `/join` so collab guards and error rendering stay in one place.
 	if (joinLink !== undefined) {
 		await executeBuiltinSlashCommand(`/join ${joinLink}`, { ctx: mode });
@@ -727,7 +727,7 @@ export async function createSessionManager(
 		if (!match) {
 			throw new SessionResolutionError(
 				`Session "${forkSource}" not found.`,
-				"Run `omp --resume` without an argument to pick from recent sessions, or `omp` to start a new one.",
+				"Run `airis --resume` without an argument to pick from recent sessions, or `airis` to start a new one.",
 			);
 		}
 		return await SessionManager.forkFrom(match.session.path, cwd, parsed.sessionDir);
@@ -747,7 +747,7 @@ export async function createSessionManager(
 		if (!match) {
 			throw new SessionResolutionError(
 				`Session "${sessionArg}" not found.`,
-				"Run `omp --resume` without an argument to pick from recent sessions, or `omp` to start a new one.",
+				"Run `airis --resume` without an argument to pick from recent sessions, or `airis` to start a new one.",
 			);
 		}
 		if (match.scope === "local") {
@@ -807,7 +807,7 @@ export async function createSessionManager(
 
 /** Discover SYSTEM.md file if no CLI system prompt was provided */
 function discoverSystemPromptFile(): string | undefined {
-	// Check project-local first (.omp/SYSTEM.md, .pi/SYSTEM.md legacy)
+	// Check project-local first (.airis/SYSTEM.md, .pi/SYSTEM.md legacy)
 	const projectPath = findConfigFile("SYSTEM.md", { user: false });
 	if (projectPath) {
 		return projectPath;
@@ -1193,13 +1193,13 @@ export async function runRootCommand(
 	pluginPreloadPromise.catch(() => {});
 
 	// Register CLI-provided extension package paths (`--extension`, `--hook`) so
-	// the `omp-plugins` discovery provider can surface their `skills/`, `hooks/`,
+	// the `airis-plugins` discovery provider can surface their `skills/`, `hooks/`,
 	// `tools/`, `commands/`, `rules/`, `prompts/`, and `.mcp.json` sub-trees.
 	// `--no-extensions` short-circuits both the factory load and the sub-discovery.
 	if (!parsedArgs.noExtensions) {
 		const cliExtensions = [...(parsedArgs.extensions ?? []), ...(parsedArgs.hooks ?? [])];
 		if (cliExtensions.length > 0) {
-			injectOmpExtensionCliRoots(cliExtensions, home, getProjectDir());
+			injectAirisExtensionCliRoots(cliExtensions, home, getProjectDir());
 		}
 	}
 
@@ -1291,7 +1291,7 @@ export async function runRootCommand(
 	normalizeContinueSessionArgs(parsedArgs, rawArgs);
 
 	// Resolve native resume/fork flags or import one foreign transcript into a
-	// fresh persisted OMP session before constructing the AgentSession.
+	// fresh persisted AIRIS session before constructing the AgentSession.
 	let sessionManager: SessionManager | undefined;
 	let foreignSource: ForeignSessionSource | undefined;
 	try {
@@ -1554,7 +1554,7 @@ export async function runRootCommand(
 				process.stderr.write(`${chalk.yellow(`${message}\n`)}`);
 			}
 		}
-		// Fail fast on stale/typo flags (e.g. `omp --list-models`) now that we
+		// Fail fast on stale/typo flags (e.g. `airis --list-models`) now that we
 		// know the real extension flag set. Without this check the unrecognized
 		// token gets silently consumed and any following positional leaks as the
 		// initial prompt — kicking off a real LLM session, MCP connection, and
@@ -1583,7 +1583,7 @@ export async function runRootCommand(
 			isInteractive,
 			resuming: Boolean(parsedArgs.continue || parsedArgs.resume || parsedArgs.fork || foreignSource),
 			quiet: settingsInstance.get("startup.quiet"),
-			timing: Boolean($env.PI_TIMING),
+			timing: Boolean($env.AIRIS_TIMING),
 			stdinIsTTY: process.stdin.isTTY,
 			stdoutIsTTY: process.stdout.isTTY,
 		});
@@ -1664,7 +1664,7 @@ export async function runRootCommand(
 				notifs.push(modelScopeNotification);
 			}
 
-			if ($env.PI_TIMING) {
+			if ($env.AIRIS_TIMING) {
 				logger.printTimings();
 				if (logger.shouldExitAfterTimings()) {
 					process.exit(0);
@@ -1702,7 +1702,7 @@ export async function runRootCommand(
 				initialImages,
 				printThoughts: initialArgs.printThoughts,
 			});
-			if ($env.PI_TIMING) {
+			if ($env.AIRIS_TIMING) {
 				logger.printTimings();
 			}
 			await session.dispose();

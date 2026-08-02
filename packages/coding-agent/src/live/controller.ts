@@ -1,8 +1,8 @@
 import * as os from "node:os";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { AudioCapture } from "@oh-my-pi/pi-natives";
-import { prompt } from "@oh-my-pi/pi-utils";
+import type { AgentMessage } from "@airis/airis-agent-core";
+import type { AssistantMessage } from "@airis/airis-ai";
+import { AudioCapture } from "@airis/airis-natives";
+import { prompt } from "@airis/airis-utils";
 import type { AgentSession } from "../session/agent-session";
 import type { AgentSessionEvent } from "../session/agent-session-events";
 import { LIVE_DELEGATION_MESSAGE_TYPE } from "../session/messages";

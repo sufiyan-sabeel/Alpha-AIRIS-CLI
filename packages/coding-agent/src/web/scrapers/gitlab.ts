@@ -1,4 +1,4 @@
-import { tryParseJson } from "@oh-my-pi/pi-utils";
+import { tryParseJson } from "@airis/airis-utils";
 import {
 	buildResult,
 	formatIsoDate,

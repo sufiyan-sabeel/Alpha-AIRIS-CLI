@@ -1,8 +1,8 @@
 import { beforeAll, describe, expect, it, vi } from "bun:test";
-import type { UsageReport } from "@oh-my-pi/pi-ai";
-import { CommandController } from "@oh-my-pi/pi-coding-agent/modes/controllers/command-controller";
-import { getThemeByName, setThemeInstance } from "@oh-my-pi/pi-coding-agent/modes/theme/theme";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
+import type { UsageReport } from "@airis/airis-ai";
+import { CommandController } from "@airis/airis-coding-agent/modes/controllers/command-controller";
+import { getThemeByName, setThemeInstance } from "@airis/airis-coding-agent/modes/theme/theme";
+import type { InteractiveModeContext } from "@airis/airis-coding-agent/modes/types";
 
 interface RenderableBlock {
 	render(width: number): string[];

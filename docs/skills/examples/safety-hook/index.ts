@@ -1,5 +1,5 @@
-// @ts-nocheck — example file; install @oh-my-pi/pi-coding-agent before running
-import type { ExtensionAPI } from "@oh-my-pi/pi-coding-agent";
+// @ts-nocheck — example file; install @airis/airis-coding-agent before running
+import type { ExtensionAPI } from "@airis/airis-coding-agent";
 
 /**
  * Safety hook: blocks any bash tool call that contains "rm -rf /".
@@ -10,7 +10,7 @@ import type { ExtensionAPI } from "@oh-my-pi/pi-coding-agent";
  * The `reason` string is returned to the LLM as the tool error text so the
  * agent understands why execution was prevented.
  */
-export default function safetyHook(pi: ExtensionAPI) {
+export default function safetyHook(airs: ExtensionAPI) {
   pi.on("tool_call", async (event) => {
     if (event.toolName !== "bash") return;
 

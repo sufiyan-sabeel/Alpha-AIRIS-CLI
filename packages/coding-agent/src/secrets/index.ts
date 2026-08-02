@@ -1,7 +1,7 @@
 import * as crypto from "node:crypto";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { getAgentDir, isEnoent, logger } from "@oh-my-pi/pi-utils";
+import { getAgentDir, isEnoent, logger } from "@airis/airis-utils";
 import { YAML } from "bun";
 import { regexHasUnresolvableShortMatchFallback, type SecretEntry, sanitizeSecretFriendlyName } from "./obfuscator";
 import { compileSecretRegex } from "./regex";
@@ -16,7 +16,7 @@ const cachedPlaceholderKeys = new Map<string, string>();
  * sessions so persisted transcripts deobfuscate consistently. Defaults to
  * `getAgentDir()` — the same directory `createAgentSession()` passes as
  * `agentDir` — so a caller relying on the default reads/writes the identical
- * key file live sessions use, per `~/.omp/agent/secret-placeholder.key` in
+ * key file live sessions use, per `~/.airis/agent/secret-placeholder.key` in
  * docs/secrets.md.
  */
 export async function getSecretPlaceholderKey(keyDir: string = getAgentDir()): Promise<string> {
@@ -110,7 +110,7 @@ export {
  * Project-local entries override global entries with matching content.
  */
 export async function loadSecrets(cwd: string, agentDir: string): Promise<SecretEntry[]> {
-	const projectPath = path.join(cwd, ".omp", "secrets.yml");
+	const projectPath = path.join(cwd, ".airis", "secrets.yml");
 	const globalPath = path.join(agentDir, "secrets.yml");
 
 	const globalEntries = await loadSecretsFile(globalPath);

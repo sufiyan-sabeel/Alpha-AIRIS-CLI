@@ -2,11 +2,11 @@ import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { discoverAndLoadExtensions } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { getAgentDir, getPluginsDir, removeSyncWithRetries, setAgentDir, TempDir } from "@oh-my-pi/pi-utils";
+import { discoverAndLoadExtensions } from "@airis/airis-coding-agent/extensibility/extensions/loader";
+import { getAgentDir, getPluginsDir, removeSyncWithRetries, setAgentDir, TempDir } from "@airis/airis-utils";
 
-const currentPiCodingAgentPath = Bun.resolveSync("@oh-my-pi/pi-coding-agent", import.meta.dir);
-const currentPiExtensionsPath = Bun.resolveSync("@oh-my-pi/pi-coding-agent/extensibility/extensions", import.meta.dir);
+const currentAirisCodingAgentPath = Bun.resolveSync("@airis/airis-coding-agent", import.meta.dir);
+const currentPiExtensionsPath = Bun.resolveSync("@airis/airis-coding-agent/extensibility/extensions", import.meta.dir);
 
 describe("plugin extension discovery", () => {
 	let projectDir: TempDir;
@@ -16,14 +16,14 @@ describe("plugin extension discovery", () => {
 	const originalXdg = new Map<string, string | undefined>();
 
 	beforeEach(() => {
-		projectDir = TempDir.createSync("@pi-plugin-ext-");
+		projectDir = TempDir.createSync("@airs-plugin-ext-");
 		// Redirect the whole config root to an isolated temp home so plugin discovery
-		// resolves into `<tempHome>/.omp/plugins` on every platform. Two things are needed:
-		//  - mock os.homedir() so configRoot = `<tempHome>/.omp` (the previous
+		// resolves into `<tempHome>/.airis/plugins` on every platform. Two things are needed:
+		//  - mock os.homedir() so configRoot = `<tempHome>/.airis` (the previous
 		//    XDG_DATA_HOME redirect was a no-op on Windows, where these tests then wrote
-		//    into and rm'd the developer's real `~/.omp/plugins`);
+		//    into and rm'd the developer's real `~/.airis/plugins`);
 		//  - clear the XDG_* vars, because on Linux/macOS the resolver prefers
-		//    `$XDG_DATA_HOME/omp` over the home config root when that dir exists, so an
+		//    `$XDG_DATA_HOME/airis` over the home config root when that dir exists, so an
 		//    XDG-migrated environment would otherwise still resolve the real plugins dir.
 		tempHome = fs.mkdtempSync(path.join(os.tmpdir(), "pi-plugin-home-"));
 		for (const key of xdgVars) {
@@ -31,12 +31,12 @@ describe("plugin extension discovery", () => {
 			delete process.env[key];
 		}
 		spyOn(os, "homedir").mockReturnValue(tempHome);
-		setAgentDir(path.join(tempHome, ".omp", "agent"));
+		setAgentDir(path.join(tempHome, ".airis", "agent"));
 
 		const pluginsDir = getPluginsDir();
 		// Safety gate: never write fixtures outside the temp home. This is the exact
 		// failure mode being fixed — a resolver/mock regression that resolves to the real
-		// ~/.omp must fail loudly here instead of clobbering the developer's plugins.
+		// ~/.airis must fail loudly here instead of clobbering the developer's plugins.
 		if (!pluginsDir.startsWith(tempHome + path.sep)) {
 			throw new Error(`plugin isolation failed: getPluginsDir() resolved outside the temp home: ${pluginsDir}`);
 		}
@@ -45,7 +45,7 @@ describe("plugin extension discovery", () => {
 		fs.writeFileSync(
 			path.join(pluginsDir, "package.json"),
 			JSON.stringify({
-				name: "omp-plugins",
+				name: "airis-plugins",
 				private: true,
 				dependencies: {
 					"@demo/plugin": "1.0.0",
@@ -57,7 +57,7 @@ describe("plugin extension discovery", () => {
 			JSON.stringify({
 				name: "@demo/plugin",
 				version: "1.0.0",
-				omp: {
+				airis: {
 					extensions: ["./dist/extension.ts"],
 				},
 			}),
@@ -95,26 +95,26 @@ describe("plugin extension discovery", () => {
 
 	it("loads installed legacy Pi plugin extensions from Windows drive-letter paths", async () => {
 		const pluginsDir = getPluginsDir();
-		const pluginDir = path.join(pluginsDir, "node_modules", "legacy-pi-plugin");
+		const pluginDir = path.join(pluginsDir, "node_modules", "legacy-airis-plugin");
 		const extensionPath = path.join(pluginDir, "dist", "extension.ts");
 		removeSyncWithRetries(path.join(pluginsDir, "node_modules"));
 		fs.mkdirSync(path.dirname(extensionPath), { recursive: true });
 		fs.writeFileSync(
 			path.join(pluginsDir, "package.json"),
 			JSON.stringify({
-				name: "omp-plugins",
+				name: "airis-plugins",
 				private: true,
 				dependencies: {
-					"legacy-pi-plugin": "1.0.0",
+					"legacy-airis-plugin": "1.0.0",
 				},
 			}),
 		);
 		fs.writeFileSync(
 			path.join(pluginDir, "package.json"),
 			JSON.stringify({
-				name: "legacy-pi-plugin",
+				name: "legacy-airis-plugin",
 				version: "1.0.0",
-				pi: {
+				airs: {
 					extensions: ["./dist/extension.ts"],
 				},
 			}),
@@ -126,7 +126,7 @@ describe("plugin extension discovery", () => {
 				'if (false) import("./optional-missing.js");',
 				'import { isToolCallEventType as legacyRoot } from "@mariozechner/pi-coding-agent";',
 				'import { isToolCallEventType as legacyExtensions } from "@mariozechner/pi-coding-agent/extensibility/extensions";',
-				`import { isToolCallEventType as modernRoot } from ${JSON.stringify(currentPiCodingAgentPath)};`,
+				`import { isToolCallEventType as modernRoot } from ${JSON.stringify(currentAirisCodingAgentPath)};`,
 				`import { isToolCallEventType as modernExtensions } from ${JSON.stringify(currentPiExtensionsPath)};`,
 				"",
 				'if (legacyRoot !== modernRoot) throw new Error("legacy root import did not remap");',
@@ -136,7 +136,7 @@ describe("plugin extension discovery", () => {
 				"export default function(pi) {",
 				"\tconst { Type } = pi.typebox;",
 				"\tpi.registerTool({",
-				'\t\tname: "legacy-pi-ext",',
+				'\t\tname: "legacy-airis-ext",',
 				'\t\tdescription: "Legacy Pi extension smoke test",',
 				"\t\tparameters: Type.Object({}),",
 				'\t\texecute: async () => ({ content: [{ type: "text", text: "ok" }] }),',
@@ -153,7 +153,7 @@ describe("plugin extension discovery", () => {
 		}
 		expect(result.errors).toHaveLength(0);
 		expect(extension).toBeDefined();
-		expect(extension?.tools.has("legacy-pi-ext")).toBe(true);
+		expect(extension?.tools.has("legacy-airis-ext")).toBe(true);
 	});
 
 	it("loads installed legacy Pi plugin extensions that use package imports", async () => {
@@ -165,7 +165,7 @@ describe("plugin extension discovery", () => {
 		fs.writeFileSync(
 			path.join(pluginsDir, "package.json"),
 			JSON.stringify({
-				name: "omp-plugins",
+				name: "airis-plugins",
 				private: true,
 				dependencies: {
 					"package-import-plugin": "1.0.0",
@@ -180,7 +180,7 @@ describe("plugin extension discovery", () => {
 				imports: {
 					"#src/*": "./src/*",
 				},
-				pi: {
+				airs: {
 					extensions: ["./src/index.ts"],
 				},
 			}),
@@ -224,7 +224,7 @@ describe("plugin extension discovery", () => {
 		fs.writeFileSync(
 			path.join(pluginsDir, "package.json"),
 			JSON.stringify({
-				name: "omp-plugins",
+				name: "airis-plugins",
 				private: true,
 				dependencies: {
 					"conditional-import-plugin": "1.0.0",
@@ -242,7 +242,7 @@ describe("plugin extension discovery", () => {
 						import: "./import/*",
 					},
 				},
-				pi: {
+				airs: {
 					extensions: ["./src/index.ts"],
 				},
 			}),
@@ -285,7 +285,7 @@ describe("plugin extension discovery", () => {
 		fs.writeFileSync(
 			path.join(pluginsDir, "package.json"),
 			JSON.stringify({
-				name: "omp-plugins",
+				name: "airis-plugins",
 				private: true,
 				dependencies: {
 					"json-import-plugin": "1.0.0",
@@ -300,7 +300,7 @@ describe("plugin extension discovery", () => {
 				imports: {
 					"#schema": "./src/schema.json",
 				},
-				pi: {
+				airs: {
 					extensions: ["./src/index.ts"],
 				},
 			}),
@@ -334,7 +334,7 @@ describe("plugin extension discovery", () => {
 		fs.writeFileSync(
 			path.join(pluginsDir, "package.json"),
 			JSON.stringify({
-				name: "omp-plugins",
+				name: "airis-plugins",
 				private: true,
 				dependencies: {
 					"null-exact-import-plugin": "1.0.0",
@@ -350,7 +350,7 @@ describe("plugin extension discovery", () => {
 					"#src/internal": null,
 					"#src/*": "./src/*",
 				},
-				pi: {
+				airs: {
 					extensions: ["./src/index.ts"],
 				},
 			}),
@@ -384,7 +384,7 @@ describe("plugin extension discovery", () => {
 		fs.writeFileSync(
 			path.join(pluginsDir, "package.json"),
 			JSON.stringify({
-				name: "omp-plugins",
+				name: "airis-plugins",
 				private: true,
 				dependencies: {
 					"null-conditional-import-plugin": "1.0.0",
@@ -402,7 +402,7 @@ describe("plugin extension discovery", () => {
 						default: "./src/blocked.ts",
 					},
 				},
-				pi: {
+				airs: {
 					extensions: ["./src/index.ts"],
 				},
 			}),
@@ -436,7 +436,7 @@ describe("plugin extension discovery", () => {
 		fs.writeFileSync(
 			path.join(pluginsDir, "package.json"),
 			JSON.stringify({
-				name: "omp-plugins",
+				name: "airis-plugins",
 				private: true,
 				dependencies: {
 					"side-effect-plugin": "1.0.0",
@@ -451,7 +451,7 @@ describe("plugin extension discovery", () => {
 				imports: {
 					"#src/*": "./src/*",
 				},
-				pi: {
+				airs: {
 					extensions: ["./src/index.ts"],
 				},
 			}),
@@ -462,7 +462,7 @@ describe("plugin extension discovery", () => {
 				// Side-effect imports — no `from`, no dynamic `import()`. The
 				// regex matchers must walk and rewrite both shapes so the legacy
 				// `@earendil-works` import inside `register.ts` resolves to the
-				// host `@oh-my-pi` package.
+				// host `@alpha-airis-cli` package.
 				'import "#src/register";',
 				'import "./marker";',
 				"",
@@ -516,7 +516,7 @@ describe("plugin extension discovery", () => {
 		fs.writeFileSync(
 			path.join(pluginsDir, "package.json"),
 			JSON.stringify({
-				name: "omp-plugins",
+				name: "airis-plugins",
 				private: true,
 				dependencies: {
 					"dir-entry-plugin": "1.0.0",
@@ -528,7 +528,7 @@ describe("plugin extension discovery", () => {
 			JSON.stringify({
 				name: "dir-entry-plugin",
 				version: "1.0.0",
-				pi: {
+				airs: {
 					// Directory entry — loader must resolve to the directory's index file.
 					extensions: [".pi/extensions/dir-entry"],
 				},
@@ -562,7 +562,7 @@ describe("plugin extension discovery", () => {
 		fs.writeFileSync(
 			path.join(pluginsDir, "package.json"),
 			JSON.stringify({
-				name: "omp-plugins",
+				name: "airis-plugins",
 				private: true,
 				dependencies: {
 					"subdir-entry-plugin": "1.0.0",
@@ -574,7 +574,7 @@ describe("plugin extension discovery", () => {
 			JSON.stringify({
 				name: "subdir-entry-plugin",
 				version: "1.0.0",
-				pi: {
+				airs: {
 					// Directory entry with no direct index — the loader must scan one
 					// level and pick up `extensions/<name>/index.ts` (pi package layout).
 					extensions: ["./extensions"],
@@ -609,7 +609,7 @@ describe("plugin extension discovery", () => {
 		fs.writeFileSync(
 			path.join(pluginsDir, "package.json"),
 			JSON.stringify({
-				name: "omp-plugins",
+				name: "airis-plugins",
 				private: true,
 				dependencies: {
 					"nested-manifest-plugin": "1.0.0",
@@ -621,14 +621,14 @@ describe("plugin extension discovery", () => {
 			JSON.stringify({
 				name: "nested-manifest-plugin",
 				version: "1.0.0",
-				pi: { extensions: ["./extensions"] },
+				airs: { extensions: ["./extensions"] },
 			}),
 		);
 		// Child package declares its real entry via its own manifest; the index.ts
 		// is a decoy that must NOT win (manifest takes precedence, like the -e scanner).
 		fs.writeFileSync(
 			path.join(featureDir, "package.json"),
-			JSON.stringify({ name: "feature-ext", version: "1.0.0", omp: { extensions: ["./dist/real-ext.ts"] } }),
+			JSON.stringify({ name: "feature-ext", version: "1.0.0", airis: { extensions: ["./dist/real-ext.ts"] } }),
 		);
 		fs.writeFileSync(
 			realEntry,
@@ -667,7 +667,7 @@ describe("plugin extension discovery", () => {
 		fs.writeFileSync(
 			path.join(pluginsDir, "package.json"),
 			JSON.stringify({
-				name: "omp-plugins",
+				name: "airis-plugins",
 				private: true,
 				dependencies: {
 					"missing-decl-plugin": "1.0.0",
@@ -679,14 +679,14 @@ describe("plugin extension discovery", () => {
 			JSON.stringify({
 				name: "missing-decl-plugin",
 				version: "1.0.0",
-				pi: { extensions: ["./extensions"] },
+				airs: { extensions: ["./extensions"] },
 			}),
 		);
 		// The child manifest is authoritative: it declares ./dist/real-ext.ts, which does
 		// not exist (e.g. unbuilt). The leftover index.ts must NOT be loaded as a fallback.
 		fs.writeFileSync(
 			path.join(featureDir, "package.json"),
-			JSON.stringify({ name: "feature-ext", version: "1.0.0", omp: { extensions: ["./dist/real-ext.ts"] } }),
+			JSON.stringify({ name: "feature-ext", version: "1.0.0", airis: { extensions: ["./dist/real-ext.ts"] } }),
 		);
 		fs.writeFileSync(
 			path.join(featureDir, "index.ts"),
@@ -713,7 +713,7 @@ describe("plugin extension discovery", () => {
 		fs.writeFileSync(
 			path.join(pluginsDir, "package.json"),
 			JSON.stringify({
-				name: "omp-plugins",
+				name: "airis-plugins",
 				private: true,
 				dependencies: {
 					"dts-plugin": "1.0.0",
@@ -725,7 +725,7 @@ describe("plugin extension discovery", () => {
 			JSON.stringify({
 				name: "dts-plugin",
 				version: "1.0.0",
-				omp: { extensions: ["./extensions"] },
+				airis: { extensions: ["./extensions"] },
 			}),
 		);
 		fs.writeFileSync(
@@ -735,7 +735,7 @@ describe("plugin extension discovery", () => {
 			),
 		);
 		// A sibling declaration file must be ignored — importing it would fail.
-		fs.writeFileSync(path.join(extensionsDir, "ext.d.ts"), "export default function (pi: unknown): void;\n");
+		fs.writeFileSync(path.join(extensionsDir, "ext.d.ts"), "export default function (airs: unknown): void;\n");
 
 		const result = await discoverAndLoadExtensions([], projectDir.path());
 		const extension = result.extensions.find(ext => ext.path === moduleEntry);

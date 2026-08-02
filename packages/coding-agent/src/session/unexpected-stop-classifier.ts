@@ -1,5 +1,5 @@
-import { type AssistantMessage, completeSimple } from "@oh-my-pi/pi-ai";
-import { logger, prompt } from "@oh-my-pi/pi-utils";
+import { type AssistantMessage, completeSimple } from "@airis/airis-ai";
+import { logger, prompt } from "@airis/airis-utils";
 
 import type { ModelRegistry } from "../config/model-registry";
 import { resolveRoleSelection } from "../config/model-resolver";

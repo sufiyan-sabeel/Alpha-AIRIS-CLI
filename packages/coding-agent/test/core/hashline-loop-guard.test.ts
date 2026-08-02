@@ -2,17 +2,17 @@ import { beforeAll, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import { resetSettingsForTest, Settings } from "@airis/airis-coding-agent/config/settings";
 import {
 	type ExecuteHashlineSingleOptions,
 	executeHashlineSingle,
 	formatHashlineHeader,
 	getFileSnapshotStore as getFileReadCache,
-} from "@oh-my-pi/pi-coding-agent/edit";
-import { NOOP_HARD_LIMIT } from "@oh-my-pi/pi-coding-agent/edit/hashline/noop-loop-guard";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { ToolError } from "@oh-my-pi/pi-coding-agent/tools/tool-errors";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+} from "@airis/airis-coding-agent/edit";
+import { NOOP_HARD_LIMIT } from "@airis/airis-coding-agent/edit/hashline/noop-loop-guard";
+import type { ToolSession } from "@airis/airis-coding-agent/tools";
+import { ToolError } from "@airis/airis-coding-agent/tools/tool-errors";
+import { removeWithRetries } from "@airis/airis-utils";
 
 beforeAll(async () => {
 	resetSettingsForTest();

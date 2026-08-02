@@ -2,7 +2,7 @@
  * OpenTelemetry instrumentation for the agent loop.
  *
  * Implements the OpenTelemetry GenAI semantic conventions
- * (https://opentelemetry.io/docs/specs/semconv/gen-ai/) plus `pi.gen_ai.*`
+ * (https://opentelemetry.io/docs/specs/semconv/gen-ai/) plus `airs.gen_ai.*`
  * extension attributes for run summaries, dashboard summaries, and cost hints
  * that are useful to downstream observability UIs.
  *
@@ -36,7 +36,7 @@ import {
 	shouldSendServiceTier,
 	type ToolChoice,
 	type Usage,
-} from "@oh-my-pi/pi-ai";
+} from "@airis/airis-ai";
 import {
 	type Attributes,
 	type AttributeValue,
@@ -52,7 +52,7 @@ import type { AgentTool } from "./types";
 import { EventLoopKeepalive } from "./utils/yield";
 
 /** Default tracer name. Override via {@link AgentTelemetryConfig.tracerName}. */
-export const DEFAULT_TRACER_NAME = "@oh-my-pi/pi-agent-core";
+export const DEFAULT_TRACER_NAME = "@airis/airis-agent-core";
 
 /** Env var matching the OTEL semconv content-capture toggle. */
 const CONTENT_CAPTURE_ENV = "OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT";
@@ -124,41 +124,41 @@ export const enum OpenAIAttr {
 
 /** Project extension attributes. Kept out of the reserved `gen_ai.*` namespace. */
 export const enum PiGenAIAttr {
-	AgentStepNumber = "pi.gen_ai.agent.step.number",
-	AgentStepCount = "pi.gen_ai.agent.step.count",
-	RequestReasoningEffort = "pi.gen_ai.request.reasoning.effort",
-	RequestToolChoice = "pi.gen_ai.request.tool.choice",
-	RequestAvailableTools = "pi.gen_ai.request.available_tools",
-	RequestMessages = "pi.gen_ai.request.messages",
-	ResponseText = "pi.gen_ai.response.text",
-	ResponseToolCalls = "pi.gen_ai.response.tool_calls",
-	ResponseUpstreamProvider = "pi.gen_ai.response.upstream_provider",
-	UsageTotalTokens = "pi.gen_ai.usage.total_tokens",
-	UsageServerSideTools = "pi.gen_ai.usage.server_tool_requests",
-	CostEstimatedUsd = "pi.gen_ai.cost.estimated_usd",
-	CostInputUsd = "pi.gen_ai.cost.input_usd",
-	CostOutputUsd = "pi.gen_ai.cost.output_usd",
-	CostUnavailableReason = "pi.gen_ai.cost.unavailable_reason",
-	ToolStatus = "pi.gen_ai.tool.status",
-	ToolCallIntent = "pi.gen_ai.tool.call.intent",
-	HandoffFromAgentName = "pi.gen_ai.handoff.from_agent.name",
-	HandoffFromAgentId = "pi.gen_ai.handoff.from_agent.id",
-	HandoffToAgentName = "pi.gen_ai.handoff.to_agent.name",
-	HandoffToAgentId = "pi.gen_ai.handoff.to_agent.id",
+	AgentStepNumber = "airs.gen_ai.agent.step.number",
+	AgentStepCount = "airs.gen_ai.agent.step.count",
+	RequestReasoningEffort = "airs.gen_ai.request.reasoning.effort",
+	RequestToolChoice = "airs.gen_ai.request.tool.choice",
+	RequestAvailableTools = "airs.gen_ai.request.available_tools",
+	RequestMessages = "airs.gen_ai.request.messages",
+	ResponseText = "airs.gen_ai.response.text",
+	ResponseToolCalls = "airs.gen_ai.response.tool_calls",
+	ResponseUpstreamProvider = "airs.gen_ai.response.upstream_provider",
+	UsageTotalTokens = "airs.gen_ai.usage.total_tokens",
+	UsageServerSideTools = "airs.gen_ai.usage.server_tool_requests",
+	CostEstimatedUsd = "airs.gen_ai.cost.estimated_usd",
+	CostInputUsd = "airs.gen_ai.cost.input_usd",
+	CostOutputUsd = "airs.gen_ai.cost.output_usd",
+	CostUnavailableReason = "airs.gen_ai.cost.unavailable_reason",
+	ToolStatus = "airs.gen_ai.tool.status",
+	ToolCallIntent = "airs.gen_ai.tool.call.intent",
+	HandoffFromAgentName = "airs.gen_ai.handoff.from_agent.name",
+	HandoffFromAgentId = "airs.gen_ai.handoff.from_agent.id",
+	HandoffToAgentName = "airs.gen_ai.handoff.to_agent.name",
+	HandoffToAgentId = "airs.gen_ai.handoff.to_agent.id",
 	// Marks chat spans emitted outside the agent loop (compaction, handoff, branch
 	// summary, image inspection, …). Lets dashboards split oneshot cost / latency
 	// from main-turn cost without overloading the semconv `gen_ai.operation.name`.
-	OneshotKind = "pi.gen_ai.oneshot.kind",
+	OneshotKind = "airs.gen_ai.oneshot.kind",
 	// Gateway / proxy (LiteLLM, Helicone, Portkey, …) — populated when a known
 	// gateway header pattern is detected on the upstream response. The base
 	// `gen_ai.provider.name` continues to track the *upstream* provider (e.g.
 	// `anthropic`) that the gateway routed to.
-	GatewayName = "pi.gen_ai.gateway.name",
-	GatewayEndpoint = "pi.gen_ai.gateway.endpoint",
-	GatewayCallId = "pi.gen_ai.gateway.call_id",
-	GatewayRoutedTo = "pi.gen_ai.gateway.routed_to",
+	GatewayName = "airs.gen_ai.gateway.name",
+	GatewayEndpoint = "airs.gen_ai.gateway.endpoint",
+	GatewayCallId = "airs.gen_ai.gateway.call_id",
+	GatewayRoutedTo = "airs.gen_ai.gateway.routed_to",
 	/** Cloudflare AI Gateway response-cache status (`cf-aig-cache-status`), never prompt-cache. */
-	GatewayResponseCacheStatus = "pi.gen_ai.gateway.response_cache.status",
+	GatewayResponseCacheStatus = "airs.gen_ai.gateway.response_cache.status",
 }
 
 /** GenAI operation names — values for {@link GenAIAttr.OperationName}. */
@@ -202,9 +202,9 @@ export interface CostEstimatorContext {
 
 /**
  * Cost estimator result.
- *   { usd: number }                — cost is known; emitted as pi.gen_ai.cost.estimated_usd
+ *   { usd: number }                — cost is known; emitted as airs.gen_ai.cost.estimated_usd
  *   { unavailable: string }        — cost is intentionally unknown; emitted as
- *                                    pi.gen_ai.cost.unavailable_reason
+ *                                    airs.gen_ai.cost.unavailable_reason
  *   undefined                      — no opinion; nothing emitted
  */
 export type CostEstimate =
@@ -251,7 +251,7 @@ export interface ChatUsageEvent {
 	 *
 	 * Use this to reconcile gateway-issued ids (e.g. `x-litellm-call-id`) with
 	 * downstream billing / spend dashboards. Known gateway patterns are also
-	 * auto-stamped on the chat span as `pi.gen_ai.gateway.*` attributes.
+	 * auto-stamped on the chat span as `airs.gen_ai.gateway.*` attributes.
 	 */
 	readonly headers: Readonly<Record<string, string>> | undefined;
 }
@@ -629,14 +629,14 @@ export function recordTelemetryWarning(telemetry: AgentTelemetry | undefined, wa
 function emitTelemetryWarning(telemetry: AgentTelemetry | undefined, warning: AgentTelemetryWarning): void {
 	const hook = telemetry?.config.onTelemetryWarning;
 	if (!hook) {
-		if (warning.error === undefined) console.warn(`[pi-agent] ${warning.message}`);
-		else console.warn(`[pi-agent] ${warning.message}`, warning.error);
+		if (warning.error === undefined) console.warn(`[airs-agent] ${warning.message}`);
+		else console.warn(`[airs-agent] ${warning.message}`, warning.error);
 		return;
 	}
 	try {
 		hook(warning);
 	} catch (err) {
-		console.warn("[pi-agent] onTelemetryWarning threw; swallowing:", err);
+		console.warn("[airs-agent] onTelemetryWarning threw; swallowing:", err);
 	}
 }
 
@@ -1645,7 +1645,7 @@ export interface InstrumentedChatSpanOptions {
 	/** Step index recorded on the span; defaults to `-1` for non-loop calls. */
 	readonly stepNumber?: number;
 	/**
-	 * Tag stamped onto `pi.gen_ai.oneshot.kind`. Values used by the agent:
+	 * Tag stamped onto `airs.gen_ai.oneshot.kind`. Values used by the agent:
 	 * `compaction_summary`, `compaction_short_summary`, `compaction_turn_prefix`,
 	 * `handoff`, `branch_summary`, `inspect_image`. Free-form to allow callers
 	 * outside this package to add new kinds without bumping the helper.
@@ -1655,7 +1655,7 @@ export interface InstrumentedChatSpanOptions {
 	readonly attributes?: Attributes;
 	/**
 	 * Override for the underlying {@link completeSimple} call. Defaults to
-	 * `completeSimple` from `@oh-my-pi/pi-ai`. Use to retain a test injection
+	 * `completeSimple` from `@airis/airis-ai`. Use to retain a test injection
 	 * seam while still going through the chat-span lifecycle.
 	 */
 	readonly completeImpl?: <TApi extends Api>(
@@ -1938,33 +1938,33 @@ export function fireOnRunEnd(telemetry: AgentTelemetry, summary: AgentRunSummary
 	}
 }
 
-/** Aggregate `pi.gen_ai.agent.*` attributes stamped on the `invoke_agent` span. */
+/** Aggregate `airs.gen_ai.agent.*` attributes stamped on the `invoke_agent` span. */
 export const enum PiGenAIAggregateAttr {
-	ChatsCount = "pi.gen_ai.agent.chats.count",
-	ChatsTotalLatencyMs = "pi.gen_ai.agent.chats.total_latency_ms",
-	ChatsStopReasonPrefix = "pi.gen_ai.agent.chats.stop_reason.",
-	ToolsCount = "pi.gen_ai.agent.tools.count",
-	ToolsOkCount = "pi.gen_ai.agent.tools.ok.count",
-	ToolsErrorCount = "pi.gen_ai.agent.tools.error.count",
-	ToolsSkippedCount = "pi.gen_ai.agent.tools.skipped.count",
-	ToolsBlockedCount = "pi.gen_ai.agent.tools.blocked.count",
-	ToolsTimeoutCount = "pi.gen_ai.agent.tools.timeout.count",
-	ToolsAbortedCount = "pi.gen_ai.agent.tools.aborted.count",
-	ToolsTotalLatencyMs = "pi.gen_ai.agent.tools.total_latency_ms",
-	ToolsInvoked = "pi.gen_ai.agent.tools.invoked",
-	ToolsAvailable = "pi.gen_ai.agent.tools.available",
-	ToolsUnused = "pi.gen_ai.agent.tools.unused",
-	UsageInputTokensTotal = "pi.gen_ai.agent.usage.input_tokens.total",
-	UsageOutputTokensTotal = "pi.gen_ai.agent.usage.output_tokens.total",
-	UsageCacheReadInputTokensTotal = "pi.gen_ai.agent.usage.cache_read.input_tokens.total",
-	UsageCacheCreationInputTokensTotal = "pi.gen_ai.agent.usage.cache_creation.input_tokens.total",
-	UsageReasoningOutputTokensTotal = "pi.gen_ai.agent.usage.reasoning.output_tokens.total",
-	UsageTotalTokensTotal = "pi.gen_ai.agent.usage.total_tokens.total",
-	CostEstimatedUsdTotal = "pi.gen_ai.agent.cost.estimated_usd.total",
-	ErrorsCount = "pi.gen_ai.agent.errors.count",
+	ChatsCount = "airs.gen_ai.agent.chats.count",
+	ChatsTotalLatencyMs = "airs.gen_ai.agent.chats.total_latency_ms",
+	ChatsStopReasonPrefix = "airs.gen_ai.agent.chats.stop_reason.",
+	ToolsCount = "airs.gen_ai.agent.tools.count",
+	ToolsOkCount = "airs.gen_ai.agent.tools.ok.count",
+	ToolsErrorCount = "airs.gen_ai.agent.tools.error.count",
+	ToolsSkippedCount = "airs.gen_ai.agent.tools.skipped.count",
+	ToolsBlockedCount = "airs.gen_ai.agent.tools.blocked.count",
+	ToolsTimeoutCount = "airs.gen_ai.agent.tools.timeout.count",
+	ToolsAbortedCount = "airs.gen_ai.agent.tools.aborted.count",
+	ToolsTotalLatencyMs = "airs.gen_ai.agent.tools.total_latency_ms",
+	ToolsInvoked = "airs.gen_ai.agent.tools.invoked",
+	ToolsAvailable = "airs.gen_ai.agent.tools.available",
+	ToolsUnused = "airs.gen_ai.agent.tools.unused",
+	UsageInputTokensTotal = "airs.gen_ai.agent.usage.input_tokens.total",
+	UsageOutputTokensTotal = "airs.gen_ai.agent.usage.output_tokens.total",
+	UsageCacheReadInputTokensTotal = "airs.gen_ai.agent.usage.cache_read.input_tokens.total",
+	UsageCacheCreationInputTokensTotal = "airs.gen_ai.agent.usage.cache_creation.input_tokens.total",
+	UsageReasoningOutputTokensTotal = "airs.gen_ai.agent.usage.reasoning.output_tokens.total",
+	UsageTotalTokensTotal = "airs.gen_ai.agent.usage.total_tokens.total",
+	CostEstimatedUsdTotal = "airs.gen_ai.agent.cost.estimated_usd.total",
+	ErrorsCount = "airs.gen_ai.agent.errors.count",
 }
 
-/** Stamp the aggregate `pi.gen_ai.agent.*` attributes on the given span. */
+/** Stamp the aggregate `airs.gen_ai.agent.*` attributes on the given span. */
 function applyAggregateAttributes(span: Span, summary: AgentRunSummary, coverage: AgentRunCoverage): void {
 	span.setAttribute(PiGenAIAggregateAttr.ChatsCount, summary.chats.total);
 	span.setAttribute(PiGenAIAggregateAttr.ChatsTotalLatencyMs, summary.chats.totalLatencyMs);

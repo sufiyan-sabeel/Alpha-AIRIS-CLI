@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 /**
- * Canonical Bazel driver for the shipping pi_natives addons.
+ * Canonical Bazel driver for the shipping airis_natives addons.
  *
  * Usage: bun scripts/bazel-natives.ts <target>... [--dest <dir>] [--source <dir>] [-- <extra bazel args>]
  *
@@ -30,14 +30,14 @@ const repoRoot = path.join(import.meta.dir, "..");
 
 /** //:natives-<name> → canonical addon filename (mirrors _ADDONS in BUILD.bazel). */
 export const ADDON_OUTPUTS: Record<string, string> = {
-	"linux-x64-baseline": "pi_natives.linux-x64-baseline.node",
-	"linux-x64-modern": "pi_natives.linux-x64-modern.node",
-	"linux-arm64": "pi_natives.linux-arm64.node",
-	"linux-musl-x64-baseline": "pi_natives.linux-x64-baseline.node",
-	"linux-musl-arm64": "pi_natives.linux-arm64.node",
-	"darwin-x64-baseline": "pi_natives.darwin-x64-baseline.node",
-	"darwin-arm64": "pi_natives.darwin-arm64.node",
-	"win32-x64-baseline": "pi_natives.win32-x64-baseline.node",
+	"linux-x64-baseline": "airis_natives.linux-x64-baseline.node",
+	"linux-x64-modern": "airis_natives.linux-x64-modern.node",
+	"linux-arm64": "airis_natives.linux-arm64.node",
+	"linux-musl-x64-baseline": "airis_natives.linux-x64-baseline.node",
+	"linux-musl-arm64": "airis_natives.linux-arm64.node",
+	"darwin-x64-baseline": "airis_natives.darwin-x64-baseline.node",
+	"darwin-arm64": "airis_natives.darwin-arm64.node",
+	"win32-x64-baseline": "airis_natives.win32-x64-baseline.node",
 };
 
 /** Aggregate filegroups → their member addon targets (mirrors BUILD.bazel). */
@@ -70,7 +70,7 @@ export function hostTargetName(host: HostInfo): string {
 		if (host.arch === "x64") return host.avx2 ? "linux-x64-modern" : "linux-x64-baseline";
 	}
 	if (host.platform === "win32" && host.arch === "x64") return "win32-x64-baseline";
-	throw new Error(`No pi_natives addon target for host ${host.platform}-${host.arch}`);
+	throw new Error(`No airis_natives addon target for host ${host.platform}-${host.arch}`);
 }
 
 /** Expand pseudo-targets and map names to //:natives-* labels (deduplicated). */
@@ -230,7 +230,7 @@ async function main(): Promise<void> {
 		const bazel = resolveBazelBinary();
 		// CI hands cache wiring (remote or disk) through a bazelrc fragment so
 		// endpoint composition stays in .github/actions/bazel-cache.
-		const rcPath = Bun.env.OMP_BAZEL_RC?.trim();
+		const rcPath = Bun.env.AIRIS_BAZEL_RC?.trim();
 		const startupArgs = rcPath ? [`--bazelrc=${rcPath}`] : [];
 
 		const buildArgs = [...startupArgs, "build", ...options.bazelArgs, "--", ...labels];

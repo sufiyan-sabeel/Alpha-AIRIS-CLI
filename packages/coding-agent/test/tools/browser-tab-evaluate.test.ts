@@ -1,9 +1,9 @@
 import { describe, expect, it } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import { BrowserTool } from "@oh-my-pi/pi-coding-agent/tools/browser";
-import { ensureChromiumExecutable } from "@oh-my-pi/pi-coding-agent/tools/browser/launch";
-import { getTabsMapForTest } from "@oh-my-pi/pi-coding-agent/tools/browser/tab-supervisor";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import type { ToolSession } from "@airis/airis-coding-agent/sdk";
+import { BrowserTool } from "@airis/airis-coding-agent/tools/browser";
+import { ensureChromiumExecutable } from "@airis/airis-coding-agent/tools/browser/launch";
+import { getTabsMapForTest } from "@airis/airis-coding-agent/tools/browser/tab-supervisor";
 
 function makeSession(): ToolSession {
 	return {
@@ -44,12 +44,12 @@ describe.skipIf(!CHROMIUM_AVAILABLE)("browser tab evaluation", () => {
 			await tool.execute("open", {
 				action: "open",
 				name,
-				url: "data:text/html,<script>globalThis.__ompMainWorld = 42</script>",
+				url: "data:text/html,<script>globalThis.__airisMainWorld = 42</script>",
 			});
 			const result = await tool.execute("run", {
 				action: "run",
 				name,
-				code: "return await tab.evaluate(() => globalThis.__ompMainWorld);",
+				code: "return await tab.evaluate(() => globalThis.__airisMainWorld);",
 			});
 
 			expect(result.content).toEqual([{ type: "text", text: "42" }]);

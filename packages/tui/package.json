@@ -1,21 +1,21 @@
 {
   "type": "module",
-  "name": "@oh-my-pi/pi-tui",
+  "name": "@airis/airis-tui",
   "version": "17.2.1",
   "description": "Terminal User Interface library with differential rendering for efficient text-based applications",
-  "homepage": "https://omp.sh",
-  "author": "Can Boluk",
+  "homepage": "https://airis.sh",
+  "author": "Umaiz Sufiyan",
   "contributors": [
     "Mario Zechner"
   ],
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/can1357/oh-my-pi.git",
+    "url": "git+https://github.com/sufiyan-sabeel/Alpha-AIRIS-CLI.git",
     "directory": "packages/tui"
   },
   "bugs": {
-    "url": "https://github.com/can1357/oh-my-pi/issues"
+    "url": "https://github.com/sufiyan-sabeel/Alpha-AIRIS-CLI/issues"
   },
   "keywords": [
     "tui",
@@ -37,8 +37,8 @@
     "fmt": "biome format --write ."
   },
   "dependencies": {
-    "@oh-my-pi/pi-natives": "catalog:",
-    "@oh-my-pi/pi-utils": "catalog:",
+    "@airis/airis-natives": "catalog:",
+    "@airis/airis-utils": "catalog:",
     "lru-cache": "catalog:",
     "marked": "catalog:"
   },

@@ -2,24 +2,24 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { InternalUrlRouter } from "@oh-my-pi/pi-coding-agent/internal-urls";
-import { getMemoryRoot } from "@oh-my-pi/pi-coding-agent/memories";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import { InternalUrlRouter } from "@airis/airis-coding-agent/internal-urls";
+import { getMemoryRoot } from "@airis/airis-coding-agent/memories";
 import {
-	loadMnemopi,
-	loadMnemopiCore,
-	MnemopiSessionState,
-	setMnemopiSessionState,
-} from "@oh-my-pi/pi-coding-agent/mnemopi/state";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { GlobTool } from "@oh-my-pi/pi-coding-agent/tools/glob";
-import { getAgentDir, removeWithRetries, setAgentDir, TempDir } from "@oh-my-pi/pi-utils";
+	loadMnemosyne,
+	loadMnemosyneCore,
+	MnemosyneSessionState,
+	setMnemosyneSessionState,
+} from "@airis/airis-coding-agent/mnemosyne/state";
+import { AgentRegistry } from "@airis/airis-coding-agent/registry/agent-registry";
+import type { AgentSession } from "@airis/airis-coding-agent/session/agent-session";
+import type { ToolSession } from "@airis/airis-coding-agent/tools";
+import { GlobTool } from "@airis/airis-coding-agent/tools/glob";
+import { getAgentDir, removeWithRetries, setAgentDir, TempDir } from "@airis/airis-utils";
 
-// Mnemopi state is loaded lazily; preload so `new MnemopiSessionState(...)` can
+// Mnemosyne state is loaded lazily; preload so `new MnemosyneSessionState(...)` can
 // resolve the module synchronously in the fixtures below.
-await Promise.all([loadMnemopi(), loadMnemopiCore()]);
+await Promise.all([loadMnemosyne(), loadMnemosyneCore()]);
 interface MemoryFixture {
 	cwd: string;
 	memoryRoot: string;
@@ -227,7 +227,7 @@ describe("MemoryProtocolHandler", () => {
 		}
 	});
 
-	it("throws for unknown memory namespace when no mnemopi backend is active", async () => {
+	it("throws for unknown memory namespace when no mnemosyne backend is active", async () => {
 		await withMemoryFixture(async () => {
 			const router = InternalUrlRouter.instance();
 			await expect(router.resolve("memory://other/memory_summary.md")).rejects.toThrow(
@@ -363,19 +363,19 @@ describe("MemoryProtocolHandler", () => {
 	});
 });
 
-interface MnemopiFixture {
-	state: MnemopiSessionState;
+interface MnemosyneFixture {
+	state: MnemosyneSessionState;
 	dbDir: TempDir;
 }
 
-async function withMnemopiSession(
-	fn: (fixture: MnemopiFixture) => Promise<void>,
+async function withMnemosyneSession(
+	fn: (fixture: MnemosyneFixture) => Promise<void>,
 	options: { bank?: string } = {},
 ): Promise<void> {
-	const dbDir = TempDir.createSync(`memory-protocol-mnemopi-${Date.now()}-`);
+	const dbDir = TempDir.createSync(`memory-protocol-mnemosyne-${Date.now()}-`);
 	const bank = options.bank ?? "test-bank";
 	const config = {
-		dbPath: dbDir.join("mnemopi.db"),
+		dbPath: dbDir.join("mnemosyne.db"),
 		bank,
 		autoRecall: false,
 		autoRetain: false,
@@ -393,23 +393,23 @@ async function withMnemopiSession(
 			llm: false,
 		},
 		llmMode: "none" as const,
-	} as unknown as ConstructorParameters<typeof MnemopiSessionState>[0]["config"];
+	} as unknown as ConstructorParameters<typeof MnemosyneSessionState>[0]["config"];
 	const session = {
-		sessionId: "test-mnemopi",
+		sessionId: "test-mnemosyne",
 		sessionManager: {
 			getEntries: () => [],
 			getCwd: () => dbDir.path(),
 			getArtifactsDir: () => null,
-			getSessionId: () => "test-mnemopi",
+			getSessionId: () => "test-mnemosyne",
 		},
 		emitNotice: () => {},
 		getHindsightSessionState: () => undefined,
 	} as unknown as AgentSession;
-	const state = new MnemopiSessionState({ sessionId: "test-mnemopi", config, session });
-	setMnemopiSessionState(session, state);
+	const state = new MnemosyneSessionState({ sessionId: "test-mnemosyne", config, session });
+	setMnemosyneSessionState(session, state);
 	AgentRegistry.global().register({
-		id: "test-mnemopi",
-		displayName: "test-mnemopi",
+		id: "test-mnemosyne",
+		displayName: "test-mnemosyne",
 		kind: "main",
 		session,
 		sessionFile: null,
@@ -422,7 +422,7 @@ async function withMnemopiSession(
 	}
 }
 
-describe("MemoryProtocolHandler — mnemopi bridge (issue #4443)", () => {
+describe("MemoryProtocolHandler — mnemosyne bridge (issue #4443)", () => {
 	beforeEach(() => {
 		AgentRegistry.resetGlobalForTests();
 		InternalUrlRouter.resetForTests();
@@ -433,8 +433,8 @@ describe("MemoryProtocolHandler — mnemopi bridge (issue #4443)", () => {
 		InternalUrlRouter.resetForTests();
 	});
 
-	it("resolves memory://<id> to the full mnemopi memory row", async () => {
-		await withMnemopiSession(async ({ state }) => {
+	it("resolves memory://<id> to the full mnemosyne memory row", async () => {
+		await withMnemosyneSession(async ({ state }) => {
 			const head = "Decision record: the deploy pipeline uses blue-green cutover. ";
 			const body = "Detail sentence about rollout invariants. ".repeat(20);
 			const tail = "CRITICAL-TAIL: rollback requires restoring the previous DNS weight map first.";
@@ -453,17 +453,17 @@ describe("MemoryProtocolHandler — mnemopi bridge (issue #4443)", () => {
 		});
 	});
 
-	it("throws a clear error when the mnemopi id is not stored in any scoped bank", async () => {
-		await withMnemopiSession(async () => {
+	it("throws a clear error when the mnemosyne id is not stored in any scoped bank", async () => {
+		await withMnemosyneSession(async () => {
 			const router = InternalUrlRouter.instance();
 			await expect(router.resolve("memory://deadbeefdeadbeef")).rejects.toThrow(
-				/Mnemopi memory deadbeefdeadbeef not found/,
+				/Mnemosyne memory deadbeefdeadbeef not found/,
 			);
 		});
 	});
 
 	it("resolves memory://<fact-id> to a read-only fact row (issue #4725)", async () => {
-		await withMnemopiSession(async ({ state }) => {
+		await withMnemosyneSession(async ({ state }) => {
 			const beam = state.memory.beam;
 			beam.db
 				.prepare(
@@ -489,7 +489,7 @@ describe("MemoryProtocolHandler — mnemopi bridge (issue #4443)", () => {
 	});
 
 	it("reports not_editable (not not_found) for memory_edit ops on a fact id (issue #4725)", async () => {
-		await withMnemopiSession(async ({ state }) => {
+		await withMnemosyneSession(async ({ state }) => {
 			const beam = state.memory.beam;
 			beam.db
 				.prepare(
@@ -515,8 +515,8 @@ describe("MemoryProtocolHandler — mnemopi bridge (issue #4443)", () => {
 		});
 	});
 
-	it("routes memory://root to the file-backed summary even when mnemopi is active", async () => {
-		await withMnemopiSession(async () => {
+	it("routes memory://root to the file-backed summary even when mnemosyne is active", async () => {
+		await withMnemosyneSession(async () => {
 			const router = InternalUrlRouter.instance();
 			await expect(router.resolve("memory://root")).rejects.toThrow(
 				"Memory artifacts are not available for this project yet. Run a session with memories enabled first.",

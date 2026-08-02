@@ -4,7 +4,7 @@ import type { ProviderDefinition } from "./types";
 
 const AUTH_URL =
 	"https://huggingface.co/settings/tokens/new?ownUserPermissions=inference.serverless.write&tokenType=fineGrained";
-const API_BASE_URL = "https://router.huggingface.co/v1";
+const AAIRIS_BASE_URL = "https://router.huggingface.co/v1";
 const VALIDATION_MODEL = "openai/gpt-oss-120b";
 
 export const loginHuggingface = createApiKeyLogin({
@@ -17,7 +17,7 @@ export const loginHuggingface = createApiKeyLogin({
 	validation: {
 		kind: "chat-completions",
 		provider: "Hugging Face",
-		baseUrl: API_BASE_URL,
+		baseUrl: AAIRIS_BASE_URL,
 		model: VALIDATION_MODEL,
 	},
 });

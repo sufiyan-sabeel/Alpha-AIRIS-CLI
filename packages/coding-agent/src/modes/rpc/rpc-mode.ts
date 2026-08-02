@@ -11,9 +11,9 @@
  * - Extension UI: Extension UI requests are emitted, client responds with extension_ui_response
  */
 import { once } from "node:events";
-import { getOAuthProviders } from "@oh-my-pi/pi-ai/oauth";
-import { isZodSchema, zodToWireSchema } from "@oh-my-pi/pi-ai/utils/schema";
-import { $env, isRecord, readLines, Snowflake } from "@oh-my-pi/pi-utils";
+import { getOAuthProviders } from "@airis/airis-ai/oauth";
+import { isZodSchema, zodToWireSchema } from "@airis/airis-ai/utils/schema";
+import { $env, isRecord, readLines, Snowflake } from "@airis/airis-utils";
 import { reset as resetCapabilities } from "../../capability";
 import { clearPluginRootsAndCaches, resolveActiveProjectRegistryPath } from "../../discovery/helpers";
 import {
@@ -167,7 +167,7 @@ type RpcExtensionUserMessageScope = {
 /**
  * Tracks extension-originated messages while an RPC prompt is executing.
  * A slash command can resolve the outer prompt as local-only while also
- * scheduling agent work through pi.sendUserMessage() or pi.sendMessage()
+ * scheduling agent work through airs.sendUserMessage() or airs.sendMessage()
  * with triggerTurn; that prompt must not report agentInvoked:false to the host.
  */
 export class RpcExtensionUserMessageTracker {
@@ -407,7 +407,7 @@ export class RpcInputDispatcher {
 /**
  * Coordinates deferred shutdown with in-flight background input tasks.
  *
- * `pi.shutdown()` from an extension only *requests* shutdown; the process must
+ * `airs.shutdown()` from an extension only *requests* shutdown; the process must
  * not exit while a background-dispatched command (`bash`, see
  * {@link dispatchRpcInputFrame}) still owes the client a response frame. The
  * coordinator tracks those tasks, re-checks the shutdown request whenever one
@@ -1448,7 +1448,7 @@ export async function runRpcMode(
 		}
 	};
 
-	// Deferred shutdown (pi.shutdown() from an extension) must not kill the
+	// Deferred shutdown (airs.shutdown() from an extension) must not kill the
 	// process while a background-dispatched bash still owes the client its
 	// response frame. The coordinator drains tracked tasks before exiting and
 	// re-checks the request as each task settles.
@@ -1459,7 +1459,7 @@ export async function runRpcMode(
 			// reaper (releaseTabsForOwner) and other bounded teardown run before
 			// the process exits. dispose() also emits `session_shutdown`, so we
 			// must NOT emit it separately here or the event fires twice. Skipping
-			// dispose left OMP-owned Chromium alive after RPC shutdown (#5643).
+			// dispose left AIRIS-owned Chromium alive after RPC shutdown (#5643).
 			await session.dispose();
 			process.exit(0);
 		},
@@ -1512,7 +1512,7 @@ export async function runRpcMode(
 	subagentRegistry?.dispose();
 	// Dispose the main session before exiting so the browser reaper and other
 	// bounded teardown run on the stdin-EOF path too (#5643). Idempotent: a
-	// prior pi.shutdown() through the coordinator makes this await settle
+	// prior airs.shutdown() through the coordinator makes this await settle
 	// immediately.
 	await session.dispose();
 	process.exit(0);

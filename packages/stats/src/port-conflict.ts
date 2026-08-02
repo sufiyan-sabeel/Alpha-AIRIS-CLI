@@ -1,13 +1,13 @@
 import type { Dirent } from "node:fs";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { $which } from "@oh-my-pi/pi-utils";
+import { $which } from "@airis/airis-utils";
 import { $ } from "bun";
 
 const STATS_PROBE_TIMEOUT_MS = 500;
 const PROCESS_EXIT_POLL_MS = 50;
 const PROCESS_EXIT_POLLS = 10;
-const STATS_RUNTIME_IMAGES: Record<string, true> = { bun: true, node: true, omp: true, "omp-stats": true };
+const STATS_RUNTIME_IMAGES: Record<string, true> = { bun: true, node: true, airis: true, "airis-stats": true };
 
 interface PortHolder {
 	pid: number;
@@ -16,7 +16,7 @@ interface PortHolder {
 }
 
 /** Header stamped on every dashboard response so reuse probes can identify us. */
-export const STATS_DASHBOARD_HEADER = "x-omp-stats-dashboard";
+export const STATS_DASHBOARD_HEADER = "x-airis-stats-dashboard";
 
 async function probeStatsDashboard(port: number): Promise<boolean> {
 	try {
@@ -27,7 +27,7 @@ async function probeStatsDashboard(port: number): Promise<boolean> {
 			await response.body?.cancel();
 			return false;
 		}
-		// A live omp-stats dashboard stamps this header on every response.
+		// A live airis-stats dashboard stamps this header on every response.
 		if (response.headers.get(STATS_DASHBOARD_HEADER)) {
 			await response.body?.cancel();
 			return true;
@@ -216,7 +216,7 @@ async function terminatePortHolder(holder: PortHolder): Promise<void> {
 	await Bun.sleep(PROCESS_EXIT_POLL_MS);
 }
 
-/** Reuse a live stats dashboard or reclaim the port from a stale omp runtime. */
+/** Reuse a live stats dashboard or reclaim the port from a stale airis runtime. */
 export async function recoverStatsPort(port: number): Promise<"retry" | "reuse"> {
 	if (await probeStatsDashboard(port)) return "reuse";
 
@@ -234,14 +234,14 @@ export async function recoverStatsPort(port: number): Promise<"retry" | "reuse">
 		.replace(/ \(deleted\)$/, "");
 	const normalizedCommand = holder.commandLine.toLowerCase().replaceAll("\\", "/");
 	const hasStatsIdentity =
-		normalizedImage === "omp-stats" ||
-		/(?:^|[/"'\s])omp-stats(?:\.exe)?(?:["'\s]|$)/.test(normalizedCommand) ||
+		normalizedImage === "airis-stats" ||
+		/(?:^|[/"'\s])airis-stats(?:\.exe)?(?:["'\s]|$)/.test(normalizedCommand) ||
 		/\/packages\/stats\/src\/index\.ts(?:["'\s]|$)/.test(normalizedCommand) ||
-		(normalizedImage === "omp" && /(?:^|\s)stats(?:\s|$)/.test(normalizedCommand)) ||
-		/(?:^|\/)omp(?:\.exe)?["'\s]+stats(?:["'\s]|$)/.test(normalizedCommand);
+		(normalizedImage === "airis" && /(?:^|\s)stats(?:\s|$)/.test(normalizedCommand)) ||
+		/(?:^|\/)airis(?:\.exe)?["'\s]+stats(?:["'\s]|$)/.test(normalizedCommand);
 	if (!STATS_RUNTIME_IMAGES[normalizedImage] || !hasStatsIdentity) {
 		throw new Error(
-			`Port ${port} is in use by ${holder.image} (PID ${holder.pid}), which is not identifiable as an omp stats dashboard; refusing to stop it.`,
+			`Port ${port} is in use by ${holder.image} (PID ${holder.pid}), which is not identifiable as an airis stats dashboard; refusing to stop it.`,
 		);
 	}
 

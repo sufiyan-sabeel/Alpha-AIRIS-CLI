@@ -8,12 +8,12 @@ import {
 	logger,
 	stripWindowsExtendedLengthPathPrefix,
 	workerHostEntry,
-} from "@oh-my-pi/pi-utils";
+} from "@airis/airis-utils";
 import type { Subprocess } from "bun";
 
 /**
  * Shared lifecycle scaffolding for the ONNX inference subprocess clients
- * (mnemopi embeddings, speech-to-text, tiny-model titles/completions, TTS).
+ * (mnemosyne embeddings, speech-to-text, tiny-model titles/completions, TTS).
  * Each runs `onnxruntime-node` inside a dedicated Bun child process so the NAPI
  * constructor/finalizer never executes in the main agent address space — those
  * destructors segfault Bun on shutdown (issues #1606 / #1607 / #3031).
@@ -150,7 +150,7 @@ export function workerEnvFromParent(overlay?: Record<string, string>): Record<st
  * `ReadableStream` pipes: even an unref'd child with a piped stderr stream can
  * keep the parent event loop alive. After the worker exits, the last
  * {@link STDERR_TAIL_LIMIT_BYTES} are appended to the `onExit` error so
- * `tts/mnemopi/…: worker error` lines carry the actual stack instead of a bare
+ * `tts/mnemosyne/…: worker error` lines carry the actual stack instead of a bare
  * exit code (issue #4324). The child is `unref`'d outside `bun test` so an idle
  * worker never blocks process exit. `exitLabel` prefixes the worker-error
  * message surfaced for an unexpected (non-intentional) exit.
@@ -269,7 +269,7 @@ interface StderrCapture {
 /** Create a file-backed stderr target that does not pin Bun's event loop. */
 function createStderrCapture(exitLabel: string): StderrCapture {
 	try {
-		const dir = fs.mkdtempSync(path.join(os.tmpdir(), "omp-worker-stderr-"));
+		const dir = fs.mkdtempSync(path.join(os.tmpdir(), "airis-worker-stderr-"));
 		const fd = fs.openSync(path.join(dir, "stderr.log"), "w+");
 		const cleanupOnExit = (): void => cleanupStderrCapture({ target: fd, fd, dir, cleanupOnExit: null });
 		process.once("exit", cleanupOnExit);
@@ -430,7 +430,7 @@ export function logWorkerMessage(message: WorkerLogMessage): void {
 }
 
 /**
- * Drive the ping/pong readiness probe wired into `omp --smoke-test`: send one
+ * Drive the ping/pong readiness probe wired into `airis --smoke-test`: send one
  * `ping`, resolve on the first `pong` (ignoring `log` chatter), and reject on
  * any other message, a worker error, or the timeout. Always tears the handle
  * down on the way out. `label` prefixes the failure messages.

@@ -1,6 +1,6 @@
-import { THINKING_EFFORTS } from "@oh-my-pi/pi-ai";
-import { DEFAULT_SHARE_URL } from "@oh-my-pi/pi-wire";
-import { SHAPE_VARIANT_NAMES } from "@oh-my-pi/snapcompact";
+import { THINKING_EFFORTS } from "@airis/airis-ai";
+import { DEFAULT_SHARE_URL } from "@airis/airis-wire";
+import { SHAPE_VARIANT_NAMES } from "@airis/airis-snapcompact";
 import { DEFAULT_RELAY_URL } from "../collab/protocol";
 import { DEFAULT_LIVE_VOICE, LIVE_VOICE_OPTIONS, LIVE_VOICE_VALUES } from "../live/voices";
 import { DEFAULT_STT_MODEL_KEY, STT_MODEL_OPTIONS, STT_MODEL_VALUES } from "../stt/models";
@@ -135,7 +135,7 @@ export const TAB_GROUPS: Record<SettingTab, readonly string[]> = {
 		"Git",
 	],
 	context: ["General", "Compaction", "Rules (TTSR)", "Experimental"],
-	memory: ["General", "Auto-Learn", "Mnemopi", "Hindsight"],
+	memory: ["General", "Auto-Learn", "Mnemosyne", "Hindsight"],
 	files: ["Editing", "Reading", "Read Summaries", "LSP"],
 	shell: ["Bash", "Eval & Runtimes"],
 	tools: [
@@ -155,7 +155,7 @@ export const TAB_GROUPS: Record<SettingTab, readonly string[]> = {
 
 /** Status line segment identifiers */
 export type StatusLineSegmentId =
-	| "pi"
+	| "airs"
 	| "model"
 	| "mode"
 	| "path"
@@ -370,7 +370,7 @@ export const DEFAULT_BASH_INTERCEPTOR_RULES: BashInterceptorRule[] = [
 			"^\\s*(?:(?:bun|npm|pnpm|yarn)\\s+(?:run\\s+)?(?:dev|start)(?:\\s|$)|(?:vite|next\\s+dev|nuxt\\s+dev|nodemon|lldb|gdb|tail\\s+-f)(?:\\s|$)|docker\\s+compose\\s+up(?!.*(?:\\s-d(?:\\s|$)|--detach))(?:\\s|$))",
 		tool: "hub",
 		message:
-			'Use the `hub` tool (`op:"start"`) for services, watchers, and debuggers so other omp instances can observe and control them.',
+			'Use the `hub` tool (`op:"start"`) for services, watchers, and debuggers so other airis instances can observe and control them.',
 	},
 	{
 		pattern:
@@ -386,9 +386,9 @@ export const SETTINGS_SCHEMA = {
 	// ────────────────────────────────────────────────────────────────────────
 	setupVersion: { type: "number", default: 0 },
 
-	// Auth broker — credentials proxied through a remote `omp auth-broker serve`
+	// Auth broker — credentials proxied through a remote `airis auth-broker serve`
 	// host. Hidden from the UI; populate via env vars or hand-edited config.yml.
-	// Env (`OMP_AUTH_BROKER_URL` / `OMP_AUTH_BROKER_TOKEN`) takes precedence so
+	// Env (`AIRIS_AUTH_BROKER_URL` / `AIRIS_AUTH_BROKER_TOKEN`) takes precedence so
 	// per-machine overrides remain trivial.
 	"auth.broker.url": { type: "string", default: undefined },
 	"auth.broker.token": { type: "string", default: undefined, credential: true },
@@ -531,7 +531,7 @@ export const SETTINGS_SCHEMA = {
 			group: "Services",
 			label: "Max In-Flight Requests",
 			description:
-				'Maximum concurrent LLM requests per provider id (for example "openai" or "anthropic"), shared across local OMP processes with this config root. Omitted providers are unlimited.',
+				'Maximum concurrent LLM requests per provider id (for example "openai" or "anthropic"), shared across local AIRIS processes with this config root. Omitted providers are unlimited.',
 		},
 	},
 
@@ -555,7 +555,7 @@ export const SETTINGS_SCHEMA = {
 				{
 					value: "project",
 					label: "Per-project",
-					description: "Save project role models in .omp/config.yml; missing project roles use global defaults",
+					description: "Save project role models in .airis/config.yml; missing project roles use global defaults",
 				},
 			],
 		},
@@ -1802,7 +1802,7 @@ export const SETTINGS_SCHEMA = {
 			tab: "interaction",
 			group: "Startup & Updates",
 			label: "Check for Updates",
-			description: "Check for omp updates on startup",
+			description: "Check for airis updates on startup",
 		},
 	},
 
@@ -2596,24 +2596,24 @@ export const SETTINGS_SCHEMA = {
 	"memories.summaryInjectionTokenLimit": { type: "number", default: 5000 },
 
 	// Memory backend selector — picks between local memories pipeline,
-	// Mnemopi local SQLite, Hindsight remote memory, or off. The legacy
+	// Mnemosyne local SQLite, Hindsight remote memory, or off. The legacy
 	// `memories.enabled` flag is migration input only; see config/settings.ts.
 	"memory.backend": {
 		type: "enum",
-		values: ["off", "local", "hindsight", "mnemopi"] as const,
+		values: ["off", "local", "hindsight", "mnemosyne"] as const,
 		default: "off",
 		ui: {
 			tab: "memory",
 			group: "General",
 			label: "Memory Backend",
-			description: "Off, local summary pipeline, Mnemopi SQLite, or Hindsight remote memory",
+			description: "Off, local summary pipeline, Mnemosyne SQLite, or Hindsight remote memory",
 			options: [
 				{ value: "off", label: "Off", description: "No memory subsystem runs" },
 				{ value: "local", label: "Local", description: "Local rollout summarisation pipeline (memory_summary.md)" },
 				{ value: "hindsight", label: "Hindsight", description: "Vectorize Hindsight remote memory service" },
 				{
-					value: "mnemopi",
-					label: "Mnemopi",
+					value: "mnemosyne",
+					label: "Mnemosyne",
 					description: "Local SQLite recall/retain backend with optional embeddings",
 				},
 			],
@@ -2621,7 +2621,7 @@ export const SETTINGS_SCHEMA = {
 	},
 
 	// Auto-Learn (experimental): post-stop nudge to capture lessons to memory
-	// and mint/enhance isolated managed skills under ~/.omp/agent/managed-skills.
+	// and mint/enhance isolated managed skills under ~/.airis/agent/managed-skills.
 	// Master flag is default-off → zero footprint; sub-flags gate behaviour.
 	"autolearn.enabled": {
 		type: "boolean",
@@ -2649,49 +2649,49 @@ export const SETTINGS_SCHEMA = {
 	// Config-file-only knob (numbers without `options` are hidden from the UI).
 	"autolearn.minToolCalls": { type: "number", default: 5 },
 
-	// Mnemopi local SQLite memory backend.
-	"mnemopi.dbPath": {
+	// Mnemosyne local SQLite memory backend.
+	"mnemosyne.dbPath": {
 		type: "string",
 		default: undefined,
 		ui: {
 			tab: "memory",
-			group: "Mnemopi",
-			label: "Mnemopi DB Path",
+			group: "Mnemosyne",
+			label: "Mnemosyne DB Path",
 			description: "Optional SQLite DB path. Defaults to the agent memories directory.",
-			condition: "mnemopiActive",
+			condition: "mnemosyneActive",
 		},
 	},
-	"mnemopi.bank": {
+	"mnemosyne.bank": {
 		type: "string",
 		default: undefined,
 		ui: {
 			tab: "memory",
-			group: "Mnemopi",
-			label: "Mnemopi Bank",
+			group: "Mnemosyne",
+			label: "Mnemosyne Bank",
 			description: "Optional shared bank base name. Per-project modes derive project-local banks from it.",
-			condition: "mnemopiActive",
+			condition: "mnemosyneActive",
 		},
 	},
-	"mnemopi.scoping": {
+	"mnemosyne.scoping": {
 		type: "enum",
 		values: ["global", "per-project", "per-project-tagged"] as const,
 		default: "per-project",
 		ui: {
 			tab: "memory",
-			group: "Mnemopi",
-			label: "Mnemopi Scoping",
+			group: "Mnemosyne",
+			label: "Mnemosyne Scoping",
 			description:
 				"global = one shared bank; per-project = isolated bank per cwd; per-project-tagged = project-local writes plus global recall visibility",
 			options: [
 				{
 					value: "global",
 					label: "Global",
-					description: "One shared Mnemopi bank for every project",
+					description: "One shared Mnemosyne bank for every project",
 				},
 				{
 					value: "per-project",
 					label: "Per project",
-					description: "Project-local Mnemopi bank per cwd basename",
+					description: "Project-local Mnemosyne bank per cwd basename",
 				},
 				{
 					value: "per-project-tagged",
@@ -2699,16 +2699,16 @@ export const SETTINGS_SCHEMA = {
 					description: "Write to a project-local bank but merge project + shared recall results",
 				},
 			],
-			condition: "mnemopiActive",
+			condition: "mnemosyneActive",
 		},
 	},
-	"mnemopi.embeddingVariant": {
+	"mnemosyne.embeddingVariant": {
 		type: "enum",
 		values: ["en", "multilingual"] as const,
 		default: "en",
 		ui: {
 			tab: "memory",
-			group: "Mnemopi",
+			group: "Mnemosyne",
 			label: "Embedding variant",
 			description:
 				"Local embedding model family. en = stronger English model; multilingual = cross-language model. Changing this rebuilds existing memory embeddings on next start.",
@@ -2724,173 +2724,173 @@ export const SETTINGS_SCHEMA = {
 					description: "intfloat/multilingual-e5-large (1024d), cross-language recall",
 				},
 			],
-			condition: "mnemopiActive",
+			condition: "mnemosyneActive",
 		},
 	},
-	"mnemopi.autoRecall": {
+	"mnemosyne.autoRecall": {
 		type: "boolean",
 		default: true,
 		ui: {
 			tab: "memory",
-			group: "Mnemopi",
-			label: "Mnemopi Auto Recall",
+			group: "Mnemosyne",
+			label: "Mnemosyne Auto Recall",
 			description: "Recall local memories into the first turn of each session",
-			condition: "mnemopiActive",
+			condition: "mnemosyneActive",
 		},
 	},
-	"mnemopi.autoRetain": {
+	"mnemosyne.autoRetain": {
 		type: "boolean",
 		default: true,
 		ui: {
 			tab: "memory",
-			group: "Mnemopi",
-			label: "Mnemopi Auto Retain",
-			description: "Retain completed conversation turns into local Mnemopi memory",
-			condition: "mnemopiActive",
+			group: "Mnemosyne",
+			label: "Mnemosyne Auto Retain",
+			description: "Retain completed conversation turns into local Mnemosyne memory",
+			condition: "mnemosyneActive",
 		},
 	},
-	"mnemopi.polyphonicRecall": {
+	"mnemosyne.polyphonicRecall": {
 		type: "boolean",
 		default: false,
 		ui: {
 			tab: "memory",
-			group: "Mnemopi",
-			label: "Mnemopi Polyphonic Recall",
+			group: "Mnemosyne",
+			label: "Mnemosyne Polyphonic Recall",
 			description: "Enable 4-voice recall (vector, graph, fact, temporal) fused with reciprocal rank fusion",
-			condition: "mnemopiActive",
+			condition: "mnemosyneActive",
 		},
 	},
-	"mnemopi.enhancedRecall": {
+	"mnemosyne.enhancedRecall": {
 		type: "boolean",
 		default: false,
 		ui: {
 			tab: "memory",
-			group: "Mnemopi",
-			label: "Mnemopi Enhanced Recall",
+			group: "Mnemosyne",
+			label: "Mnemosyne Enhanced Recall",
 			description: "Enable the tiered query result cache for repeated and similar recall queries",
-			condition: "mnemopiActive",
+			condition: "mnemosyneActive",
 		},
 	},
-	"mnemopi.proactiveLinking": {
+	"mnemosyne.proactiveLinking": {
 		type: "boolean",
 		default: false,
 		ui: {
 			tab: "memory",
-			group: "Mnemopi",
-			label: "Mnemopi Proactive Linking",
+			group: "Mnemosyne",
+			label: "Mnemosyne Proactive Linking",
 			description:
 				"Ingest new memories into the episodic graph as they are stored, linking them to related entities and memories",
-			condition: "mnemopiActive",
+			condition: "mnemosyneActive",
 		},
 	},
-	"mnemopi.noEmbeddings": {
+	"mnemosyne.noEmbeddings": {
 		type: "boolean",
 		default: false,
 		ui: {
 			tab: "memory",
-			group: "Mnemopi",
-			label: "Mnemopi Disable Embeddings",
+			group: "Mnemosyne",
+			label: "Mnemosyne Disable Embeddings",
 			description: "Force deterministic FTS-only recall instead of vector embeddings",
-			condition: "mnemopiActive",
+			condition: "mnemosyneActive",
 		},
 	},
-	"mnemopi.embeddingModel": {
+	"mnemosyne.embeddingModel": {
 		type: "string",
 		default: undefined,
 		ui: {
 			tab: "memory",
-			group: "Mnemopi",
-			label: "Mnemopi Embedding Model",
+			group: "Mnemosyne",
+			label: "Mnemosyne Embedding Model",
 			description:
-				"Advanced: explicit embedding model id that overrides the variant. Leave empty to use mnemopi.embeddingVariant.",
-			condition: "mnemopiActive",
+				"Advanced: explicit embedding model id that overrides the variant. Leave empty to use mnemosyne.embeddingVariant.",
+			condition: "mnemosyneActive",
 		},
 	},
-	"mnemopi.embeddingApiUrl": {
+	"mnemosyne.embeddingApiUrl": {
 		type: "string",
 		default: undefined,
 		ui: {
 			tab: "memory",
-			group: "Mnemopi",
-			label: "Mnemopi Embedding API URL",
-			description: "Optional OpenAI-compatible embedding endpoint passed to Mnemopi",
-			condition: "mnemopiActive",
+			group: "Mnemosyne",
+			label: "Mnemosyne Embedding API URL",
+			description: "Optional OpenAI-compatible embedding endpoint passed to Mnemosyne",
+			condition: "mnemosyneActive",
 		},
 	},
-	"mnemopi.embeddingApiKey": {
+	"mnemosyne.embeddingApiKey": {
 		type: "string",
 		credential: true,
 		default: undefined,
 		ui: {
 			tab: "memory",
-			group: "Mnemopi",
-			label: "Mnemopi Embedding API Key",
-			description: "Optional embedding API key passed to Mnemopi",
-			condition: "mnemopiActive",
+			group: "Mnemosyne",
+			label: "Mnemosyne Embedding API Key",
+			description: "Optional embedding API key passed to Mnemosyne",
+			condition: "mnemosyneActive",
 		},
 	},
-	"mnemopi.llmMode": {
+	"mnemosyne.llmMode": {
 		type: "enum",
 		values: ["none", "smol", "remote"] as const,
 		default: "smol",
 		ui: {
 			tab: "memory",
-			group: "Mnemopi",
-			label: "Mnemopi LLM Mode",
+			group: "Mnemosyne",
+			label: "Mnemosyne LLM Mode",
 			description:
 				"Use no LLM, the online tiny model (the TINY role from /models, else @smol), or a remote OpenAI-compatible endpoint",
-			condition: "mnemopiActive",
+			condition: "mnemosyneActive",
 			options: [
-				{ value: "none", label: "None", description: "Disable Mnemopi LLM-backed extraction" },
+				{ value: "none", label: "None", description: "Disable Mnemosyne LLM-backed extraction" },
 				{
 					value: "smol",
 					label: "Online (tiny)",
 					description: "Use the online tiny model (the TINY role from /models, else @smol)",
 				},
-				{ value: "remote", label: "Remote", description: "Use the Mnemopi remote LLM settings below" },
+				{ value: "remote", label: "Remote", description: "Use the Mnemosyne remote LLM settings below" },
 			],
 		},
 	},
-	"mnemopi.llmBaseUrl": {
+	"mnemosyne.llmBaseUrl": {
 		type: "string",
 		default: undefined,
 		ui: {
 			tab: "memory",
-			group: "Mnemopi",
-			label: "Mnemopi LLM Base URL",
-			description: "Optional OpenAI-compatible LLM endpoint for Mnemopi remote mode",
-			condition: "mnemopiActive",
+			group: "Mnemosyne",
+			label: "Mnemosyne LLM Base URL",
+			description: "Optional OpenAI-compatible LLM endpoint for Mnemosyne remote mode",
+			condition: "mnemosyneActive",
 		},
 	},
-	"mnemopi.llmApiKey": {
+	"mnemosyne.llmApiKey": {
 		type: "string",
 		credential: true,
 		default: undefined,
 		ui: {
 			tab: "memory",
-			group: "Mnemopi",
-			label: "Mnemopi LLM API Key",
-			description: "Optional LLM API key for Mnemopi remote mode",
-			condition: "mnemopiActive",
+			group: "Mnemosyne",
+			label: "Mnemosyne LLM API Key",
+			description: "Optional LLM API key for Mnemosyne remote mode",
+			condition: "mnemosyneActive",
 		},
 	},
-	"mnemopi.llmModel": {
+	"mnemosyne.llmModel": {
 		type: "string",
 		default: undefined,
 		ui: {
 			tab: "memory",
-			group: "Mnemopi",
-			label: "Mnemopi LLM Model",
-			description: "Optional LLM model name for Mnemopi remote mode",
-			condition: "mnemopiActive",
+			group: "Mnemosyne",
+			label: "Mnemosyne LLM Model",
+			description: "Optional LLM model name for Mnemosyne remote mode",
+			condition: "mnemosyneActive",
 		},
 	},
-	"mnemopi.retainEveryNTurns": { type: "number", default: 4 },
-	"mnemopi.recallLimit": { type: "number", default: 8 },
-	"mnemopi.recallContextTurns": { type: "number", default: 3 },
-	"mnemopi.recallMaxQueryChars": { type: "number", default: 4000 },
-	"mnemopi.injectionTokenLimit": { type: "number", default: 5000 },
-	"mnemopi.debug": { type: "boolean", default: false },
+	"mnemosyne.retainEveryNTurns": { type: "number", default: 4 },
+	"mnemosyne.recallLimit": { type: "number", default: 8 },
+	"mnemosyne.recallContextTurns": { type: "number", default: 3 },
+	"mnemosyne.recallMaxQueryChars": { type: "number", default: 4000 },
+	"mnemosyne.injectionTokenLimit": { type: "number", default: 5000 },
+	"mnemosyne.debug": { type: "boolean", default: false },
 
 	// Hindsight (https://hindsight.vectorize.io)
 	"hindsight.apiUrl": {
@@ -3010,7 +3010,7 @@ export const SETTINGS_SCHEMA = {
 	},
 	"hindsight.retainEveryNTurns": { type: "number", default: 3 },
 	"hindsight.retainOverlapTurns": { type: "number", default: 2 },
-	"hindsight.retainContext": { type: "string", default: "omp" },
+	"hindsight.retainContext": { type: "string", default: "airis" },
 
 	"hindsight.recallBudget": {
 		type: "enum",
@@ -4023,7 +4023,7 @@ export const SETTINGS_SCHEMA = {
 			tab: "tools",
 			group: "GitHub",
 			label: "GitHub View Cache",
-			description: "Cache rendered issue/PR view output in ~/.omp/cache/github-cache.db so repeated reads are free",
+			description: "Cache rendered issue/PR view output in ~/.airis/cache/github-cache.db so repeated reads are free",
 		},
 	},
 
@@ -4070,7 +4070,7 @@ export const SETTINGS_SCHEMA = {
 			group: "Available Tools",
 			label: "Security",
 			description:
-				"Enable OMP-native security scan planning, execution, and the read-only security:// resource namespace",
+				"Enable AIRIS-native security scan planning, execution, and the read-only security:// resource namespace",
 		},
 	},
 
@@ -4511,7 +4511,7 @@ export const SETTINGS_SCHEMA = {
 			group: "Isolation",
 			label: "Worktree Base Directory",
 			description:
-				"Base directory for agent-managed worktrees — task-isolation copies, `github` PR checkouts, and `omp worktree` cleanup all live here. Unset uses ~/.omp/wt. Must be an absolute or ~-relative path; relative paths are ignored. The OMP_WORKTREE_DIR env var overrides this.",
+				"Base directory for agent-managed worktrees — task-isolation copies, `github` PR checkouts, and `airis worktree` cleanup all live here. Unset uses ~/.airis/wt. Must be an absolute or ~-relative path; relative paths are ignored. The AIRIS_WORKTREE_DIR env var overrides this.",
 		},
 	},
 
@@ -5098,8 +5098,8 @@ export const SETTINGS_SCHEMA = {
 			group: "General",
 			label: "Memory Model",
 			description:
-				"Mnemopi LLM for fact extraction + consolidation: online (the TINY role from /models, else smol/remote) by default, or a local on-device model",
-			condition: "mnemopiActive",
+				"Mnemosyne LLM for fact extraction + consolidation: online (the TINY role from /models, else smol/remote) by default, or a local on-device model",
+			condition: "mnemosyneActive",
 			options: TINY_MEMORY_MODEL_OPTIONS,
 		},
 	},
@@ -5461,12 +5461,12 @@ export const SETTINGS_SCHEMA = {
 
 	"dev.autoqaPush.endpoint": {
 		type: "string",
-		default: "https://qa.omp.sh/v1/grievances" as const,
+		default: "https://qa.airis.sh/v1/grievances" as const,
 		ui: {
 			tab: "tools",
 			group: "Developer",
 			label: "Auto QA Push Endpoint",
-			description: "Full URL receiving Auto QA JSON reports (default https://qa.omp.sh/v1/grievances)",
+			description: "Full URL receiving Auto QA JSON reports (default https://qa.airis.sh/v1/grievances)",
 		},
 	},
 

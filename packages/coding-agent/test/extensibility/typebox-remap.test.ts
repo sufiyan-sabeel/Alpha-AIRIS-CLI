@@ -3,18 +3,18 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import {
-	installLegacyPiSpecifierShim,
-	loadLegacyPiModule,
-} from "@oh-my-pi/pi-coding-agent/extensibility/plugins/legacy-pi-compat";
-import { Type as TypeBoxShimType } from "@oh-my-pi/pi-coding-agent/extensibility/typebox";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+	installLegacyAirisSpecifierShim,
+	loadLegacyAirisModule,
+} from "@airis/airis-coding-agent/extensibility/plugins/legacy-airis-compat";
+import { Type as TypeBoxShimType } from "@airis/airis-coding-agent/extensibility/typebox";
+import { removeWithRetries } from "@airis/airis-utils";
 
 // The remap installs a Bun.plugin onResolve hook plus an explicit
 // rewrite branch inside `rewriteBareImportsForLegacyExtension` that
 // redirects bare `@sinclair/typebox` specifiers to the in-repo Zod-backed
 // shim. Extensions that authored against TypeBox should keep working
 // unchanged without `@sinclair/typebox` ever needing to be installed.
-installLegacyPiSpecifierShim();
+installLegacyAirisSpecifierShim();
 
 const tempRoots: string[] = [];
 
@@ -25,14 +25,14 @@ afterAll(async () => {
 });
 
 async function writeFixtureExtension(source: string): Promise<string> {
-	const dir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-typebox-remap-"));
+	const dir = await fs.mkdtemp(path.join(os.tmpdir(), "airis-typebox-remap-"));
 	tempRoots.push(dir);
 	const entry = path.join(dir, "index.ts");
 	await fs.writeFile(entry, source, "utf8");
 	return entry;
 }
 
-describe("legacy-pi TypeBox remap", () => {
+describe("legacy-airis TypeBox remap", () => {
 	it("redirects bare @sinclair/typebox imports inside legacy extensions to the in-repo shim", async () => {
 		const entry = await writeFixtureExtension(
 			[
@@ -42,7 +42,7 @@ describe("legacy-pi TypeBox remap", () => {
 			].join("\n"),
 		);
 
-		const loaded = (await loadLegacyPiModule(entry)) as {
+		const loaded = (await loadLegacyAirisModule(entry)) as {
 			probe: typeof TypeBoxShimType;
 			objectSchema: { safeParse: (input: unknown) => { success: boolean } };
 		};
@@ -61,7 +61,7 @@ describe("legacy-pi TypeBox remap", () => {
 			].join("\n"),
 		);
 
-		const loaded = (await loadLegacyPiModule(entry)) as {
+		const loaded = (await loadLegacyAirisModule(entry)) as {
 			probe: typeof TypeBoxShimType;
 			unsafeSchema: Record<string, unknown>;
 		};
@@ -79,7 +79,7 @@ describe("legacy-pi TypeBox remap", () => {
 			'import{Type}from"typebox";export const schema=Type.Object({name:Type.String()});',
 		);
 
-		const loaded = (await loadLegacyPiModule(entry)) as {
+		const loaded = (await loadLegacyAirisModule(entry)) as {
 			schema: { safeParse: (input: unknown) => { success: boolean } };
 		};
 		expect(loaded.schema.safeParse({ name: "ok" }).success).toBe(true);

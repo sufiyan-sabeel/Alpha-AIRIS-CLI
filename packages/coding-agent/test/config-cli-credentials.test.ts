@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { runConfigCommand } from "@oh-my-pi/pi-coding-agent/cli/config-cli";
-import { resetSettingsForTest } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import { getConfigRootDir, setAgentDir, TempDir } from "@oh-my-pi/pi-utils";
+import { runConfigCommand } from "@airis/airis-coding-agent/cli/config-cli";
+import { resetSettingsForTest } from "@airis/airis-coding-agent/config/settings";
+import { AgentStorage } from "@airis/airis-coding-agent/session/agent-storage";
+import { getConfigRootDir, setAgentDir, TempDir } from "@airis/airis-utils";
 import { isCredential, SETTINGS_SCHEMA, type SettingPath } from "../src/config/settings-schema";
 import { getSettingDef } from "../src/modes/components/settings-defs";
 
@@ -25,7 +25,7 @@ describe("credential settings", () => {
 	it("classifies UI-visible credentials through the same marker", () => {
 		// One field, not two: there is no separate UI-only masking flag that could
 		// drift away from this classification.
-		for (const path of ["mnemopi.embeddingApiKey", "mnemopi.llmApiKey"] as const) {
+		for (const path of ["mnemosyne.embeddingApiKey", "mnemosyne.llmApiKey"] as const) {
 			expect(isCredential(path)).toBe(true);
 		}
 	});
@@ -50,7 +50,7 @@ describe("credential masking reaches every surface", () => {
 		// The panel derives masking from the same classification the CLI uses, so
 		// a credential cannot render as plain text on one surface and dots on the
 		// other.
-		for (const path of ["hindsight.apiToken", "mnemopi.embeddingApiKey", "mnemopi.llmApiKey"] as const) {
+		for (const path of ["hindsight.apiToken", "mnemosyne.embeddingApiKey", "mnemosyne.llmApiKey"] as const) {
 			const def = getSettingDef(path);
 			expect(def?.type).toBe("text");
 			expect(def && "secret" in def ? def.secret : undefined).toBe(true);
@@ -82,7 +82,7 @@ describe("config list output", () => {
 
 	beforeEach(() => {
 		resetSettingsForTest();
-		agentDir = TempDir.createSync("@omp-config-credentials-");
+		agentDir = TempDir.createSync("@airis-config-credentials-");
 		setAgentDir(agentDir.path());
 	});
 

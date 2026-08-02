@@ -9,9 +9,9 @@ import {
 	discoverPromptTemplates,
 	type PromptTemplate,
 	SessionManager,
-} from "@oh-my-pi/pi-coding-agent";
+} from "@airis/airis-coding-agent";
 
-// Discover prompt templates from cwd/.pi/prompts/ and ~/.pi/agent/prompts/
+// Discover prompt templates from cwd/.airs/prompts/ and ~/.airs/agent/prompts/
 const discovered = await discoverPromptTemplates();
 console.log("Discovered prompt templates:");
 for (const cmd of discovered) {

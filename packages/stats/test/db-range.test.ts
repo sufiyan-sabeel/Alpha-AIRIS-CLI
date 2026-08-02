@@ -1,10 +1,10 @@
 import { describe, expect, it } from "bun:test";
-import { getDashboardStats } from "@oh-my-pi/omp-stats/aggregator";
-import { initDb, insertMessageStats } from "@oh-my-pi/omp-stats/db";
-import type { MessageStats } from "@oh-my-pi/omp-stats/types";
+import { getDashboardStats } from "@airis/airis-stats/aggregator";
+import { initDb, insertMessageStats } from "@airis/airis-stats/db";
+import type { MessageStats } from "@airis/airis-stats/types";
 import { installStatsTestIsolation } from "./helpers/temp-agent";
 
-installStatsTestIsolation("@pi-stats-db-range-");
+installStatsTestIsolation("@airs-stats-db-range-");
 
 function makeMessage(timestamp: number, entryId: string): MessageStats {
 	return {

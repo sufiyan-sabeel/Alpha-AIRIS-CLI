@@ -4,11 +4,11 @@
  * Prevents session changes when there are uncommitted git changes.
  * Useful to ensure work is committed before switching context.
  */
-import type { HookAPI, HookContext } from "@oh-my-pi/pi-coding-agent";
+import type { HookAPI, HookContext } from "@airis/airis-coding-agent";
 
-async function checkDirtyRepo(pi: HookAPI, ctx: HookContext, action: string): Promise<{ cancel: boolean } | undefined> {
+async function checkDirtyRepo(airs: HookAPI, ctx: HookContext, action: string): Promise<{ cancel: boolean } | undefined> {
 	// Check for uncommitted changes
-	const { stdout, code } = await pi.exec("git", ["status", "--porcelain"]);
+	const { stdout, code } = await airs.exec("git", ["status", "--porcelain"]);
 
 	if (code !== 0) {
 		// Not a git repo, allow the action
@@ -39,13 +39,13 @@ async function checkDirtyRepo(pi: HookAPI, ctx: HookContext, action: string): Pr
 	}
 }
 
-export default function (pi: HookAPI) {
-	pi.on("session_before_switch", async (event, ctx) => {
+export default function (airs: HookAPI) {
+	airs.on("session_before_switch", async (event, ctx) => {
 		const action = event.reason === "new" ? "new session" : "switch session";
-		return checkDirtyRepo(pi, ctx, action);
+		return checkDirtyRepo(airs, ctx, action);
 	});
 
-	pi.on("session_before_branch", async (_event, ctx) => {
-		return checkDirtyRepo(pi, ctx, "branch");
+	airs.on("session_before_branch", async (_event, ctx) => {
+		return checkDirtyRepo(airs, ctx, "branch");
 	});
 }

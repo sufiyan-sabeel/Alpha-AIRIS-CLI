@@ -2,19 +2,19 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { resetSettingsForTest, Settings, type ShellMinimizerSettings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import { resetSettingsForTest, Settings, type ShellMinimizerSettings } from "@airis/airis-coding-agent/config/settings";
 import {
 	applyDirenvPreflight,
 	buildMinimizerOptions,
 	executeBash,
 	isPersistentShellCdCommand,
-} from "@oh-my-pi/pi-coding-agent/exec/bash-executor";
-import * as direnvModule from "@oh-my-pi/pi-coding-agent/exec/direnv";
-import { DEFAULT_MAX_BYTES } from "@oh-my-pi/pi-coding-agent/session/streaming-output";
-import * as shellSnapshot from "@oh-my-pi/pi-coding-agent/utils/shell-snapshot";
-import type { Shell, ShellRunResult } from "@oh-my-pi/pi-natives";
-import * as piNatives from "@oh-my-pi/pi-natives";
-import { removeSyncWithRetries } from "@oh-my-pi/pi-utils";
+} from "@airis/airis-coding-agent/exec/bash-executor";
+import * as direnvModule from "@airis/airis-coding-agent/exec/direnv";
+import { DEFAULT_MAX_BYTES } from "@airis/airis-coding-agent/session/streaming-output";
+import * as shellSnapshot from "@airis/airis-coding-agent/utils/shell-snapshot";
+import type { Shell, ShellRunResult } from "@airis/airis-natives";
+import * as airisNatives from "@airis/airis-natives";
+import { removeSyncWithRetries } from "@airis/airis-utils";
 
 // Matches the schema default for `tools.artifactHeadBytes` (20 KB) used by
 // OutputSink when bash-executor pulls settings via resolveOutputSinkHeadBytes.
@@ -30,7 +30,7 @@ const KILL_SETTLE_MS = 25; // let the kill signal land before we touch `release`
 const KILL_REACT_MS = 50; // > one poll interval: a survivor would write its marker
 
 function makeTempDir(): string {
-	return fs.mkdtempSync(path.join(os.tmpdir(), "omp-bash-exec-"));
+	return fs.mkdtempSync(path.join(os.tmpdir(), "airis-bash-exec-"));
 }
 
 function shellQuote(value: string): string {
@@ -244,7 +244,7 @@ describe("executeBash", () => {
 			return;
 		}
 
-		const shellDir = fs.mkdtempSync(path.join(os.tmpdir(), "omp-shellpath-"));
+		const shellDir = fs.mkdtempSync(path.join(os.tmpdir(), "airis.shellpath-"));
 		const marker = path.join(shellDir, "fake-shell-ran");
 		const markerEscaped = marker.replace(/'/g, "'\\''");
 		const fakeShell = path.join(shellDir, "fake-shell");
@@ -295,7 +295,7 @@ exit 64
 	it("persists cd, bare cd, and cd - when shortcut commands use a non-bash user shell", async () => {
 		if (process.platform === "win32") return;
 
-		const shellDir = fs.mkdtempSync(path.join(os.tmpdir(), "omp-cd-shellpath-"));
+		const shellDir = fs.mkdtempSync(path.join(os.tmpdir(), "airis-cd-shellpath-"));
 		const marker = path.join(shellDir, "fake-shell-ran");
 		const fakeShell = path.join(shellDir, "fake-shell");
 		const childDir = path.join(tempDir, "child");
@@ -380,7 +380,7 @@ exit 64
 		}
 
 		const originalShell = Bun.env.SHELL;
-		const shellDir = fs.mkdtempSync(path.join(os.tmpdir(), "omp-env-shell-"));
+		const shellDir = fs.mkdtempSync(path.join(os.tmpdir(), "airis-env-shell-"));
 		const marker = path.join(shellDir, "env-shell-ran");
 		const markerEscaped = marker.replace(/'/g, "'\\''");
 		const fakeShell = path.join(shellDir, "fish");
@@ -449,8 +449,8 @@ exit 64
 			return;
 		}
 
-		const shellDir = fs.mkdtempSync(path.join(os.tmpdir(), "omp-zsh-shellpath-"));
-		fs.writeFileSync(path.join(shellDir, ".zshrc"), "alias pi_shell_alias='printf zsh-alias-ok\\\\n'\n");
+		const shellDir = fs.mkdtempSync(path.join(os.tmpdir(), "airis-zsh-shellpath-"));
+		fs.writeFileSync(path.join(shellDir, ".zshrc"), "alias airis_shell_alias='printf zsh-alias-ok\\\\n'\n");
 		Settings.instance.set("shellPath", zshPath);
 
 		vi.spyOn(Settings.prototype, "getShellConfig").mockReturnValue({
@@ -464,7 +464,7 @@ exit 64
 		});
 
 		try {
-			const result = await executeBash("pi_shell_alias", {
+			const result = await executeBash("airis_shell_alias", {
 				cwd: tempDir,
 				timeout: 5000,
 				sessionKey: "zsh-shell-path",
@@ -491,7 +491,7 @@ exit 64
 			return;
 		}
 
-		const shellDir = fs.mkdtempSync(path.join(os.tmpdir(), "omp-fish-shellpath-"));
+		const shellDir = fs.mkdtempSync(path.join(os.tmpdir(), "airis-fish-shellpath-"));
 		const configDir = path.join(shellDir, ".config", "fish");
 		fs.mkdirSync(path.join(configDir, "conf.d"), { recursive: true });
 		fs.writeFileSync(path.join(configDir, "config.fish"), "function pi_fish_fn; echo fish-fn-ok; end\n");
@@ -634,10 +634,10 @@ exit 64
 			return;
 		}
 
-		const originalRun = piNatives.Shell.prototype.run;
+		const originalRun = airisNatives.Shell.prototype.run;
 		let runCalls = 0;
 		const dispatched = Promise.withResolvers<void>();
-		vi.spyOn(piNatives.Shell.prototype, "run").mockImplementation(function (this: Shell, options, onChunk) {
+		vi.spyOn(airisNatives.Shell.prototype, "run").mockImplementation(function (this: Shell, options, onChunk) {
 			runCalls++;
 			if (runCalls === 1) {
 				onChunk?.(null, "started\n");
@@ -646,7 +646,7 @@ exit 64
 			}
 			return originalRun.call(this, options, onChunk);
 		});
-		const abortSpy = vi.spyOn(piNatives.Shell.prototype, "abort").mockResolvedValue();
+		const abortSpy = vi.spyOn(airisNatives.Shell.prototype, "abort").mockResolvedValue();
 
 		const controller = new AbortController();
 		const promise = executeBash("sleep 10", {
@@ -686,12 +686,12 @@ exit 64
 
 		const nativeResult = Promise.withResolvers<{ exitCode: undefined; cancelled: true; timedOut: false }>();
 		const dispatched = Promise.withResolvers<void>();
-		vi.spyOn(piNatives.Shell.prototype, "run").mockImplementation((_options, onChunk) => {
+		vi.spyOn(airisNatives.Shell.prototype, "run").mockImplementation((_options, onChunk) => {
 			onChunk?.(null, "started\n");
 			dispatched.resolve();
 			return nativeResult.promise;
 		});
-		vi.spyOn(piNatives.Shell.prototype, "abort").mockResolvedValue();
+		vi.spyOn(airisNatives.Shell.prototype, "abort").mockResolvedValue();
 
 		const controller = new AbortController();
 		const promise = executeBash("sleep 10", {
@@ -735,14 +735,14 @@ exit 64
 			)) as typeof globalThis.setTimeout);
 
 		let nativeSignal: AbortSignal | undefined;
-		vi.spyOn(piNatives.Shell.prototype, "run").mockImplementation((options, onChunk) => {
+		vi.spyOn(airisNatives.Shell.prototype, "run").mockImplementation((options, onChunk) => {
 			if (options.signal instanceof AbortSignal) {
 				nativeSignal = options.signal;
 			}
 			onChunk?.(null, "streamed-before-timeout\n");
 			return Promise.withResolvers<never>().promise;
 		});
-		const abortSpy = vi.spyOn(piNatives.Shell.prototype, "abort").mockResolvedValue();
+		const abortSpy = vi.spyOn(airisNatives.Shell.prototype, "abort").mockResolvedValue();
 
 		const result = await executeBash("sleep 10", {
 			cwd: tempDir,
@@ -771,7 +771,7 @@ exit 64
 		const isolatedResult = Promise.withResolvers<ShellRunResult>();
 		const ownerDispatched = Promise.withResolvers<void>();
 		const isolatedDispatched = Promise.withResolvers<void>();
-		vi.spyOn(piNatives.Shell.prototype, "run").mockImplementation(options => {
+		vi.spyOn(airisNatives.Shell.prototype, "run").mockImplementation(options => {
 			if (options.command === "owner") {
 				ownerDispatched.resolve();
 				return ownerResult.promise;
@@ -779,7 +779,7 @@ exit 64
 			isolatedDispatched.resolve();
 			return isolatedResult.promise;
 		});
-		const abortSpy = vi.spyOn(piNatives.Shell.prototype, "abort").mockResolvedValue();
+		const abortSpy = vi.spyOn(airisNatives.Shell.prototype, "abort").mockResolvedValue();
 
 		const owner = executeBash("owner", {
 			cwd: tempDir,
@@ -1245,18 +1245,18 @@ exit 64
 			)) as typeof globalThis.setTimeout);
 
 		let nativeSignal: AbortSignal | undefined;
-		vi.spyOn(piNatives.Shell.prototype, "run").mockImplementation((options, onChunk) => {
+		vi.spyOn(airisNatives.Shell.prototype, "run").mockImplementation((options, onChunk) => {
 			if (options.signal instanceof AbortSignal) {
 				nativeSignal = options.signal;
 			}
-			const nativeResult = Promise.withResolvers<piNatives.ShellRunResult>();
+			const nativeResult = Promise.withResolvers<airisNatives.ShellRunResult>();
 			realSetTimeout(() => {
 				onChunk?.(null, "flushed-during-timeout\n");
 				nativeResult.resolve({ exitCode: undefined, cancelled: false, timedOut: true });
 			}, 20);
 			return nativeResult.promise;
 		});
-		const abortSpy = vi.spyOn(piNatives.Shell.prototype, "abort").mockResolvedValue();
+		const abortSpy = vi.spyOn(airisNatives.Shell.prototype, "abort").mockResolvedValue();
 
 		const result = await executeBash("producer | tail -5", {
 			cwd: tempDir,

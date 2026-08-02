@@ -1,10 +1,10 @@
-import { type AgentToolResult, ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import { PASTE_CODE_LOGIN_PROVIDERS } from "@oh-my-pi/pi-ai";
-import { getOAuthProviders } from "@oh-my-pi/pi-ai/oauth";
-import type { OAuthProvider } from "@oh-my-pi/pi-ai/oauth/types";
-import type { Component, OverlayHandle } from "@oh-my-pi/pi-tui";
-import { Loader, Spacer, setTuiTight, Text } from "@oh-my-pi/pi-tui";
-import { getAgentDbPath, getAgentDir, getProjectDir, normalizePathForComparison } from "@oh-my-pi/pi-utils";
+import { type AgentToolResult, ThinkingLevel } from "@airis/airis-agent-core";
+import { PASTE_CODE_LOGIN_PROVIDERS } from "@airis/airis-ai";
+import { getOAuthProviders } from "@airis/airis-ai/oauth";
+import type { OAuthProvider } from "@airis/airis-ai/oauth/types";
+import type { Component, OverlayHandle } from "@airis/airis-tui";
+import { Loader, Spacer, setTuiTight, Text } from "@airis/airis-tui";
+import { getAgentDbPath, getAgentDir, getProjectDir, normalizePathForComparison } from "@airis/airis-utils";
 import {
 	type AdvisorConfigScope,
 	discoverAdvisorConfigs,
@@ -1355,7 +1355,7 @@ export class SelectorController {
 		// agent turn, where the model sees the redirect and starts a
 		// conversation, but this standalone re-answer has no turn to hand it
 		// to — completing the navigation with it would silently drop the
-		// user's intent to chat (roboomp review on #5895).
+		// user's intent to chat (roboairis review on #5895).
 		if (result.details?.chatRedirect) {
 			this.ctx.showError(
 				"Chat about this isn't available when re-answering from the tree — pick an option or type a custom answer instead.",

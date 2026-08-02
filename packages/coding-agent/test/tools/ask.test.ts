@@ -1,16 +1,16 @@
 import { beforeAll, describe, expect, it, vi } from "bun:test";
 import { stripVTControlCharacters } from "node:util";
-import type { AgentToolContext } from "@oh-my-pi/pi-agent-core";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import type { AgentToolContext } from "@airis/airis-agent-core";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
 import type {
 	ExtensionAskDialogQuestion,
 	ExtensionAskDialogResult,
 	ExtensionUISelectItem,
-} from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import { getThemeByName, initTheme } from "@oh-my-pi/pi-coding-agent/modes/theme/theme";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { AskTool, askToolRenderer } from "@oh-my-pi/pi-coding-agent/tools/ask";
-import { ToolAbortError } from "@oh-my-pi/pi-coding-agent/tools/tool-errors";
+} from "@airis/airis-coding-agent/extensibility/extensions";
+import { getThemeByName, initTheme } from "@airis/airis-coding-agent/modes/theme/theme";
+import type { ToolSession } from "@airis/airis-coding-agent/tools";
+import { AskTool, askToolRenderer } from "@airis/airis-coding-agent/tools/ask";
+import { ToolAbortError } from "@airis/airis-coding-agent/tools/tool-errors";
 import { type } from "arktype";
 
 function createSession(overrides: Partial<ToolSession> = {}): ToolSession {
@@ -415,7 +415,7 @@ describe("AskTool option descriptions", () => {
 		const select = vi.fn(async (_prompt: string, options: ExtensionUISelectItem[]) => {
 			expect(options[0]).toEqual({
 				label: "Use local credentials",
-				description: "Authenticate with provider keys already configured under ~/.omp.",
+				description: "Authenticate with provider keys already configured under ~/.airis.",
 			});
 			expect(options[1]).toEqual({
 				label: "Set up in terminal",
@@ -436,7 +436,7 @@ describe("AskTool option descriptions", () => {
 						options: [
 							{
 								label: "Use local credentials",
-								description: "Authenticate with provider keys already configured under ~/.omp.",
+								description: "Authenticate with provider keys already configured under ~/.airis.",
 							},
 							{
 								label: "Set up in terminal",
@@ -470,7 +470,7 @@ describe("AskTool option descriptions", () => {
 				options: [
 					{
 						label: "Use local credentials",
-						description: "Authenticate with provider keys already configured under ~/.omp.",
+						description: "Authenticate with provider keys already configured under ~/.airis.",
 					},
 					{
 						label: "Set up in terminal",

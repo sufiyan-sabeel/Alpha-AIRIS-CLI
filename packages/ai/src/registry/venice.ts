@@ -3,7 +3,7 @@ import type { OAuthLoginCallbacks } from "./oauth/types";
 import type { ProviderDefinition } from "./types";
 
 const AUTH_URL = "https://venice.ai/settings/api";
-const API_BASE_URL = "https://api.venice.ai/api/v1";
+const AAIRIS_BASE_URL = "https://api.venice.ai/api/v1";
 const VALIDATION_MODEL = "qwen3-4b";
 
 /**
@@ -21,7 +21,7 @@ export const loginVenice = createApiKeyLogin({
 	validation: {
 		kind: "chat-completions",
 		provider: "Venice",
-		baseUrl: API_BASE_URL,
+		baseUrl: AAIRIS_BASE_URL,
 		model: VALIDATION_MODEL,
 	},
 });

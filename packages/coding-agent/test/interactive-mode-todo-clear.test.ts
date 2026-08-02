@@ -1,18 +1,18 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { InteractiveMode } from "@oh-my-pi/pi-coding-agent/modes/interactive-mode";
-import { initTheme, theme } from "@oh-my-pi/pi-coding-agent/modes/theme/theme";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TASK_SUBAGENT_LIFECYCLE_CHANNEL } from "@oh-my-pi/pi-coding-agent/task";
-import type { TodoPhase } from "@oh-my-pi/pi-coding-agent/tools/todo";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import type { NativeScrollbackLiveRegion } from "@oh-my-pi/pi-tui";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@airis/airis-agent-core";
+import { ModelRegistry } from "@airis/airis-coding-agent/config/model-registry";
+import { resetSettingsForTest, Settings } from "@airis/airis-coding-agent/config/settings";
+import { InteractiveMode } from "@airis/airis-coding-agent/modes/interactive-mode";
+import { initTheme, theme } from "@airis/airis-coding-agent/modes/theme/theme";
+import { AgentSession } from "@airis/airis-coding-agent/session/agent-session";
+import { AuthStorage } from "@airis/airis-coding-agent/session/auth-storage";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import { TASK_SUBAGENT_LIFECYCLE_CHANNEL } from "@airis/airis-coding-agent/task";
+import type { TodoPhase } from "@airis/airis-coding-agent/tools/todo";
+import { EventBus } from "@airis/airis-coding-agent/utils/event-bus";
+import type { NativeScrollbackLiveRegion } from "@airis/airis-tui";
+import { TempDir } from "@airis/airis-utils";
 
 function renderTodos(mode: InteractiveMode): string {
 	return Bun.stripANSI(mode.todoContainer.render(120).join("\n"));
@@ -31,7 +31,7 @@ describe("InteractiveMode todo HUD persistence", () => {
 
 	beforeEach(async () => {
 		resetSettingsForTest();
-		tempDir = TempDir.createSync("@pi-todo-clear-");
+		tempDir = TempDir.createSync("@airs-todo-clear-");
 	});
 
 	afterEach(async () => {
@@ -195,7 +195,7 @@ describe("InteractiveMode todo HUD anchor", () => {
 
 	beforeEach(async () => {
 		resetSettingsForTest();
-		tempDir = TempDir.createSync("@pi-todo-hud-");
+		tempDir = TempDir.createSync("@airs-todo-hud-");
 		await Settings.init({ inMemory: true, cwd: tempDir.path() });
 		authStorage = await AuthStorage.create(path.join(tempDir.path(), "testauth.db"));
 		const modelRegistry = new ModelRegistry(authStorage);

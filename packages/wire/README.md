@@ -1,14 +1,14 @@
-# @oh-my-pi/pi-wire
+# @airis/airis-wire
 
-Shared TypeScript wire contracts for omp collab live sessions.
+Shared TypeScript wire contracts for airis collab live sessions.
 
-The package contains only JSON-safe protocol shapes and constants. It has no runtime dependencies and is consumed by both the host CLI (`@oh-my-pi/pi-coding-agent`) and browser guest (`@oh-my-pi/collab-web`).
+The package contains only JSON-safe protocol shapes and constants. It has no runtime dependencies and is consumed by both the host CLI (`@airis/airis-coding-agent`) and browser guest (`@airis/airis-collab-web`).
 
 ## Exports
 
 ```ts
-import type { GuestFrame, HostFrame, SessionEntry } from "@oh-my-pi/pi-wire";
-import { COLLAB_PROTO, DEFAULT_RELAY_URL, ENVELOPE_HEADER_LENGTH } from "@oh-my-pi/pi-wire";
+import type { GuestFrame, HostFrame, SessionEntry } from "@airis/airis-wire";
+import { COLLAB_PROTO, DEFAULT_RELAY_URL, ENVELOPE_HEADER_LENGTH } from "@airis/airis-wire";
 ```
 
 Key groups:

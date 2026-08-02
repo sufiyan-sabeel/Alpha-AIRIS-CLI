@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "bun:test";
-import { executeAcpBuiltinSlashCommand } from "@oh-my-pi/pi-coding-agent/slash-commands/acp-builtins";
-import type { SlashCommandRuntime } from "@oh-my-pi/pi-coding-agent/slash-commands/types";
-import type { DesktopSessionOptions } from "@oh-my-pi/pi-natives";
+import { executeAcpBuiltinSlashCommand } from "@airis/airis-coding-agent/slash-commands/acp-builtins";
+import type { SlashCommandRuntime } from "@airis/airis-coding-agent/slash-commands/types";
+import type { DesktopSessionOptions } from "@airis/airis-natives";
 
 function acpRuntime(options?: {
 	enabled?: boolean;

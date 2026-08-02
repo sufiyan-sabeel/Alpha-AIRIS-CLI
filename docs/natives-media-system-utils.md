@@ -1,20 +1,20 @@
 # Natives media + system utilities
 
-This document covers the media/system/conversion exports currently present in `@oh-my-pi/pi-natives`: terminal SIXEL image encoding, HTML conversion, clipboard access, token counting, macOS appearance/power helpers, and work profiling.
+This document covers the media/system/conversion exports currently present in `@airis/airis-natives`: terminal SIXEL image encoding, HTML conversion, clipboard access, token counting, macOS appearance/power helpers, and work profiling.
 
 ## Implementation files
 
-- `crates/pi-natives/src/sixel.rs`
-- `crates/pi-natives/src/html.rs`
-- `crates/pi-natives/src/clipboard.rs`
-- `crates/pi-natives/src/tokens.rs`
-- `crates/pi-natives/src/appearance.rs`
-- `crates/pi-natives/src/power.rs`
-- `crates/pi-natives/src/prof.rs`
-- `crates/pi-natives/src/task.rs`
+- `crates/airis-natives/src/sixel.rs`
+- `crates/airis-natives/src/html.rs`
+- `crates/airis-natives/src/clipboard.rs`
+- `crates/airis-natives/src/tokens.rs`
+- `crates/airis-natives/src/appearance.rs`
+- `crates/airis-natives/src/power.rs`
+- `crates/airis-natives/src/prof.rs`
+- `crates/airis-natives/src/task.rs`
 - `packages/natives/native/index.d.ts`
 
-There is no native `PhotonImage` class, `image.rs`, or ProjFS overlay helper module in the current `pi-natives` addon. General-purpose image decode/resize/encode is expected to live outside this native surface; the native image export here is only terminal SIXEL encoding.
+There is no native `PhotonImage` class, `image.rs`, or ProjFS overlay helper module in the current `airis-natives` addon. General-purpose image decode/resize/encode is expected to live outside this native surface; the native image export here is only terminal SIXEL encoding.
 
 ## JS API ↔ Rust export/module mapping
 

@@ -7,10 +7,10 @@ import {
 	mathStartIndex,
 	renderInlineMarkdown,
 	urlTokenPossible,
-} from "@oh-my-pi/pi-tui/components/markdown";
-import { setTerminalTextSizing, TERMINAL } from "@oh-my-pi/pi-tui/terminal-capabilities";
-import { type Component, TUI } from "@oh-my-pi/pi-tui/tui";
-import { visibleWidth } from "@oh-my-pi/pi-tui/utils";
+} from "@airis/airis-tui/components/markdown";
+import { setTerminalTextSizing, TERMINAL } from "@airis/airis-tui/terminal-capabilities";
+import { type Component, TUI } from "@airis/airis-tui/tui";
+import { visibleWidth } from "@airis/airis-tui/utils";
 import { Chalk } from "chalk";
 import { defaultMarkdownTheme } from "./test-themes.js";
 import { VirtualTerminal } from "./virtual-terminal.js";
@@ -1475,7 +1475,7 @@ bar`,
 		});
 
 		it("should isolate wrapped OSC 8 links from adjacent table cells", () => {
-			const issueUrl = "https://github.com/can1357/oh-my-pi/issues/5860";
+			const issueUrl = "https://github.com/sufiyan-sabeel/Alpha-AIRIS-CLI/issues/5860";
 			const markdown = new Markdown(
 				`| Issue | Title |
 |---|---|
@@ -1521,7 +1521,7 @@ bar`,
 		});
 
 		it("should balance OSC 8 links across explicit newlines in a table cell", () => {
-			const issueUrl = "https://github.com/can1357/oh-my-pi/issues/5860";
+			const issueUrl = "https://github.com/sufiyan-sabeel/Alpha-AIRIS-CLI/issues/5860";
 			const markdown = new Markdown(
 				`| Issue | Title |
 |---|---|

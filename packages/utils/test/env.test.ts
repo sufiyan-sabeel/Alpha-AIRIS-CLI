@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { filterProcessEnv, parseEnvFile } from "@oh-my-pi/pi-utils/env";
+import { filterProcessEnv, parseEnvFile } from "@airis/airis-utils/env";
 
 const tempDirs: string[] = [];
 
@@ -41,11 +41,11 @@ describe("parseEnvFile", () => {
 		});
 	});
 
-	it("mirrors valid OMP_ variables to PI_ variables", () => {
-		const filePath = writeTempEnv("OMP_FEATURE=enabled\nOMP_BAD=before\0after\n");
+	it("mirrors valid AIRIS_ variables to PI_ variables", () => {
+		const filePath = writeTempEnv("AIRIS_FEATURE=enabled\nAIRIS_BAD=before\0after\n");
 
 		expect(parseEnvFile(filePath)).toEqual({
-			OMP_FEATURE: "enabled",
+			AIRIS_FEATURE: "enabled",
 			PI_FEATURE: "enabled",
 		});
 	});

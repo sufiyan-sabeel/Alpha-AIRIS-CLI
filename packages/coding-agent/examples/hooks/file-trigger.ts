@@ -8,17 +8,17 @@
  *   echo "Run the tests" > /tmp/agent-trigger.txt
  */
 import * as fs from "node:fs";
-import type { HookAPI } from "@oh-my-pi/pi-coding-agent";
+import type { HookAPI } from "@airis/airis-coding-agent";
 
-export default function (pi: HookAPI) {
-	pi.on("session_start", async (_event, ctx) => {
+export default function (airs: HookAPI) {
+	airs.on("session_start", async (_event, ctx) => {
 		const triggerFile = "/tmp/agent-trigger.txt";
 
 		fs.watch(triggerFile, async () => {
 			try {
 				const content = (await Bun.file(triggerFile).text()).trim();
 				if (content) {
-					pi.sendMessage(
+					airs.sendMessage(
 						{
 							customType: "file-trigger",
 							content: `External trigger: ${content}`,

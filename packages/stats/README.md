@@ -1,10 +1,10 @@
-# @oh-my-pi/omp-stats
+# @airis/airis-stats
 
 Local observability dashboard for AI usage statistics.
 
 ## Features
 
-- **Session log parsing**: Reads JSONL session logs from `~/.omp/agent/sessions/`
+- **Session log parsing**: Reads JSONL session logs from `~/.airis/agent/sessions/`
 - **SQLite aggregation**: Efficient stats storage and querying using `bun:sqlite`
 - **Web dashboard**: Real-time metrics visualization with Chart.js
 - **Incremental sync**: Only processes new/modified log entries
@@ -26,22 +26,22 @@ Local observability dashboard for AI usage statistics.
 
 ```bash
 # Start dashboard server (default: http://localhost:3847)
-omp stats
+airis stats
 
 # Custom port
-omp stats --port 8080
+airis stats --port 8080
 
 # Print summary to console
-omp stats --summary
+airis stats --summary
 
 # Output as JSON (for scripting)
-omp stats --json
+airis stats --json
 ```
 
 ### Programmatic
 
 ```typescript
-import { getDashboardStats, syncAllSessions } from "@oh-my-pi/omp-stats";
+import { getDashboardStats, syncAllSessions } from "@airis/airis-stats";
 
 // Sync session logs to database
 const { processed, files } = await syncAllSessions();
@@ -64,8 +64,8 @@ console.log(stats.byModel[0].avgTokensPerSecond);
 
 ## Data Storage
 
-- **Session logs**: `~/.omp/agent/sessions/` (JSONL files)
-- **Stats database**: `~/.omp/stats.db` (SQLite)
+- **Session logs**: `~/.airis/agent/sessions/` (JSONL files)
+- **Stats database**: `~/.airis/stats.db` (SQLite)
 
 ## Dashboard
 

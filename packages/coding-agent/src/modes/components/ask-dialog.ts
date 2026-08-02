@@ -13,7 +13,7 @@ import {
 	type TUI,
 	truncateToWidth,
 	wrapTextWithAnsi,
-} from "@oh-my-pi/pi-tui";
+} from "@airis/airis-tui";
 import type {
 	ExtensionAskDialogQuestion,
 	ExtensionAskDialogResultItem,

@@ -1,5 +1,5 @@
-import type { Agent } from "@oh-my-pi/pi-agent-core";
-import { logger, prompt } from "@oh-my-pi/pi-utils";
+import type { Agent } from "@airis/airis-agent-core";
+import { logger, prompt } from "@airis/airis-utils";
 import type { Settings } from "../config/settings";
 import { IrcBus, type IrcMessage } from "../irc/bus";
 import parentIrcSteerTemplate from "../prompts/steering/parent-irc.md" with { type: "text" };

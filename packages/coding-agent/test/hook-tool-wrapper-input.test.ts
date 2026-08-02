@@ -5,14 +5,14 @@
 
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import type { AgentTool } from "@oh-my-pi/pi-agent-core";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { HookRunner, type LoadedHook } from "@oh-my-pi/pi-coding-agent/extensibility/hooks";
-import { HookToolWrapper } from "@oh-my-pi/pi-coding-agent/extensibility/hooks/tool-wrapper";
-import { Type } from "@oh-my-pi/pi-coding-agent/extensibility/typebox";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import type { AgentTool } from "@airis/airis-agent-core";
+import { ModelRegistry } from "@airis/airis-coding-agent/config/model-registry";
+import { HookRunner, type LoadedHook } from "@airis/airis-coding-agent/extensibility/hooks";
+import { HookToolWrapper } from "@airis/airis-coding-agent/extensibility/hooks/tool-wrapper";
+import { Type } from "@airis/airis-coding-agent/extensibility/typebox";
+import { AuthStorage } from "@airis/airis-coding-agent/session/auth-storage";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import { TempDir } from "@airis/airis-utils";
 
 describe("HookToolWrapper tool_call input override", () => {
 	let sharedTempDir: TempDir;
@@ -20,7 +20,7 @@ describe("HookToolWrapper tool_call input override", () => {
 	let authStorage: AuthStorage;
 
 	beforeAll(async () => {
-		sharedTempDir = TempDir.createSync("@pi-hook-wrapper-shared-");
+		sharedTempDir = TempDir.createSync("@airs-hook-wrapper-shared-");
 		authStorage = await AuthStorage.create(path.join(sharedTempDir.path(), "testauth.db"));
 		modelRegistry = new ModelRegistry(authStorage);
 	});

@@ -9,20 +9,20 @@
  */
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Agent, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { InteractiveMode } from "@oh-my-pi/pi-coding-agent/modes/interactive-mode";
-import { initTheme } from "@oh-my-pi/pi-coding-agent/modes/theme/theme";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { normalizeCustomMessagePayload } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { FileSessionStorage, type WriteTextAtomicOptions } from "@oh-my-pi/pi-coding-agent/session/session-storage";
-import { VIBE_TOOL_NAMES } from "@oh-my-pi/pi-coding-agent/tools/vibe";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { VibeSessionRegistry } from "@oh-my-pi/pi-coding-agent/vibe/runtime";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent, type AgentTool } from "@airis/airis-agent-core";
+import { ModelRegistry } from "@airis/airis-coding-agent/config/model-registry";
+import { resetSettingsForTest, Settings } from "@airis/airis-coding-agent/config/settings";
+import { InteractiveMode } from "@airis/airis-coding-agent/modes/interactive-mode";
+import { initTheme } from "@airis/airis-coding-agent/modes/theme/theme";
+import { AgentSession } from "@airis/airis-coding-agent/session/agent-session";
+import { AuthStorage } from "@airis/airis-coding-agent/session/auth-storage";
+import { normalizeCustomMessagePayload } from "@airis/airis-coding-agent/session/messages";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import { FileSessionStorage, type WriteTextAtomicOptions } from "@airis/airis-coding-agent/session/session-storage";
+import { VIBE_TOOL_NAMES } from "@airis/airis-coding-agent/tools/vibe";
+import { EventBus } from "@airis/airis-coding-agent/utils/event-bus";
+import { VibeSessionRegistry } from "@airis/airis-coding-agent/vibe/runtime";
+import { TempDir } from "@airis/airis-utils";
 import { type } from "arktype";
 
 function stubTool(name: string): AgentTool {
@@ -97,7 +97,7 @@ describe("InteractiveMode vibe mode toggle", () => {
 	beforeEach(async () => {
 		resetSettingsForTest();
 		VibeSessionRegistry.resetGlobalForTests();
-		tempDir = TempDir.createSync("@pi-vibe-toggle-");
+		tempDir = TempDir.createSync("@airs-vibe-toggle-");
 		await Settings.init({ inMemory: true, cwd: tempDir.path() });
 		authStorage = await AuthStorage.create(path.join(tempDir.path(), "testauth.db"));
 		modelRegistry = new ModelRegistry(authStorage);

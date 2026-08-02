@@ -3,7 +3,7 @@ import type { OAuthLoginCallbacks } from "./oauth/types";
 import type { ProviderDefinition } from "./types";
 
 const AUTH_URL = "https://console.bce.baidu.com/qianfan/ais/console/apiKey";
-const API_BASE_URL = "https://qianfan.baidubce.com/v2";
+const AAIRIS_BASE_URL = "https://qianfan.baidubce.com/v2";
 const VALIDATION_MODEL = "deepseek-v3.2";
 
 export const loginQianfan = createApiKeyLogin({
@@ -15,7 +15,7 @@ export const loginQianfan = createApiKeyLogin({
 	validation: {
 		kind: "chat-completions",
 		provider: "qianfan",
-		baseUrl: API_BASE_URL,
+		baseUrl: AAIRIS_BASE_URL,
 		model: VALIDATION_MODEL,
 	},
 });

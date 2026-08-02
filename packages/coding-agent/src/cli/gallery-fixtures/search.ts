@@ -32,7 +32,7 @@ export const searchFixtures: Record<string, GalleryFixture> = {
 			],
 			details: {
 				scopePath: "packages/tui/src",
-				searchPath: "/Users/dev/Projects/pi/packages/tui/src",
+				searchPath: "/Users/dev/Projects/alpha-airis-cli/packages/tui/src",
 				matchCount: 5,
 				fileCount: 3,
 				files: [
@@ -105,7 +105,7 @@ export const searchFixtures: Record<string, GalleryFixture> = {
 				filesSearched: 14,
 				limitReached: false,
 				scopePath: "packages/tui/src/components",
-				searchPath: "/Users/dev/Projects/pi/packages/tui/src/components",
+				searchPath: "/Users/dev/Projects/alpha-airis-cli/packages/tui/src/components",
 				files: ["packages/tui/src/components/SearchBox.tsx", "packages/tui/src/components/StatusBar.tsx"],
 				fileMatches: [
 					{ path: "packages/tui/src/components/SearchBox.tsx", count: 1 },

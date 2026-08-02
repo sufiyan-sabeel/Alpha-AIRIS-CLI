@@ -1,5 +1,5 @@
-import type { AgentTool, AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import { logger, untilAborted } from "@oh-my-pi/pi-utils";
+import type { AgentTool, AgentToolResult } from "@airis/airis-agent-core";
+import { logger, untilAborted } from "@airis/airis-utils";
 import { type } from "arktype";
 import { formatCurrentTime, formatMemories } from "../hindsight/content";
 import recallDescription from "../prompts/tools/recall.md" with { type: "text" };
@@ -25,17 +25,17 @@ export class MemoryRecallTool implements AgentTool<typeof memoryRecallSchema> {
 
 	static createIf(session: ToolSession): MemoryRecallTool | null {
 		const backend = session.settings.get("memory.backend");
-		if (backend !== "hindsight" && backend !== "mnemopi") return null;
+		if (backend !== "hindsight" && backend !== "mnemosyne") return null;
 		return new MemoryRecallTool(session);
 	}
 
 	async execute(_id: string, params: MemoryRecallParams, signal?: AbortSignal): Promise<AgentToolResult> {
 		return untilAborted(signal, async () => {
 			const backend = this.session.settings.get("memory.backend");
-			if (backend === "mnemopi") {
-				const state = this.session.getMnemopiSessionState?.();
+			if (backend === "mnemosyne") {
+				const state = this.session.getMnemosyneSessionState?.();
 				if (!state) {
-					throw new Error("Mnemopi backend is not initialised for this session.");
+					throw new Error("Mnemosyne backend is not initialised for this session.");
 				}
 				try {
 					const results = await state.recallResultsScoped(params.query);
@@ -57,7 +57,7 @@ export class MemoryRecallTool implements AgentTool<typeof memoryRecallSchema> {
 						details: {},
 					};
 				} catch (err) {
-					logger.warn("recall failed", { backend: "mnemopi", bank: state.config.bank, error: String(err) });
+					logger.warn("recall failed", { backend: "mnemosyne", bank: state.config.bank, error: String(err) });
 					throw err instanceof Error ? err : new Error(String(err));
 				}
 			}

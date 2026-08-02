@@ -14,8 +14,8 @@
  *    message delta is a cache miss each turn.
  */
 
-import type { Context, Message, Tool } from "@oh-my-pi/pi-ai";
-import type { Dialect } from "@oh-my-pi/pi-ai/dialect";
+import type { Context, Message, Tool } from "@airis/airis-ai";
+import type { Dialect } from "@airis/airis-ai/dialect";
 import { normalizeTools } from "./agent-loop";
 import type { AgentContext } from "./types";
 

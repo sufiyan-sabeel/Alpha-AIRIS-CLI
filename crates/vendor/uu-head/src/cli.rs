@@ -6,7 +6,7 @@
 use std::ffi::OsString;
 
 use clap::{Arg, ArgAction, Command};
-use pi_uutils_ctx::format_usage;
+use airis_uutils_ctx::format_usage;
 
 pub mod options {
 	pub const BYTES: &str = "BYTES";

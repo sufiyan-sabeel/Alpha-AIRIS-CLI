@@ -1,9 +1,9 @@
 import { describe, expect, it } from "bun:test";
-import { Effort, type FetchImpl } from "@oh-my-pi/pi-ai";
-import { streamSimple } from "@oh-my-pi/pi-ai/stream";
-import type { Context, Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import type { ModelSpec } from "@oh-my-pi/pi-catalog/types";
+import { Effort, type FetchImpl } from "@airis/airis-ai";
+import { streamSimple } from "@airis/airis-ai/stream";
+import type { Context, Model } from "@airis/airis-ai/types";
+import { buildModel } from "@airis/airis-catalog/build";
+import type { ModelSpec } from "@airis/airis-catalog/types";
 
 interface CapturedRequestBody {
 	model?: string;

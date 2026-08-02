@@ -5,7 +5,7 @@ import {
 	type AgentTool,
 	AppendOnlyContextManager,
 	type StreamFn,
-} from "@oh-my-pi/pi-agent-core";
+} from "@airis/airis-agent-core";
 import {
 	type Api,
 	type Context,
@@ -17,21 +17,21 @@ import {
 	registerCustomApi,
 	type SimpleStreamOptions,
 	type TextContent,
-} from "@oh-my-pi/pi-ai";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import * as memoryBackend from "@oh-my-pi/pi-coding-agent/memory-backend";
-import type { MemoryBackend } from "@oh-my-pi/pi-coding-agent/memory-backend/types";
-import { type MnemopiSessionState, setMnemopiSessionState } from "@oh-my-pi/pi-coding-agent/mnemopi/state";
-import { createAgentSession, type ExtensionFactory } from "@oh-my-pi/pi-coding-agent/sdk";
-import { obfuscateProviderContext, SecretObfuscator } from "@oh-my-pi/pi-coding-agent/secrets";
-import { AgentSession, type AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { convertToLlm, wrapSteeringForModel } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@airis/airis-ai";
+import { AssistantMessageEventStream } from "@airis/airis-ai/utils/event-stream";
+import { buildModel } from "@airis/airis-catalog/build";
+import { ModelRegistry } from "@airis/airis-coding-agent/config/model-registry";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import * as memoryBackend from "@airis/airis-coding-agent/memory-backend";
+import type { MemoryBackend } from "@airis/airis-coding-agent/memory-backend/types";
+import { type MnemosyneSessionState, setMnemosyneSessionState } from "@airis/airis-coding-agent/mnemosyne/state";
+import { createAgentSession, type ExtensionFactory } from "@airis/airis-coding-agent/sdk";
+import { obfuscateProviderContext, SecretObfuscator } from "@airis/airis-coding-agent/secrets";
+import { AgentSession, type AgentSessionEvent } from "@airis/airis-coding-agent/session/agent-session";
+import { AuthStorage } from "@airis/airis-coding-agent/session/auth-storage";
+import { convertToLlm, wrapSteeringForModel } from "@airis/airis-coding-agent/session/messages";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import { TempDir } from "@airis/airis-utils";
 import { createAssistantMessage } from "./helpers/agent-session-setup";
 
 function createAgent(): Agent {
@@ -66,15 +66,15 @@ function getConvertedUserText(message: Message | undefined): string {
 }
 
 async function withNativeDialectEnv<T>(fn: () => Promise<T>): Promise<T> {
-	const previous = Bun.env.PI_DIALECT;
-	delete Bun.env.PI_DIALECT;
+	const previous = Bun.env.AIRIS_DIALECT;
+	delete Bun.env.AIRIS_DIALECT;
 	try {
 		return await fn();
 	} finally {
 		if (previous === undefined) {
-			delete Bun.env.PI_DIALECT;
+			delete Bun.env.AIRIS_DIALECT;
 		} else {
-			Bun.env.PI_DIALECT = previous;
+			Bun.env.AIRIS_DIALECT = previous;
 		}
 	}
 }
@@ -685,7 +685,7 @@ describe("AgentSession message pipeline", () => {
 		let remembered = false;
 		const injected = "<memories>remember blue</memories>";
 		const fakeBackend: MemoryBackend = {
-			id: "mnemopi",
+			id: "mnemosyne",
 			async start() {},
 			async buildDeveloperInstructions() {
 				return remembered ? `static memory instructions\n\n${injected}` : "static memory instructions";
@@ -754,7 +754,7 @@ describe("AgentSession message pipeline", () => {
 	});
 
 	it("preserves append-only prefixes in subagent sessions when context handlers rewrite prior turns", async () => {
-		using tempDir = TempDir.createSync("@pi-subagent-append-only-");
+		using tempDir = TempDir.createSync("@airs-subagent-append-only-");
 		const api = "test-subagent-append-only-cache";
 		const contexts: Context[] = [];
 		registerCustomApi(api, (_model, context) => {
@@ -846,7 +846,7 @@ describe("AgentSession message pipeline", () => {
 		// own emission is suppressed via the runner marker), the revision is what
 		// tool_execution_start reports, what bash executes, and what the
 		// assistant message persists.
-		using tempDir = TempDir.createSync("@pi-tool-call-revision-");
+		using tempDir = TempDir.createSync("@airs-tool-call-revision-");
 		const api = "test-tool-call-revision";
 		let requests = 0;
 		registerCustomApi(api, () => {
@@ -947,7 +947,7 @@ describe("AgentSession message pipeline", () => {
 	});
 
 	it("clears promoted memory from the base prompt when switching sessions", async () => {
-		using tempDir = TempDir.createSync("@pi-injected-memory-switch-");
+		using tempDir = TempDir.createSync("@airs-injected-memory-switch-");
 		const sessionManager = SessionManager.create(tempDir.path(), tempDir.join("sessions"));
 		const firstSessionFile = sessionManager.getSessionFile();
 		expect(firstSessionFile).toBeString();
@@ -963,7 +963,7 @@ describe("AgentSession message pipeline", () => {
 		let recallAvailable = true;
 		const injected = "<memories>session A only</memories>";
 		const fakeBackend: MemoryBackend = {
-			id: "mnemopi",
+			id: "mnemosyne",
 			async start() {},
 			async buildDeveloperInstructions() {
 				return remembered ? `static memory instructions\n\n${injected}` : "static memory instructions";
@@ -1013,7 +1013,7 @@ describe("AgentSession message pipeline", () => {
 			sessionManager,
 			settings: Settings.isolated({
 				"compaction.enabled": false,
-				"memory.backend": "mnemopi",
+				"memory.backend": "mnemosyne",
 				"provider.appendOnlyContext": "on",
 			}),
 			modelRegistry: createModelRegistryStub() as never,
@@ -1024,14 +1024,14 @@ describe("AgentSession message pipeline", () => {
 			}),
 		});
 		sessions.push(session);
-		setMnemopiSessionState(session, {
+		setMnemosyneSessionState(session, {
 			aliasOf: undefined,
 			setSessionId(_sessionId: string) {},
 			resetConversationTracking() {
 				remembered = false;
 			},
 			async dispose() {},
-		} as unknown as MnemopiSessionState);
+		} as unknown as MnemosyneSessionState);
 
 		await session.sendUserMessage("first");
 		expect(session.systemPrompt.join("\n")).toContain(injected);
@@ -1052,7 +1052,7 @@ describe("AgentSession message pipeline", () => {
 		let recallAvailable = true;
 		const injected = "<memories>previous session only</memories>";
 		const fakeBackend: MemoryBackend = {
-			id: "mnemopi",
+			id: "mnemosyne",
 			async start() {},
 			async buildDeveloperInstructions() {
 				return remembered ? `static memory instructions\n\n${injected}` : "static memory instructions";
@@ -1102,7 +1102,7 @@ describe("AgentSession message pipeline", () => {
 			sessionManager: SessionManager.inMemory(),
 			settings: Settings.isolated({
 				"compaction.enabled": false,
-				"memory.backend": "mnemopi",
+				"memory.backend": "mnemosyne",
 				"provider.appendOnlyContext": "on",
 			}),
 			modelRegistry: createModelRegistryStub() as never,
@@ -1113,14 +1113,14 @@ describe("AgentSession message pipeline", () => {
 			}),
 		});
 		sessions.push(session);
-		setMnemopiSessionState(session, {
+		setMnemosyneSessionState(session, {
 			aliasOf: undefined,
 			setSessionId(_sessionId: string) {},
 			resetConversationTracking() {
 				remembered = false;
 			},
 			async dispose() {},
-		} as unknown as MnemopiSessionState);
+		} as unknown as MnemosyneSessionState);
 
 		await session.sendUserMessage("first");
 		expect(session.systemPrompt.join("\n")).toContain(injected);
@@ -1135,7 +1135,7 @@ describe("AgentSession message pipeline", () => {
 	});
 
 	it("does not duplicate promoted memory in the base prompt when forking", async () => {
-		using tempDir = TempDir.createSync("@pi-injected-memory-fork-");
+		using tempDir = TempDir.createSync("@airs-injected-memory-fork-");
 		const sessionManager = SessionManager.create(tempDir.path(), tempDir.join("sessions"));
 		expect(sessionManager.getSessionFile()).toBeString();
 		await sessionManager.flush();
@@ -1145,7 +1145,7 @@ describe("AgentSession message pipeline", () => {
 		let remembered = false;
 		const injected = "<memories>forked recall</memories>";
 		const fakeBackend: MemoryBackend = {
-			id: "mnemopi",
+			id: "mnemosyne",
 			async start() {},
 			async buildDeveloperInstructions() {
 				return remembered ? `static memory instructions\n\n${injected}` : "static memory instructions";
@@ -1195,7 +1195,7 @@ describe("AgentSession message pipeline", () => {
 			sessionManager,
 			settings: Settings.isolated({
 				"compaction.enabled": false,
-				"memory.backend": "mnemopi",
+				"memory.backend": "mnemosyne",
 				"provider.appendOnlyContext": "on",
 			}),
 			modelRegistry: createModelRegistryStub() as never,
@@ -1206,14 +1206,14 @@ describe("AgentSession message pipeline", () => {
 			}),
 		});
 		sessions.push(session);
-		setMnemopiSessionState(session, {
+		setMnemosyneSessionState(session, {
 			aliasOf: undefined,
 			setSessionId(_sessionId: string) {},
 			resetConversationTracking() {
 				remembered = false;
 			},
 			async dispose() {},
-		} as unknown as MnemopiSessionState);
+		} as unknown as MnemosyneSessionState);
 
 		await session.sendUserMessage("first");
 		expect(session.systemPrompt.join("\n")).toContain(injected);

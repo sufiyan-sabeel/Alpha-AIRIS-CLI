@@ -1,11 +1,11 @@
 /**
- * HTTP client for the omp auth-broker server.
+ * HTTP client for the airis auth-broker server.
  *
  * Used by {@link RemoteAuthCredentialStore} (snapshot pulls) and by
- * `omp auth-broker status` (liveness checks). All endpoints except
+ * `airis auth-broker status` (liveness checks). All endpoints except
  * `/v1/healthz` require a bearer token.
  */
-import { readSseEvents } from "@oh-my-pi/pi-utils";
+import { readSseEvents } from "@airis/airis-utils";
 import { type } from "arktype";
 import type { AuthCredential, DisabledCredentialSummary } from "../auth-storage";
 import type {

@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { LiveSessionController } from "@oh-my-pi/pi-coding-agent/live/controller";
-import { LiveCommandController } from "@oh-my-pi/pi-coding-agent/modes/controllers/live-command-controller";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import { LiveSessionController } from "@airis/airis-coding-agent/live/controller";
+import { LiveCommandController } from "@airis/airis-coding-agent/modes/controllers/live-command-controller";
+import type { InteractiveModeContext } from "@airis/airis-coding-agent/modes/types";
 
 function createContext(): InteractiveModeContext {
 	const editor = {

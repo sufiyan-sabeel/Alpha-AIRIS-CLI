@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { removeWithRetries, TempDir } from "@oh-my-pi/pi-utils";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import { removeWithRetries, TempDir } from "@airis/airis-utils";
 
 const tempDirs: TempDir[] = [];
 
@@ -30,8 +30,8 @@ async function writeSession(cwd: string, sessionDir: string): Promise<string> {
 
 describe("SessionManager cwd adoption on resume", () => {
 	it("adopts the resumed session's own cwd and session directory", async () => {
-		const projectA = makeTempDir("@pi-cwd-a-");
-		const projectB = makeTempDir("@pi-cwd-b-");
+		const projectA = makeTempDir("@airs-cwd-a-");
+		const projectB = makeTempDir("@airs-cwd-b-");
 		const sessionsB = path.join(projectB, "sessions");
 		const fileB = await writeSession(projectB, sessionsB);
 
@@ -48,8 +48,8 @@ describe("SessionManager cwd adoption on resume", () => {
 	});
 
 	it("leaves cwd untouched when the resumed session has no recorded cwd", async () => {
-		const projectA = makeTempDir("@pi-cwd-a-");
-		const projectB = makeTempDir("@pi-cwd-b-");
+		const projectA = makeTempDir("@airs-cwd-a-");
+		const projectB = makeTempDir("@airs-cwd-b-");
 		const sessionsB = path.join(projectB, "sessions");
 		const fileB = await writeSession(projectB, sessionsB);
 
@@ -79,8 +79,8 @@ describe("SessionManager cwd adoption on resume", () => {
 	});
 
 	it("restores cwd and session directory when a switch is rolled back", async () => {
-		const projectA = makeTempDir("@pi-cwd-a-");
-		const projectB = makeTempDir("@pi-cwd-b-");
+		const projectA = makeTempDir("@airs-cwd-a-");
+		const projectB = makeTempDir("@airs-cwd-b-");
 		const sessionsA = path.join(projectA, "sessions");
 		const sessionsB = path.join(projectB, "sessions");
 		const fileB = await writeSession(projectB, sessionsB);
@@ -97,10 +97,10 @@ describe("SessionManager cwd adoption on resume", () => {
 	});
 
 	it("keeps the current cwd when the resumed session's project directory is gone", async () => {
-		const launch = makeTempDir("@pi-cwd-launch-");
-		const store = makeTempDir("@pi-cwd-store-");
-		const goneProject = makeTempDir("@pi-cwd-gone-");
-		// The session file survives in `store` (like ~/.omp), but its header cwd
+		const launch = makeTempDir("@airs-cwd-launch-");
+		const store = makeTempDir("@airs-cwd-store-");
+		const goneProject = makeTempDir("@airs-cwd-gone-");
+		// The session file survives in `store` (like ~/.airis), but its header cwd
 		// points at a project directory that we then delete.
 		const file = await writeSession(goneProject, store);
 		await removeWithRetries(goneProject);
@@ -116,9 +116,9 @@ describe("SessionManager cwd adoption on resume", () => {
 	});
 
 	it("falls back to the launch cwd when opening a session whose project directory is gone", async () => {
-		const launch = makeTempDir("@pi-cwd-launch-");
-		const store = makeTempDir("@pi-cwd-store-");
-		const goneProject = makeTempDir("@pi-cwd-gone-");
+		const launch = makeTempDir("@airs-cwd-launch-");
+		const store = makeTempDir("@airs-cwd-store-");
+		const goneProject = makeTempDir("@airs-cwd-gone-");
 		const file = await writeSession(goneProject, store);
 		await removeWithRetries(goneProject);
 

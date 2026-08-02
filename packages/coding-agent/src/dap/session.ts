@@ -1,6 +1,6 @@
 import * as path from "node:path";
 import * as timers from "node:timers/promises";
-import { logger, ptree, untilAborted } from "@oh-my-pi/pi-utils";
+import { logger, ptree, untilAborted } from "@airis/airis-utils";
 import { NON_INTERACTIVE_ENV } from "../exec/non-interactive-env";
 import { DapClient } from "./client";
 import type {
@@ -372,7 +372,7 @@ export class DapSessionManager {
 			const attachArguments: DapAttachArguments = {
 				...options.adapter.attachDefaults,
 				cwd: options.cwd,
-				...(options.pid !== undefined ? { pid: options.pid, processId: options.pid } : {}),
+				...(options.airisd !== undefined ? { pid: options.airisd, processId: options.airisd } : {}),
 				...(options.port !== undefined ? { port: options.port } : {}),
 				...(options.host ? { host: options.host } : {}),
 			};
@@ -1429,8 +1429,8 @@ export class DapSessionManager {
 
 	#buildInitializeArguments(adapter: DapResolvedAdapter): DapInitializeArguments {
 		return {
-			clientID: "omp",
-			clientName: "Oh My Pi",
+			clientID: "airis",
+			clientName: "Alpha AIRIS-CLI",
 			adapterID: adapter.name,
 			locale: "en-US",
 			linesStartAt1: true,

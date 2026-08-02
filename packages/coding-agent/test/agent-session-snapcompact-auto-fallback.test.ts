@@ -1,15 +1,15 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import * as compactionModule from "@oh-my-pi/pi-agent-core/compaction";
-import type { Message } from "@oh-my-pi/pi-ai";
-import { type GeneratedProvider, getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@airis/airis-agent-core";
+import * as compactionModule from "@airis/airis-agent-core/compaction";
+import type { Message } from "@airis/airis-ai";
+import { type GeneratedProvider, getBundledModel } from "@airis/airis-catalog/models";
+import { ModelRegistry } from "@airis/airis-coding-agent/config/model-registry";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import { AgentSession } from "@airis/airis-coding-agent/session/agent-session";
+import { AuthStorage } from "@airis/airis-coding-agent/session/auth-storage";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import { TempDir } from "@airis/airis-utils";
 
 const UNRENDERABLE_SNAPCOMPACT_TEXT = "\uE000\uE001\uE002\uE003\uE004\uE005\uE006\uE007\uE008\uE009";
 
@@ -127,7 +127,7 @@ describe("AgentSession auto-snapcompact local-blocker fallback", () => {
 	});
 
 	it("downgrades to context-full when the active model cannot read snapcompact frames", async () => {
-		tempDir = TempDir.createSync("@pi-snapcompact-text-only-");
+		tempDir = TempDir.createSync("@airs-snapcompact-text-only-");
 		authStorage = await AuthStorage.create(path.join(tempDir.path(), "auth.db"));
 		const harness = await createHarness(tempDir, authStorage, {
 			activeModel: { provider: "aimlapi", id: "alibaba/qwen3-coder-480b-a35b-instruct" },
@@ -148,7 +148,7 @@ describe("AgentSession auto-snapcompact local-blocker fallback", () => {
 	});
 
 	it("downgrades to context-full when unsupported glyphs make snapcompact unsafe", async () => {
-		tempDir = TempDir.createSync("@pi-snapcompact-unsupported-glyphs-");
+		tempDir = TempDir.createSync("@airs-snapcompact-unsupported-glyphs-");
 		authStorage = await AuthStorage.create(path.join(tempDir.path(), "auth.db"));
 		const harness = await createHarness(tempDir, authStorage, {
 			activeModel: { provider: "aimlapi", id: "claude-sonnet-4-5-20250929" },

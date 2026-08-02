@@ -3,11 +3,11 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import { create, fromBinary } from "@bufbuild/protobuf";
-import type { AgentEvent, AgentTool, AgentToolContext } from "@oh-my-pi/pi-agent-core";
-import { type BlockState, handleServerMessage, type ToolCallState } from "@oh-my-pi/pi-ai/providers/cursor";
-import { buildPiLsResult, piTruncation } from "@oh-my-pi/pi-ai/providers/cursor/exec-modern";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai/types";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
+import type { AgentEvent, AgentTool, AgentToolContext } from "@airis/airis-agent-core";
+import { type BlockState, handleServerMessage, type ToolCallState } from "@airis/airis-ai/providers/cursor";
+import { buildPiLsResult, piTruncation } from "@airis/airis-ai/providers/cursor/exec-modern";
+import type { AssistantMessage } from "@airis/airis-ai/types";
+import { AssistantMessageEventStream } from "@airis/airis-ai/utils/event-stream";
 import {
 	AgentClientMessageSchema,
 	AgentServerMessageSchema,
@@ -16,21 +16,21 @@ import {
 	McpArgsSchema,
 	ReadArgsSchema,
 	ShellArgsSchema,
-} from "@oh-my-pi/pi-catalog/discovery/cursor-gen/agent_pb";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { CursorExecHandlers } from "@oh-my-pi/pi-coding-agent/cursor";
+} from "@airis/airis-catalog/discovery/cursor-gen/agent_pb";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import { CursorExecHandlers } from "@airis/airis-coding-agent/cursor";
 import {
 	bridgeToolMap,
 	createBridgeEditTool,
 	createBridgeGrepFactory,
-} from "@oh-my-pi/pi-coding-agent/cursor-bridge-tools";
-import { EditTool } from "@oh-my-pi/pi-coding-agent/edit";
-import type { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import { ExtensionToolWrapper } from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import { BUILTIN_TOOLS, GrepTool, ReadTool, type Tool, type ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { BashTool } from "@oh-my-pi/pi-coding-agent/tools/bash";
-import type { TruncationMeta } from "@oh-my-pi/pi-coding-agent/tools/output-meta";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+} from "@airis/airis-coding-agent/cursor-bridge-tools";
+import { EditTool } from "@airis/airis-coding-agent/edit";
+import type { ExtensionRunner } from "@airis/airis-coding-agent/extensibility/extensions";
+import { ExtensionToolWrapper } from "@airis/airis-coding-agent/extensibility/extensions";
+import { BUILTIN_TOOLS, GrepTool, ReadTool, type Tool, type ToolSession } from "@airis/airis-coding-agent/tools";
+import { BashTool } from "@airis/airis-coding-agent/tools/bash";
+import type { TruncationMeta } from "@airis/airis-coding-agent/tools/output-meta";
+import { removeWithRetries } from "@airis/airis-utils";
 import { type } from "arktype";
 import { AdviseTool } from "../src/advisor/advise-tool";
 
@@ -721,7 +721,7 @@ describe("CursorExecHandlers mounted tool bridge", () => {
 
 		const result = await handlers.mcp({
 			name: mountedTool.name,
-			providerIdentifier: "pi-agent",
+			providerIdentifier: "airis-agent",
 			toolName: mountedTool.name,
 			toolCallId: "call-mounted",
 			args: {},
@@ -762,7 +762,7 @@ describe("CursorExecHandlers mounted tool bridge", () => {
 
 		const result = await handlers.mcp({
 			name: device.name,
-			providerIdentifier: "pi-agent",
+			providerIdentifier: "airis-agent",
 			toolName: device.name,
 			toolCallId: "call-denied",
 			args: {},
@@ -1223,7 +1223,7 @@ describe("CursorExecHandlers advise routing (issue #5680)", () => {
 							name: "advise",
 							toolName: "advise",
 							toolCallId: "call-advise-1",
-							providerIdentifier: "pi-agent",
+							providerIdentifier: "airis-agent",
 							args: { note: new TextEncoder().encode(JSON.stringify(note)) },
 						}),
 					},

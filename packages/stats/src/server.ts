@@ -2,7 +2,7 @@ import type { Dirent } from "node:fs";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { isEnoent } from "@oh-my-pi/pi-utils";
+import { isEnoent } from "@airis/airis-utils";
 import { $ } from "bun";
 import {
 	getBehaviorDashboardStats,
@@ -28,7 +28,7 @@ const EMBEDDED_CLIENT_ARCHIVE = decodeEmbeddedClientArchive(embeddedClientArchiv
 const CLIENT_DIR = path.join(import.meta.dir, "client");
 const STATIC_DIR = path.join(import.meta.dir, "..", "dist", "client");
 const IS_BUN_COMPILED =
-	Boolean(process.env.PI_COMPILED || Bun.env.PI_COMPILED) ||
+	Boolean(process.env.AIRIS_COMPILED || Bun.env.AIRIS_COMPILED) ||
 	import.meta.url.includes("$bunfs") ||
 	import.meta.url.includes("~BUN") ||
 	import.meta.url.includes("%7EBUN");
@@ -39,7 +39,7 @@ const IS_BUN_COMPILED =
 const IS_PREBUILT = IS_BUN_COMPILED || Boolean(process.env.PI_BUNDLED || Bun.env.PI_BUNDLED);
 const USE_EMBEDDED_CLIENT = EMBEDDED_CLIENT_ARCHIVE !== null || IS_PREBUILT;
 
-const EMBEDDED_CLIENT_DIR_ROOT = path.join(os.tmpdir(), "omp-stats-client");
+const EMBEDDED_CLIENT_DIR_ROOT = path.join(os.tmpdir(), "airis-stats-client");
 let embeddedClientDirPromise: Promise<string> | null = null;
 
 function sanitizeArchivePath(archivePath: string): string | null {
@@ -71,7 +71,7 @@ async function getEmbeddedClientDir(): Promise<string> {
 
 	if (!EMBEDDED_CLIENT_ARCHIVE) {
 		throw new Error(
-			"Embedded stats client bundle missing. Rebuild the omp binary or npm bundle with embedded stats assets.",
+			"Embedded stats client bundle missing. Rebuild the airis binary or npm bundle with embedded stats assets.",
 		);
 	}
 
@@ -308,7 +308,7 @@ function createDashboardServer(port: number) {
 			const path = url.pathname;
 
 			// CORS headers for local development; the identity header lets another
-			// omp session's reuse probe positively recognize this dashboard.
+			// airis session's reuse probe positively recognize this dashboard.
 			const corsHeaders: Record<string, string> = {
 				"Access-Control-Allow-Origin": "*",
 				"Access-Control-Allow-Methods": "GET, POST, OPTIONS",
@@ -352,7 +352,7 @@ function createDashboardServer(port: number) {
 }
 
 /**
- * Start the HTTP server, reusing a live dashboard or reclaiming a stale omp listener.
+ * Start the HTTP server, reusing a live dashboard or reclaiming a stale airis listener.
  */
 export async function startServer(port = 3847): Promise<{ port: number; stop: () => void }> {
 	await ensureClientBuild();

@@ -28,7 +28,7 @@ pub struct PreciseNumber {
 }
 
 impl PreciseNumber {
-	// pi-uutils: upstream's unused `new` constructor (only reachable from the
+	// airis-uutils: upstream's unused `new` constructor (only reachable from the
 	// fuzzing harness) is dropped to keep the vendored crate warning-free.
 
 	pub fn one() -> Self {

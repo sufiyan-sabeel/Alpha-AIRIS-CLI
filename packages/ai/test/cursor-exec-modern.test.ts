@@ -7,10 +7,10 @@ import {
 	handleServerMessage,
 	processInteractionUpdate,
 	type ToolCallState,
-} from "@oh-my-pi/pi-ai/providers/cursor";
-import type { AssistantMessage, CursorExecHandlers, ToolResultMessage } from "@oh-my-pi/pi-ai/types";
-import { kCursorExecResolved, setStreamingPartialJson } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
+} from "@airis/airis-ai/providers/cursor";
+import type { AssistantMessage, CursorExecHandlers, ToolResultMessage } from "@airis/airis-ai/types";
+import { kCursorExecResolved, setStreamingPartialJson } from "@airis/airis-ai/utils/block-symbols";
+import { AssistantMessageEventStream } from "@airis/airis-ai/utils/event-stream";
 import {
 	type AgentClientMessage,
 	AgentClientMessageSchema,
@@ -62,7 +62,7 @@ import {
 	SubagentAwaitArgsSchema,
 	ToolCallSchema,
 	WebFetchAllowlistPrecheckArgsSchema,
-} from "@oh-my-pi/pi-catalog/discovery/cursor-gen/agent_pb";
+} from "@airis/airis-catalog/discovery/cursor-gen/agent_pb";
 
 /**
  * Drive one `ExecServerMessage` through the real dispatcher and decode every
@@ -214,7 +214,7 @@ describe("Cursor stream teardown", () => {
 						target: {
 							case: "github",
 							value: create(ConnectScmGithubSchema, {
-								repository: create(ConnectScmGithubRepositorySchema, { owner: "can1357", repo: "oh-my-pi" }),
+								repository: create(ConnectScmGithubRepositorySchema, { owner: "sufiyan-sabeel", repo: "alpha-airis-cli" }),
 							}),
 						},
 					}),
@@ -827,7 +827,7 @@ describe("Cursor modern exec frames: status and precheck answers", () => {
 		const mcp = await dispatchExec(
 			buildExecMessage({
 				case: "mcpAllowlistPrecheckArgs",
-				value: create(McpAllowlistPrecheckArgsSchema, { providerIdentifier: "pi-agent", toolName: "task" }),
+				value: create(McpAllowlistPrecheckArgsSchema, { providerIdentifier: "airis-agent", toolName: "task" }),
 			}),
 		);
 		const mcpAnswer = soleResult(mcp.frames);
@@ -923,8 +923,8 @@ describe("Cursor modern exec frames: MCP state", () => {
 			buildExecMessage({ case: "mcpStateExecArgs", value: create(McpStateExecArgsSchema, {}) }),
 			{
 				requestContextTools: [
-					mcpTool("task", "pi-agent"),
-					mcpTool("hub", "pi-agent"),
+					mcpTool("task", "airis-agent"),
+					mcpTool("hub", "airis-agent"),
 					mcpTool("mcp__fixture_report", "fixture"),
 				],
 			},
@@ -934,8 +934,8 @@ describe("Cursor modern exec frames: MCP state", () => {
 		if (answer.case !== "mcpStateExecResult") throw new Error(`got ${answer.case}`);
 		if (answer.value.result.case !== "success") throw new Error("expected success");
 		const servers = answer.value.result.value.servers;
-		expect(servers.map(server => server.serverIdentifier).sort()).toEqual(["fixture", "pi-agent"]);
-		const piAgent = servers.find(server => server.serverIdentifier === "pi-agent");
+		expect(servers.map(server => server.serverIdentifier).sort()).toEqual(["fixture", "airis-agent"]);
+		const piAgent = servers.find(server => server.serverIdentifier === "airis-agent");
 		expect(piAgent?.tools.map(t => t.name)).toEqual(["task", "hub"]);
 	});
 
@@ -945,7 +945,7 @@ describe("Cursor modern exec frames: MCP state", () => {
 				case: "mcpStateExecArgs",
 				value: create(McpStateExecArgsSchema, { serverIdentifiers: ["fixture"] }),
 			}),
-			{ requestContextTools: [mcpTool("task", "pi-agent"), mcpTool("mcp__fixture_report", "fixture")] },
+			{ requestContextTools: [mcpTool("task", "airis-agent"), mcpTool("mcp__fixture_report", "fixture")] },
 		);
 
 		const answer = soleResult(frames);
@@ -1408,7 +1408,7 @@ describe("Cursor modern exec frames: server-resolved tool calls leave a paired b
 
 	it("reads the connectScm repository out of the target oneof, not a flat field", async () => {
 		const { output, results } = runConnectScm(
-			{ toolCallId: "call-scm-1", repository: { owner: "can1357", repo: "oh-my-pi" } },
+			{ toolCallId: "call-scm-1", repository: { owner: "sufiyan-sabeel", repo: "alpha-airis-cli" } },
 			{ case: "success", value: {} },
 		);
 
@@ -1416,7 +1416,7 @@ describe("Cursor modern exec frames: server-resolved tool calls leave a paired b
 		expect(block).toMatchObject({
 			id: "call-scm-1",
 			name: "connect_scm",
-			arguments: { owner: "can1357", repo: "oh-my-pi" },
+			arguments: { owner: "sufiyan-sabeel", repo: "alpha-airis-cli" },
 		});
 		// Resolved => agent-loop runs no local tool, so the decoder owes the pair.
 		expect(block[kCursorExecResolved]).toBe(true);
@@ -1595,7 +1595,7 @@ describe("Cursor modern exec frames: server-resolved tool calls leave a paired b
 				message: {
 					case: "toolCallStarted",
 					value: {
-						callId: "call-pi-read",
+						callId: "call-airs-read",
 						toolCall: { tool: { case: "piReadToolCall", value: { args: { path: "/a.ts" } } } },
 					},
 				},

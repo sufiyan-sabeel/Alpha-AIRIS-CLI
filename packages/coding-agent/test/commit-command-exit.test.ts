@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import CommitCommand from "@oh-my-pi/pi-coding-agent/commands/commit";
-import * as commitModule from "@oh-my-pi/pi-coding-agent/commit";
-import * as themeModule from "@oh-my-pi/pi-coding-agent/modes/theme/theme";
-import { postmortem } from "@oh-my-pi/pi-utils";
+import CommitCommand from "@airis/airis-coding-agent/commands/commit";
+import * as commitModule from "@airis/airis-coding-agent/commit";
+import * as themeModule from "@airis/airis-coding-agent/modes/theme/theme";
+import { postmortem } from "@airis/airis-utils";
 
-describe("omp commit command lifecycle (issue #1041)", () => {
+describe("airis commit command lifecycle (issue #1041)", () => {
 	afterEach(() => {
 		vi.restoreAllMocks();
 	});
@@ -19,7 +19,7 @@ describe("omp commit command lifecycle (issue #1041)", () => {
 		const quitSpy = vi.spyOn(postmortem, "quit").mockResolvedValue(undefined);
 
 		const command = new CommitCommand([], {
-			bin: "omp",
+			bin: "airis",
 			version: "0.0.0-test",
 			commands: new Map(),
 		});
@@ -41,7 +41,7 @@ describe("omp commit command lifecycle (issue #1041)", () => {
 		const quitSpy = vi.spyOn(postmortem, "quit").mockResolvedValue(undefined);
 
 		const command = new CommitCommand([], {
-			bin: "omp",
+			bin: "airis",
 			version: "0.0.0-test",
 			commands: new Map(),
 		});

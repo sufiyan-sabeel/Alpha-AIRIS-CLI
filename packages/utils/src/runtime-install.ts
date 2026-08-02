@@ -156,8 +156,8 @@ interface ResolverRegistration {
 	stubs: Record<string, string>;
 }
 
-const REGISTRY = Symbol.for("omp.runtimeModuleResolver.registry");
-const PATCHED = Symbol.for("omp.runtimeModuleResolver.patched");
+const REGISTRY = Symbol.for("airis.runtimeModuleResolver.registry");
+const PATCHED = Symbol.for("airis.runtimeModuleResolver.patched");
 
 /**
  * The registration list lives on `globalThis` so a bundled copy and a
@@ -210,7 +210,7 @@ export interface RuntimeResolverOptions {
  * "Cannot find module './x' from ''". The override cannot recover what it is
  * never given. Keep this patch scoped to dedicated worker/runtime processes
  * (tiny-inference, fastembed); never install it in the main agent process,
- * where legacy-pi extensions rely on `createRequire` relative requires.
+ * where legacy-airis extensions rely on `createRequire` relative requires.
  */
 export function installRuntimeModuleResolver({ runtimeNodeModules, stubs = {} }: RuntimeResolverOptions): () => void {
 	const registry = resolverRegistry();

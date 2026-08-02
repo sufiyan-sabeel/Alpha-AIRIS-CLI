@@ -13,7 +13,7 @@ User setup, safety guidance, platform permissions, and verified limitations: [Na
 - Approval wrapper: `packages/coding-agent/src/extensibility/extensions/wrapper.ts`
 - Renderer: `packages/coding-agent/src/tools/computer-renderer.ts`
 - Supervisor/protocol: `packages/coding-agent/src/tools/computer/{supervisor,protocol,worker,worker-entry}.ts`
-- Native implementation: `crates/pi-natives/src/desktop.rs`
+- Native implementation: `crates/airis-natives/src/desktop.rs`
 - Native loader: `packages/natives/native/loader-state.js`
 - Provider types: `packages/ai/src/types.ts`
 - OpenAI GA schemas: `packages/ai/src/providers/openai-responses-server-schema.ts`
@@ -191,7 +191,7 @@ macOS capture calls `CGPreflightScreenCaptureAccess()` without prompting. Input 
 
 `ComputerWorkerCore` also serializes inbound messages. It initializes once, tracks whether a screenshot was returned, closes native session once, then unsubscribes and closes transport.
 
-Native `DesktopSession` starts a named `omp-desktop-session` thread. Capture/execute/close requests use a FIFO channel. Every execute batch carries a 60-second deadline enforced inside the native worker: the deadline is checked before each action and the final capture, expiry returns `DESKTOP_DEADLINE_EXCEEDED` without emitting further input, and wait-heavy batches that cannot finish in time are rejected upfront. Explicit close waits up to two seconds and is idempotent. Destructor sends best-effort close but does not block indefinitely on a stuck worker.
+Native `DesktopSession` starts a named `airis-desktop-session` thread. Capture/execute/close requests use a FIFO channel. Every execute batch carries a 60-second deadline enforced inside the native worker: the deadline is checked before each action and the final capture, expiry returns `DESKTOP_DEADLINE_EXCEEDED` without emitting further input, and wait-heavy batches that cannot finish in time are rejected upfront. Explicit close waits up to two seconds and is idempotent. Destructor sends best-effort close but does not block indefinitely on a stuck worker.
 
 ## Side effects
 

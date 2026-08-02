@@ -1,5 +1,5 @@
-import { postmortem } from "@oh-my-pi/pi-utils";
-import { Command, Flags } from "@oh-my-pi/pi-utils/cli";
+import { postmortem } from "@airis/airis-utils";
+import { Command, Flags } from "@airis/airis-utils/cli";
 import { runCleanseCommand } from "../cleanse";
 import { CliUsageError } from "../cli/usage-error";
 
@@ -25,11 +25,11 @@ export default class Cleanse extends Command {
 	};
 
 	static examples = [
-		"omp cleanse",
-		"omp cleanse -n 4",
-		"omp cleanse -m opus",
-		"omp cleanse -t",
-		"omp cleanse --agents 12 --model anthropic/claude-opus-4-6",
+		"airis cleanse",
+		"airis cleanse -n 4",
+		"airis cleanse -m opus",
+		"airis cleanse -t",
+		"airis cleanse --agents 12 --model anthropic/claude-opus-4-6",
 	];
 
 	async run(): Promise<void> {

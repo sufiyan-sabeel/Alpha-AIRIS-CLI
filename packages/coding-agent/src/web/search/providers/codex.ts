@@ -12,21 +12,21 @@ import {
 	type OAuthAccess,
 	withAuth,
 	withOAuthAccess,
-} from "@oh-my-pi/pi-ai";
-import { applyCodexResponsesLiteShape } from "@oh-my-pi/pi-ai/providers/openai-codex/request-transformer";
+} from "@airis/airis-ai";
+import { applyCodexResponsesLiteShape } from "@airis/airis-ai/providers/openai-codex/request-transformer";
 import {
 	createOpenAICodexCompatibilityMetadata,
 	resolveCodexResponsesUrl,
-} from "@oh-my-pi/pi-ai/providers/openai-codex-responses";
-import { getBundledModels } from "@oh-my-pi/pi-catalog/models";
+} from "@airis/airis-ai/providers/openai-codex-responses";
+import { getBundledModels } from "@airis/airis-catalog/models";
 import {
 	CODEX_BASE_URL,
 	CODEX_CLIENT_VERSION,
 	getCodexAccountId,
 	OPENAI_HEADER_VALUES,
 	OPENAI_HEADERS,
-} from "@oh-my-pi/pi-catalog/wire/codex";
-import { $env, readSseJson } from "@oh-my-pi/pi-utils";
+} from "@airis/airis-catalog/wire/codex";
+import { $env, readSseJson } from "@airis/airis-utils";
 import packageJson from "../../../../package.json" with { type: "json" };
 import type { ModelRegistry } from "../../../config/model-registry";
 import type { SearchResponse, SearchSource } from "../../../web/search/types";
@@ -711,7 +711,7 @@ export async function searchCodex(params: SearchParams): Promise<SearchResponse>
 		const seed = await findCodexAuth(params.authStorage, params.sessionId, params.signal);
 		if (!seed) {
 			throw new Error(
-				"No Codex OAuth credentials found. Login with 'omp /login openai-codex' to enable Codex web search.",
+				"No Codex OAuth credentials found. Login with 'airis /login openai-codex' to enable Codex web search.",
 			);
 		}
 

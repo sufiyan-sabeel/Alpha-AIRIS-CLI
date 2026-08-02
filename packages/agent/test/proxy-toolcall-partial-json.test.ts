@@ -7,11 +7,11 @@
  * ends without a `toolcall_end` event.
  */
 import { describe, expect, it } from "bun:test";
-import type { ProxyAssistantMessageEvent } from "@oh-my-pi/pi-agent-core/proxy";
-import { type ProxyMessageEventStream, streamProxy } from "@oh-my-pi/pi-agent-core/proxy";
-import type { AssistantMessage, AssistantMessageEvent, Context, FetchImpl, Model, ToolCall } from "@oh-my-pi/pi-ai";
-import { getStreamingPartialJson } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import type { ProxyAssistantMessageEvent } from "@airis/airis-agent-core/proxy";
+import { type ProxyMessageEventStream, streamProxy } from "@airis/airis-agent-core/proxy";
+import type { AssistantMessage, AssistantMessageEvent, Context, FetchImpl, Model, ToolCall } from "@airis/airis-ai";
+import { getStreamingPartialJson } from "@airis/airis-ai/utils/block-symbols";
+import { buildModel } from "@airis/airis-catalog/build";
 
 const mockModel: Model = buildModel({
 	id: "test-model",

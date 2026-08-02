@@ -2,16 +2,16 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi 
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import * as ai from "@oh-my-pi/pi-ai";
-import { Effort, type Model } from "@oh-my-pi/pi-ai";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import * as ai from "@airis/airis-ai";
+import { Effort, type Model } from "@airis/airis-ai";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
 import {
 	buildMemoryToolDeveloperInstructions,
 	getMemoryRoot,
 	startMemoryStartupTask,
-} from "@oh-my-pi/pi-coding-agent/memories";
-import * as memoryStorage from "@oh-my-pi/pi-coding-agent/memories/storage";
-import { getAgentDbPath, Snowflake, TempDir } from "@oh-my-pi/pi-utils";
+} from "@airis/airis-coding-agent/memories";
+import * as memoryStorage from "@airis/airis-coding-agent/memories/storage";
+import { getAgentDbPath, Snowflake, TempDir } from "@airis/airis-utils";
 
 interface SessionFixture {
 	agentDir: string;

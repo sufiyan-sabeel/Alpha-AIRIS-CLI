@@ -1,15 +1,15 @@
 import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from "bun:test";
 import * as fs from "node:fs";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import * as pythonExecutor from "@oh-my-pi/pi-coding-agent/eval/py/executor";
-import type { PythonKernel as PythonKernelInstance } from "@oh-my-pi/pi-coding-agent/eval/py/kernel";
-import * as pythonKernel from "@oh-my-pi/pi-coding-agent/eval/py/kernel";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import { createAgentSession, type ExtensionFactory, type WorkspaceTree } from "@oh-my-pi/pi-coding-agent/sdk";
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { Snowflake, TempDir } from "@oh-my-pi/pi-utils";
+import { getBundledModel } from "@airis/airis-catalog/models";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import * as pythonExecutor from "@airis/airis-coding-agent/eval/py/executor";
+import type { PythonKernel as PythonKernelInstance } from "@airis/airis-coding-agent/eval/py/kernel";
+import * as pythonKernel from "@airis/airis-coding-agent/eval/py/kernel";
+import { AgentRegistry } from "@airis/airis-coding-agent/registry/agent-registry";
+import { createAgentSession, type ExtensionFactory, type WorkspaceTree } from "@airis/airis-coding-agent/sdk";
+import { AgentStorage } from "@airis/airis-coding-agent/session/agent-storage";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import { Snowflake, TempDir } from "@airis/airis-utils";
 
 const OK_EXECUTION = { status: "ok", cancelled: false, timedOut: false, stdinRequested: false } as const;
 
@@ -68,7 +68,7 @@ const getModel = () => {
 };
 
 const createTempProject = () => {
-	const tempDir = TempDir.createSync(`@pi-agent-session-python-cleanup-${Snowflake.next()}-`);
+	const tempDir = TempDir.createSync(`@airs-agent-session-python-cleanup-${Snowflake.next()}-`);
 	const cwd = tempDir.join("project");
 	fs.mkdirSync(cwd, { recursive: true });
 	return { tempDir, cwd };
@@ -79,7 +79,7 @@ const createTempProject = () => {
 // auth.db handle doesn't keep the per-test project temp dir locked on Windows.
 const agentDirPool: TempDir[] = [];
 const createAgentDir = (): string => {
-	const dir = TempDir.createSync("@pi-python-cleanup-agentdir-");
+	const dir = TempDir.createSync("@airs-python-cleanup-agentdir-");
 	agentDirPool.push(dir);
 	return dir.path();
 };

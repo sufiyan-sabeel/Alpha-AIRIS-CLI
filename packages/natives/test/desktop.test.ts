@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import { DesktopSession } from "../native/index.js";
 
-const optInCaptureTest = Bun.env.OMP_NATIVE_DESKTOP_CAPTURE_TEST === "1" ? it : it.skip;
+const optInCaptureTest = Bun.env.AIRIS_NATIVE_DESKTOP_CAPTURE_TEST === "1" ? it : it.skip;
 
 describe("DesktopSession", () => {
 	it("exports DesktopSession from the packaged native addon", () => {

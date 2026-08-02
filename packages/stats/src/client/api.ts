@@ -12,7 +12,7 @@ import type {
 	ToolDashboardStats,
 } from "./types";
 
-const API_BASE = "/api";
+const AAIRIS_BASE = "/api";
 
 export class ApiError extends Error {
 	status: number;
@@ -35,7 +35,7 @@ async function fetchJson<T>(endpoint: string, options?: RequestInit): Promise<T>
 }
 
 export async function getOverviewStats(range: TimeRange = "24h", signal?: AbortSignal): Promise<OverviewStats> {
-	return fetchJson<OverviewStats>(`${API_BASE}/stats/overview?range=${encodeURIComponent(range)}`, {
+	return fetchJson<OverviewStats>(`${AAIRIS_BASE}/stats/overview?range=${encodeURIComponent(range)}`, {
 		signal,
 	});
 }
@@ -44,7 +44,7 @@ export async function getModelDashboardStats(
 	range: TimeRange = "24h",
 	signal?: AbortSignal,
 ): Promise<ModelDashboardStats> {
-	return fetchJson<ModelDashboardStats>(`${API_BASE}/stats/model-dashboard?range=${encodeURIComponent(range)}`, {
+	return fetchJson<ModelDashboardStats>(`${AAIRIS_BASE}/stats/model-dashboard?range=${encodeURIComponent(range)}`, {
 		signal,
 	});
 }
@@ -53,11 +53,11 @@ export async function getCostDashboardStats(
 	range: TimeRange = "24h",
 	signal?: AbortSignal,
 ): Promise<CostDashboardStats> {
-	return fetchJson<CostDashboardStats>(`${API_BASE}/stats/costs?range=${encodeURIComponent(range)}`, { signal });
+	return fetchJson<CostDashboardStats>(`${AAIRIS_BASE}/stats/costs?range=${encodeURIComponent(range)}`, { signal });
 }
 
 export async function getRecentRequests(limit = 50, signal?: AbortSignal): Promise<MessageStats[]> {
-	return fetchJson<MessageStats[]>(`${API_BASE}/stats/recent?limit=${limit}`, { signal });
+	return fetchJson<MessageStats[]>(`${AAIRIS_BASE}/stats/recent?limit=${limit}`, { signal });
 }
 
 export async function getRecentErrors(
@@ -65,30 +65,30 @@ export async function getRecentErrors(
 	limit = 50,
 	signal?: AbortSignal,
 ): Promise<MessageStats[]> {
-	return fetchJson<MessageStats[]>(`${API_BASE}/stats/errors?range=${encodeURIComponent(range)}&limit=${limit}`, {
+	return fetchJson<MessageStats[]>(`${AAIRIS_BASE}/stats/errors?range=${encodeURIComponent(range)}&limit=${limit}`, {
 		signal,
 	});
 }
 
 export async function getRequestDetails(id: number, signal?: AbortSignal): Promise<RequestDetails> {
-	return fetchJson<RequestDetails>(`${API_BASE}/request/${id}`, { signal });
+	return fetchJson<RequestDetails>(`${AAIRIS_BASE}/request/${id}`, { signal });
 }
 
 export async function sync(signal?: AbortSignal): Promise<{ processed: number; files: number; totalMessages: number }> {
-	return fetchJson<{ processed: number; files: number; totalMessages: number }>(`${API_BASE}/sync`, { signal });
+	return fetchJson<{ processed: number; files: number; totalMessages: number }>(`${AAIRIS_BASE}/sync`, { signal });
 }
 
 export async function getBehaviorDashboardStats(
 	range: TimeRange = "24h",
 	signal?: AbortSignal,
 ): Promise<BehaviorDashboardStats> {
-	return fetchJson<BehaviorDashboardStats>(`${API_BASE}/stats/behavior?range=${encodeURIComponent(range)}`, {
+	return fetchJson<BehaviorDashboardStats>(`${AAIRIS_BASE}/stats/behavior?range=${encodeURIComponent(range)}`, {
 		signal,
 	});
 }
 
 export async function getFolderStats(range: TimeRange = "24h", signal?: AbortSignal): Promise<FolderStats[]> {
-	return fetchJson<FolderStats[]>(`${API_BASE}/stats/folders?range=${encodeURIComponent(range)}`, { signal });
+	return fetchJson<FolderStats[]>(`${AAIRIS_BASE}/stats/folders?range=${encodeURIComponent(range)}`, { signal });
 }
 
 export async function getGainDashboardStats(
@@ -98,21 +98,21 @@ export async function getGainDashboardStats(
 ): Promise<GainDashboardStats> {
 	const params = new URLSearchParams({ range });
 	if (project) params.set("project", project);
-	return fetchJson<GainDashboardStats>(`${API_BASE}/stats/gain?${params}`, { signal });
+	return fetchJson<GainDashboardStats>(`${AAIRIS_BASE}/stats/gain?${params}`, { signal });
 }
 
 export async function getToolDashboardStats(
 	range: TimeRange = "24h",
 	signal?: AbortSignal,
 ): Promise<ToolDashboardStats> {
-	return fetchJson<ToolDashboardStats>(`${API_BASE}/stats/tools?range=${encodeURIComponent(range)}`, { signal });
+	return fetchJson<ToolDashboardStats>(`${AAIRIS_BASE}/stats/tools?range=${encodeURIComponent(range)}`, { signal });
 }
 
 export async function getProviderDashboardStats(
 	range: TimeRange = "24h",
 	signal?: AbortSignal,
 ): Promise<ProviderDashboardStats> {
-	return fetchJson<ProviderDashboardStats>(`${API_BASE}/stats/providers?range=${encodeURIComponent(range)}`, {
+	return fetchJson<ProviderDashboardStats>(`${AAIRIS_BASE}/stats/providers?range=${encodeURIComponent(range)}`, {
 		signal,
 	});
 }

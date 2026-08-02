@@ -15,8 +15,8 @@ import { randomUUID } from "node:crypto";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { configureCredentialRedaction } from "@oh-my-pi/pi-ai/providers/transform-messages";
-import { configureProviderMaxInFlightRequests } from "@oh-my-pi/pi-ai/stream";
+import { configureCredentialRedaction } from "@airis/airis-ai/providers/transform-messages";
+import { configureProviderMaxInFlightRequests } from "@airis/airis-ai/stream";
 import {
 	getAgentDbPath,
 	getAgentDir,
@@ -29,7 +29,7 @@ import {
 	procmgr,
 	setWorktreesDir,
 	toError,
-} from "@oh-my-pi/pi-utils";
+} from "@airis/airis-utils";
 import { JSONC, YAML } from "bun";
 import { invalidate as invalidateCapabilityFsCache } from "../capability/fs";
 import { type Settings as SettingsCapabilityItem, settingsCapability } from "../capability/settings";
@@ -329,7 +329,7 @@ export class Settings {
 	#global: RawSettings = {};
 	/** Project settings from .claude/settings.yml etc */
 	#project: RawSettings = {};
-	/** Last successfully loaded native .omp/config.yml contents. */
+	/** Last successfully loaded native .airis/config.yml contents. */
 	#projectFileSettings: RawSettings = {};
 	/** Logical config paths whose malformed targets were moved aside. */
 	#quarantinedYamlTargets = new Map<string, string>();
@@ -1241,7 +1241,7 @@ export class Settings {
 			// Capability discovery is best-effort; the native project config below
 			// remains authoritative for its model-role layer and must not be hidden.
 		}
-		const projectConfigPath = path.join(this.#cwd, ".omp", "config.yml");
+		const projectConfigPath = path.join(this.#cwd, ".airis", "config.yml");
 		const nativeProject = await this.#loadYaml(projectConfigPath);
 		this.#projectFileSettings = structuredClone(nativeProject);
 		const nativeModelRoles = getByPath(nativeProject, ["modelRoles"]);
@@ -1453,7 +1453,7 @@ export class Settings {
 			todoObj.eager = todoObj.eager ? "always" : "default";
 		}
 
-		// task.isolation.mode: legacy values from before the pi-iso PAL refactor.
+		// task.isolation.mode: legacy values from before the airis-iso PAL refactor.
 		// `worktree` was git worktree → now lives under `rcopy`. `fuse-overlay`
 		// and `fuse-projfs` are now the platform-named `overlayfs` / `projfs`
 		// kinds; the PAL falls back internally when the chosen one isn't
@@ -1568,15 +1568,15 @@ export class Settings {
 			raw.memory = memoryRoot;
 		}
 
-		// Rename the legacy local `mnemosyne` memory backend to `mnemopi`.
+		// Rename the legacy local `mnemosyne` memory backend to `mnemosyne`.
 		// - `memory.backend: "mnemosyne"` now selects the renamed backend.
-		// - the top-level `mnemosyne` settings object becomes `mnemopi`.
-		// Idempotent: skips the object move once `mnemopi` is materialised.
+		// - the top-level `mnemosyne` settings object becomes `mnemosyne`.
+		// Idempotent: skips the object move once `mnemosyne` is materialised.
 		if (memoryBackendObj && memoryBackendObj.backend === "mnemosyne") {
-			memoryBackendObj.backend = "mnemopi";
+			memoryBackendObj.backend = "mnemosyne";
 		}
-		if ("mnemosyne" in raw && !("mnemopi" in raw)) {
-			raw.mnemopi = raw.mnemosyne;
+		if ("mnemosyne" in raw && !("mnemosyne" in raw)) {
+			raw.mnemosyne = raw.mnemosyne;
 			delete raw.mnemosyne;
 		}
 
@@ -1601,7 +1601,7 @@ export class Settings {
 					!("bankId" in hindsightObj) &&
 					typeof agentName === "string" &&
 					agentName.trim().length > 0 &&
-					agentName !== "omp"
+					agentName !== "airis"
 				) {
 					hindsightObj.bankId = agentName;
 				}
@@ -2089,7 +2089,7 @@ export class Settings {
 	async #saveProjectNow(): Promise<void> {
 		if (this.#savesCancelled || !this.#persist || this.#modifiedProjectModelRoles.size === 0) return;
 
-		const projectConfigPath = path.join(this.#cwd, ".omp", "config.yml");
+		const projectConfigPath = path.join(this.#cwd, ".airis", "config.yml");
 		const modifiedModelRoles = [...this.#modifiedProjectModelRoles];
 		this.#modifiedProjectModelRoles.clear();
 

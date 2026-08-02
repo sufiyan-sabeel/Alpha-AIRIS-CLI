@@ -3,10 +3,10 @@
 // For the full copyright and license information, please view the LICENSE
 // file that was distributed with this source code.
 
-// pi-uutils: vendored from uutils/coreutils 0.8.0 and patched to run in-process
+// airis-uutils: vendored from uutils/coreutils 0.8.0 and patched to run in-process
 // as a shell builtin. The environment comes from the SCOPE, not the process:
-// the no-argument dump iterates `pi_uutils_ctx::env_snapshot()` and named
-// lookups go through `pi_uutils_ctx::var`, because the embedding shell's
+// the no-argument dump iterates `airis_uutils_ctx::env_snapshot()` and named
+// lookups go through `airis_uutils_ctx::var`, because the embedding shell's
 // exported variables are not present in the host process environment. All
 // output is routed through the context stdout, `translate!` strings are
 // literalized, and the entry point no longer calls `std::process::exit`.
@@ -14,7 +14,7 @@
 use std::{ffi::OsString, io::Write};
 
 use clap::{Arg, ArgAction, ArgMatches, Command};
-use pi_uutils_ctx::format_usage;
+use airis_uutils_ctx::format_usage;
 use uucore::{error::UResult, line_ending::LineEnding};
 
 static OPT_NULL: &str = "null";
@@ -32,23 +32,23 @@ pub fn run(argv: Vec<OsString>) -> i32 {
 		Err(err) => {
 			let rendered = err.to_string();
 			if err.use_stderr() {
-				let _ = write!(pi_uutils_ctx::stderr(), "{rendered}");
+				let _ = write!(airis_uutils_ctx::stderr(), "{rendered}");
 				return 1;
 			}
-			let _ = write!(pi_uutils_ctx::stdout(), "{rendered}");
+			let _ = write!(airis_uutils_ctx::stdout(), "{rendered}");
 			return 0;
 		},
 	};
 	match printenv_main(&matches) {
-		Ok(()) => pi_uutils_ctx::exit_code(),
+		Ok(()) => airis_uutils_ctx::exit_code(),
 		Err(err) => {
 			let code = err.code();
-			// pi-uutils: unset-variable failures surface as bare exit-code
+			// airis-uutils: unset-variable failures surface as bare exit-code
 			// errors that render to an empty message (upstream prints nothing
 			// for them); don't emit a dangling "printenv: " prefix.
 			let msg = err.to_string();
 			if !msg.is_empty() {
-				let _ = writeln!(pi_uutils_ctx::stderr(), "printenv: {msg}");
+				let _ = writeln!(airis_uutils_ctx::stderr(), "printenv: {msg}");
 			}
 			if code == 0 { 1 } else { code }
 		},
@@ -64,10 +64,10 @@ fn printenv_main(matches: &ArgMatches) -> UResult<()> {
 	let separator = LineEnding::from_zero_flag(matches.get_flag(OPT_NULL));
 
 	if variables.is_empty() {
-		// pi-uutils: replacement for `uucore::display::print_all_env_vars` —
+		// airis-uutils: replacement for `uucore::display::print_all_env_vars` —
 		// dumps the scope environment map to the context stdout.
-		let mut stdout = pi_uutils_ctx::stdout();
-		for (key, value) in pi_uutils_ctx::env_snapshot() {
+		let mut stdout = airis_uutils_ctx::stdout();
+		for (key, value) in airis_uutils_ctx::env_snapshot() {
 			write!(stdout, "{key}={value}{separator}")?;
 		}
 		stdout.flush()?;
@@ -81,10 +81,10 @@ fn printenv_main(matches: &ArgMatches) -> UResult<()> {
 			error_found = true;
 			continue;
 		}
-		// pi-uutils: look the variable up in the scope environment (upstream
+		// airis-uutils: look the variable up in the scope environment (upstream
 		// uses `std::env::var_os`) and write it to the context stdout.
-		if let Some(var) = pi_uutils_ctx::var(&env_var) {
-			let mut stdout = pi_uutils_ctx::stdout();
+		if let Some(var) = airis_uutils_ctx::var(&env_var) {
+			let mut stdout = airis_uutils_ctx::stdout();
 			write!(stdout, "{var}{separator}")?;
 			stdout.flush()?;
 		} else {
@@ -123,7 +123,7 @@ mod tests {
 	use std::{collections::HashMap, io::Write, sync::Arc};
 
 	use parking_lot::Mutex;
-	use pi_uutils_ctx::ScopeIo;
+	use airis_uutils_ctx::ScopeIo;
 
 	use super::*;
 
@@ -161,7 +161,7 @@ mod tests {
 			.map(OsString::from)
 			.collect();
 
-		let code = pi_uutils_ctx::scope(io, || run(argv));
+		let code = airis_uutils_ctx::scope(io, || run(argv));
 
 		let out_str = String::from_utf8(stdout_buf.lock().clone()).unwrap();
 		let err_str = String::from_utf8(stderr_buf.lock().clone()).unwrap();

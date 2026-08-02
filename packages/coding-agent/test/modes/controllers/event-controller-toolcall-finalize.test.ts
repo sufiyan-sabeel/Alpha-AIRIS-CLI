@@ -9,12 +9,12 @@
  * transcript reads as cut off for the whole args stream.
  */
 import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { resetSettingsForTest, Settings, settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { EventController } from "@oh-my-pi/pi-coding-agent/modes/controllers/event-controller";
-import { initTheme } from "@oh-my-pi/pi-coding-agent/modes/theme/theme";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import type { AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
+import type { AssistantMessage } from "@airis/airis-ai";
+import { resetSettingsForTest, Settings, settings } from "@airis/airis-coding-agent/config/settings";
+import { EventController } from "@airis/airis-coding-agent/modes/controllers/event-controller";
+import { initTheme } from "@airis/airis-coding-agent/modes/theme/theme";
+import type { InteractiveModeContext } from "@airis/airis-coding-agent/modes/types";
+import type { AgentSessionEvent } from "@airis/airis-coding-agent/session/agent-session";
 
 beforeAll(async () => {
 	await initTheme();

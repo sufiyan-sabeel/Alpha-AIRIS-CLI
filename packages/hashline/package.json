@@ -1,18 +1,18 @@
 {
   "type": "module",
-  "name": "@oh-my-pi/hashline",
+  "name": "@airis/airis-hashline",
   "version": "17.2.1",
   "description": "Hashline: a compact, line-anchored patch language and applier. Pluggable FS/IO so it works over disk, in-memory, or any custom backend.",
-  "homepage": "https://omp.sh",
-  "author": "Can Boluk",
+  "homepage": "https://airis.sh",
+  "author": "Umaiz Sufiyan",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/can1357/oh-my-pi.git",
+    "url": "git+https://github.com/sufiyan-sabeel/Alpha-AIRIS-CLI.git",
     "directory": "packages/hashline"
   },
   "bugs": {
-    "url": "https://github.com/can1357/oh-my-pi/issues"
+    "url": "https://github.com/sufiyan-sabeel/Alpha-AIRIS-CLI/issues"
   },
   "keywords": [
     "patch",
@@ -33,7 +33,7 @@
     "fmt": "biome format --write ."
   },
   "dependencies": {
-    "@oh-my-pi/pi-natives": "catalog:",
+    "@airis/airis-natives": "catalog:",
     "lru-cache": "catalog:"
   },
   "devDependencies": {

@@ -1,5 +1,5 @@
 /**
- * Regression for the [#3751](https://github.com/can1357/oh-my-pi/pull/3751)
+ * Regression for the [#3751](https://github.com/sufiyan-sabeel/Alpha-AIRIS-CLI/pull/3751)
  * chatgpt-codex follow-up: the per-LLM-turn provider concurrency wrapper
  * (`wrapStreamFnWithProviderConcurrency`) was only attached to
  * `Agent.streamFn` / `Agent.sideStreamFn`, so direct compaction oneshots
@@ -20,20 +20,20 @@
  *     unrelated provider call.
  */
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import type { StreamFn } from "@oh-my-pi/pi-agent-core";
+import type { StreamFn } from "@airis/airis-agent-core";
 import {
 	type CompactionPreparation,
 	compact,
 	createFileOps,
 	DEFAULT_COMPACTION_SETTINGS,
-} from "@oh-my-pi/pi-agent-core/compaction";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core/types";
-import type { AssistantMessage, Model } from "@oh-my-pi/pi-ai";
-import * as ai from "@oh-my-pi/pi-ai";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { wrapStreamFnWithProviderConcurrency } from "@oh-my-pi/pi-coding-agent/task/provider-concurrency";
+} from "@airis/airis-agent-core/compaction";
+import type { AgentMessage } from "@airis/airis-agent-core/types";
+import type { AssistantMessage, Model } from "@airis/airis-ai";
+import * as ai from "@airis/airis-ai";
+import { AssistantMessageEventStream } from "@airis/airis-ai/utils/event-stream";
+import { getBundledModel } from "@airis/airis-catalog/models";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import { wrapStreamFnWithProviderConcurrency } from "@airis/airis-coding-agent/task/provider-concurrency";
 
 interface Deferred {
 	promise: Promise<void>;

@@ -3,7 +3,7 @@
  * the advisor `Agent` constructed by `#buildAdvisorRuntime` inherits them so
  * its OpenRouter/OpenAI requests cache and route like the main turn.
  *
- * Regression for can1357/oh-my-pi#3639: before the fix, the advisor was built
+ * Regression for sufiyan-sabeel/Alpha-AIRIS-CLI#3639: before the fix, the advisor was built
  * with only `sessionId`/`getApiKey`/telemetry — it dropped the session's
  * `streamFn` wrapper (so `providers.openrouterVariant` and `loopGuard` never
  * landed on advisor requests), its `promptCacheKey` (so OpenAI Responses
@@ -12,16 +12,16 @@
  */
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { Agent, type StreamFn } from "@oh-my-pi/pi-agent-core";
-import type { FetchImpl, Model, SimpleStreamOptions } from "@oh-my-pi/pi-ai";
-import { streamSimple } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent, type StreamFn } from "@airis/airis-agent-core";
+import type { FetchImpl, Model, SimpleStreamOptions } from "@airis/airis-ai";
+import { streamSimple } from "@airis/airis-ai";
+import { getBundledModel } from "@airis/airis-catalog/models";
+import { ModelRegistry } from "@airis/airis-coding-agent/config/model-registry";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import { AgentSession } from "@airis/airis-coding-agent/session/agent-session";
+import { AuthStorage } from "@airis/airis-coding-agent/session/auth-storage";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import { TempDir } from "@airis/airis-utils";
 
 /** Provider-facing advisor session ids must be UUIDv7 (issue #5040): Codex writes
  *  them verbatim onto `conversation_id`/`session_id` headers, so `-advisor`
@@ -47,7 +47,7 @@ describe("AgentSession advisor provider-options parity", () => {
 	let model: Model;
 
 	beforeAll(async () => {
-		sharedDir = TempDir.createSync("@pi-advisor-parity-shared-");
+		sharedDir = TempDir.createSync("@airs-advisor-parity-shared-");
 		authStorage = await AuthStorage.create(path.join(sharedDir.path(), "testauth.db"));
 		authStorage.setRuntimeApiKey("anthropic", "test-key");
 		modelRegistry = new ModelRegistry(authStorage);
@@ -74,7 +74,7 @@ describe("AgentSession advisor provider-options parity", () => {
 		});
 
 	beforeEach(async () => {
-		tempDir = TempDir.createSync("@pi-advisor-parity-");
+		tempDir = TempDir.createSync("@airs-advisor-parity-");
 		sessionManager = SessionManager.create(tempDir.path(), tempDir.path());
 	});
 

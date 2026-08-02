@@ -1,6 +1,6 @@
-import type { DesktopAction, DesktopCapabilities, DesktopCapture, DesktopSessionOptions } from "@oh-my-pi/pi-natives";
+import type { DesktopAction, DesktopCapabilities, DesktopCapture, DesktopSessionOptions } from "@airis/airis-natives";
 
-export const COMPUTER_WORKER_ARG = "__omp_worker_computer";
+export const COMPUTER_WORKER_ARG = "__airis_worker_computer";
 
 export type ComputerWorkerInbound =
 	| { type: "ping"; id: string }

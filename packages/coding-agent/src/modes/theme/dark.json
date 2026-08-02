@@ -1,5 +1,5 @@
 {
-	"$schema": "https://raw.githubusercontent.com/can1357/oh-my-pi/main/packages/coding-agent/theme-schema.json",
+	"$schema": "https://raw.githubusercontent.com/sufiyan-sabeel/Alpha-AIRIS-CLI/main/packages/coding-agent/theme-schema.json",
 	"name": "dark",
 	"vars": {
 		"cyan": "#0088fa",
@@ -10,7 +10,7 @@
 		"gray": "#777d88",
 		"dimGray": "#5f6673",
 		"darkGray": "#3d424a",
-		"accent": "#febc38",
+		"accent": "#06b6d4",
 		"selectedBg": "#31363f",
 		"userMsgBg": "#221d1a",
 		"toolPendingBg": "#1d2129",
@@ -41,7 +41,7 @@
 		"toolErrorBg": "toolErrorBg",
 		"toolTitle": "",
 		"toolOutput": "gray",
-		"mdHeading": "#febc38",
+		"mdHeading": "#6366f1",
 		"mdLink": "#0088fa",
 		"mdLinkUrl": "dimGray",
 		"mdCode": "#e5c1ff",

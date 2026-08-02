@@ -1,10 +1,10 @@
 /**
  * Extension runner - executes extensions and manages their lifecycle.
  */
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { CredentialDisabledEvent, ImageContent, Model, ProviderResponseMetadata } from "@oh-my-pi/pi-ai";
-import type { KeyId } from "@oh-my-pi/pi-tui";
-import { logger } from "@oh-my-pi/pi-utils";
+import type { AgentMessage } from "@airis/airis-agent-core";
+import type { CredentialDisabledEvent, ImageContent, Model, ProviderResponseMetadata } from "@airis/airis-ai";
+import type { KeyId } from "@airis/airis-tui";
+import { logger } from "@airis/airis-utils";
 import type { ModelRegistry } from "../../config/model-registry";
 import type { Settings } from "../../config/settings";
 import type { LocalProtocolOptions } from "../../internal-urls/local-protocol";
@@ -155,7 +155,7 @@ function createHandlerUIContext(ui: ExtensionUIContext, handlerSignal: AbortSign
 /**
  * Scope `ctx` to a single handler run without spreading it: `{ ...ctx }` would
  * snapshot live accessors (notably the `model` getter), so a handler calling
- * `pi.setModel()` and then reading `ctx.model` would see a stale model.
+ * `airs.setModel()` and then reading `ctx.model` would see a stale model.
  * Prototype delegation keeps every getter live while overriding `ui`.
  */
 function createHandlerContext(ctx: ExtensionContext, handlerSignal: AbortSignal): ExtensionContext {

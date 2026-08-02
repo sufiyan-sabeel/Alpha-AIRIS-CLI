@@ -1,8 +1,8 @@
 import * as os from "node:os";
 import * as path from "node:path";
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import { TERMINAL } from "@oh-my-pi/pi-tui";
-import { formatDuration, formatNumber, getProjectDir, pathIsWithin, relativePathWithinRoot } from "@oh-my-pi/pi-utils";
+import { ThinkingLevel } from "@airis/airis-agent-core";
+import { TERMINAL } from "@airis/airis-tui";
+import { formatDuration, formatNumber, getProjectDir, pathIsWithin, relativePathWithinRoot } from "@airis/airis-utils";
 import { type ThemeColor, theme } from "../../../modes/theme/theme";
 import { shortenPath, TRUNCATE_LENGTHS, truncateToWidth } from "../../../tools/render-utils";
 import { getSessionAccentAnsi, getSessionAccentHex } from "../../../utils/session-color";
@@ -80,14 +80,14 @@ function classifyProjectDir(pwd: string): { scratch: boolean; relative: string |
 // Segment Implementations
 // ═══════════════════════════════════════════════════════════════════════════
 
-const piSegment: StatusLineSegment = {
-	id: "pi",
+const airisSegment: StatusLineSegment = {
+	id: "airs",
 	render(ctx) {
 		if (ctx.focusedAgentId) {
 			const icon = theme.icon.ghost ? `${theme.icon.ghost} ` : "";
 			return { content: theme.fg("warning", `${icon}${ctx.focusedAgentId} `), visible: true };
 		}
-		const content = theme.icon.pi ? `${theme.icon.pi} ` : "";
+		const content = theme.icon.airs ? `${theme.icon.airs} ` : "";
 		return { content: theme.fg("accent", content), visible: true };
 	},
 };
@@ -673,7 +673,7 @@ const usageSegment: StatusLineSegment = {
 // ═══════════════════════════════════════════════════════════════════════════
 
 export const SEGMENTS: Record<StatusLineSegmentId, StatusLineSegment> = {
-	pi: piSegment,
+	airs: airisSegment,
 	model: modelSegment,
 	mode: modeSegment,
 	path: pathSegment,

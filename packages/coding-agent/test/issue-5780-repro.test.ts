@@ -2,11 +2,11 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { clearCustomApis, type FetchImpl } from "@oh-my-pi/pi-ai";
-import { unregisterOAuthProviders } from "@oh-my-pi/pi-ai/oauth";
-import { ModelRegistry, type ProviderConfigInput } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
+import { clearCustomApis, type FetchImpl } from "@airis/airis-ai";
+import { unregisterOAuthProviders } from "@airis/airis-ai/oauth";
+import { ModelRegistry, type ProviderConfigInput } from "@airis/airis-coding-agent/config/model-registry";
+import { AuthStorage } from "@airis/airis-coding-agent/session/auth-storage";
+import { removeSyncWithRetries, Snowflake } from "@airis/airis-utils";
 
 describe("issue #5780 post-auth runtime provider refresh", () => {
 	let tempDir: string;

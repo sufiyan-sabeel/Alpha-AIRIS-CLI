@@ -8,10 +8,10 @@ import {
 	toolWireSchema,
 	validateSchemaCompatibility,
 	validateStrictSchemaEnforcement,
-} from "@oh-my-pi/pi-ai/utils/schema";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createTools, HIDDEN_TOOLS, type ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { createVibeTools } from "@oh-my-pi/pi-coding-agent/tools/vibe";
+} from "@airis/airis-ai/utils/schema";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import { createTools, HIDDEN_TOOLS, type ToolSession } from "@airis/airis-coding-agent/tools";
+import { createVibeTools } from "@airis/airis-coding-agent/tools/vibe";
 
 interface ToolSchemaEntry {
 	name: string;

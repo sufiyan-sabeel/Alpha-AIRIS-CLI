@@ -1,18 +1,18 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import * as ai from "@oh-my-pi/pi-ai";
-import { Effort, type Model } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import { ThinkingLevel } from "@airis/airis-agent-core";
+import * as ai from "@airis/airis-ai";
+import { Effort, type Model } from "@airis/airis-ai";
+import { buildModel } from "@airis/airis-catalog/build";
+import { getBundledModel } from "@airis/airis-catalog/models";
 import {
 	classifyDifficulty,
 	parseDifficultyBucket,
 	parseDifficultyLevel,
-} from "@oh-my-pi/pi-coding-agent/auto-thinking/classifier";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
+} from "@airis/airis-coding-agent/auto-thinking/classifier";
+import { ModelRegistry } from "@airis/airis-coding-agent/config/model-registry";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import { AuthStorage } from "@airis/airis-coding-agent/session/auth-storage";
 import {
 	AUTO_THINKING,
 	clampAutoThinkingEffort,
@@ -22,10 +22,10 @@ import {
 	parseThinkingLevel,
 	resolveProvisionalAutoLevel,
 	resolveTaskEffortLevel,
-} from "@oh-my-pi/pi-coding-agent/thinking";
-import type { TinyMemoryLocalModelKey } from "@oh-my-pi/pi-coding-agent/tiny/models";
-import { tinyModelClient } from "@oh-my-pi/pi-coding-agent/tiny/title-client";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@airis/airis-coding-agent/thinking";
+import type { TinyMemoryLocalModelKey } from "@airis/airis-coding-agent/tiny/models";
+import { tinyModelClient } from "@airis/airis-coding-agent/tiny/title-client";
+import { TempDir } from "@airis/airis-utils";
 
 describe("auto thinking classifier helpers", () => {
 	afterEach(() => {
@@ -42,7 +42,7 @@ describe("auto thinking classifier helpers", () => {
 	async function createLocalClassifierFixture(
 		autoThinkingModel: TinyMemoryLocalModelKey,
 	): Promise<LocalClassifierFixture> {
-		const tempDir = TempDir.createSync("@pi-auto-thinking-classifier-");
+		const tempDir = TempDir.createSync("@airs-auto-thinking-classifier-");
 		const authStorage = await AuthStorage.create(path.join(tempDir.path(), "auth.db"));
 		const model = getBundledModel("anthropic", "claude-sonnet-4-6");
 		if (!model) {
@@ -407,7 +407,7 @@ describe("auto thinking classifier helpers", () => {
 	});
 
 	it("returns undefined for reasoning models without controllable efforts (devin-agent shape)", () => {
-		// Repro for https://github.com/can1357/oh-my-pi/issues/3356 — Devin
+		// Repro for https://github.com/sufiyan-sabeel/Alpha-AIRIS-CLI/issues/3356 — Devin
 		// models report `reasoning: true` but expose no `thinking.efforts` (Cascade
 		// selects effort by routing to sibling model ids). `auto` must not invent
 		// a concrete effort here, or `requireSupportedEffort` throws in stream.ts.

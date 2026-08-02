@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
-import type { Tool } from "@oh-my-pi/pi-ai/types";
-import { isValidJsonSchema, toolWireSchema } from "@oh-my-pi/pi-ai/utils/schema";
-import { validateToolArguments } from "@oh-my-pi/pi-ai/utils/validation";
-import { type TSchema, Type } from "@oh-my-pi/pi-coding-agent/extensibility/typebox";
+import type { Tool } from "@airis/airis-ai/types";
+import { isValidJsonSchema, toolWireSchema } from "@airis/airis-ai/utils/schema";
+import { validateToolArguments } from "@airis/airis-ai/utils/validation";
+import { type TSchema, Type } from "@airis/airis-coding-agent/extensibility/typebox";
 
 /**
  * The typebox shim's `Type.*` builders return arktype-backed validator wrappers

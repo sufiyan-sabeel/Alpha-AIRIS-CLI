@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import * as evalIndex from "@oh-my-pi/pi-coding-agent/eval";
-import type { EvalToolDetails } from "@oh-my-pi/pi-coding-agent/eval/types";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { EvalTool } from "@oh-my-pi/pi-coding-agent/tools/eval";
-import { formatOutputNotice } from "@oh-my-pi/pi-coding-agent/tools/output-meta";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import * as evalIndex from "@airis/airis-coding-agent/eval";
+import type { EvalToolDetails } from "@airis/airis-coding-agent/eval/types";
+import type { ToolSession } from "@airis/airis-coding-agent/tools";
+import { EvalTool } from "@airis/airis-coding-agent/tools/eval";
+import { formatOutputNotice } from "@airis/airis-coding-agent/tools/output-meta";
 
 function makeSession(settings = Settings.isolated()): ToolSession {
 	return {

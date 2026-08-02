@@ -1,15 +1,15 @@
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import type { AgentEvent } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { CursorExecHandlers } from "@oh-my-pi/pi-coding-agent/cursor";
-import { initTheme, theme } from "@oh-my-pi/pi-coding-agent/modes/theme/theme";
+import type { AgentEvent } from "@airis/airis-agent-core";
+import type { AssistantMessage } from "@airis/airis-ai";
+import { resetSettingsForTest, Settings } from "@airis/airis-coding-agent/config/settings";
+import { CursorExecHandlers } from "@airis/airis-coding-agent/cursor";
+import { initTheme, theme } from "@airis/airis-coding-agent/modes/theme/theme";
 import {
 	getLatestTodoPhasesFromEntries,
 	type TodoPhase,
 	todoToolRenderer,
 	USER_TODO_EDIT_CUSTOM_TYPE,
-} from "@oh-my-pi/pi-coding-agent/tools/todo";
+} from "@airis/airis-coding-agent/tools/todo";
 import { buildSessionContext } from "../src/session/session-context";
 import type { SessionEntry } from "../src/session/session-entries";
 

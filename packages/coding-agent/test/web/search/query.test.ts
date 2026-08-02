@@ -8,8 +8,8 @@ import {
 	matchesSite,
 	parseDateValue,
 	parseSearchQuery,
-} from "@oh-my-pi/pi-coding-agent/web/search/query";
-import type { SearchSource } from "@oh-my-pi/pi-coding-agent/web/search/types";
+} from "@airis/airis-coding-agent/web/search/query";
+import type { SearchSource } from "@airis/airis-coding-agent/web/search/types";
 
 describe("parseSearchQuery", () => {
 	it("leaves plain queries untouched", () => {
@@ -174,8 +174,8 @@ describe("formatQuery", () => {
 
 describe("formatScraperQuery", () => {
 	it("demotes path-carrying site: and inurl: to plain terms, keeping bare-domain site:", () => {
-		expect(formatScraperQuery("site:github.com/can1357/oh-my-pi inurl:releases site:github.com 17.1.1 release")).toBe(
-			"17.1.1 release github.com/can1357/oh-my-pi releases site:github.com",
+		expect(formatScraperQuery("site:github.com/sufiyan-sabeel/Alpha-AIRIS-CLI inurl:releases site:github.com 17.1.1 release")).toBe(
+			"17.1.1 release github.com/sufiyan-sabeel/Alpha-AIRIS-CLI releases site:github.com",
 		);
 	});
 
@@ -190,8 +190,8 @@ describe("formatScraperQuery", () => {
 	});
 
 	it("passes directive-free queries through byte-identical", () => {
-		expect(formatScraperQuery("github.com/can1357/oh-my-pi 17.1.1 release")).toBe(
-			"github.com/can1357/oh-my-pi 17.1.1 release",
+		expect(formatScraperQuery("github.com/sufiyan-sabeel/Alpha-AIRIS-CLI 17.1.1 release")).toBe(
+			"github.com/sufiyan-sabeel/Alpha-AIRIS-CLI 17.1.1 release",
 		);
 	});
 

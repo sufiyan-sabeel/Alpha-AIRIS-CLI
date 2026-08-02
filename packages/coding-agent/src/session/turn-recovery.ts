@@ -5,7 +5,7 @@ import {
 	type AgentMessage,
 	isSyntheticToolResultMessage,
 	type ThinkingLevel,
-} from "@oh-my-pi/pi-agent-core";
+} from "@airis/airis-agent-core";
 import type {
 	AssistantMessage,
 	AssistantRetryRecovery,
@@ -15,12 +15,12 @@ import type {
 	Model,
 	TextContent,
 	ToolChoice,
-} from "@oh-my-pi/pi-ai";
-import { calculateRateLimitBackoffMs, parseRateLimitReason } from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { kCursorExecResolved } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { isFireworksFastModelId, toFireworksBaseModelId } from "@oh-my-pi/pi-catalog/fireworks-model-id";
-import { extractRetryHint, logger, prompt } from "@oh-my-pi/pi-utils";
+} from "@airis/airis-ai";
+import { calculateRateLimitBackoffMs, parseRateLimitReason } from "@airis/airis-ai";
+import * as AIError from "@airis/airis-ai/error";
+import { kCursorExecResolved } from "@airis/airis-ai/utils/block-symbols";
+import { isFireworksFastModelId, toFireworksBaseModelId } from "@airis/airis-catalog/fireworks-model-id";
+import { extractRetryHint, logger, prompt } from "@airis/airis-utils";
 import type { ModelRegistry } from "../config/model-registry";
 import { formatModelStringWithRouting, resolveModelOverride } from "../config/model-resolver";
 import type { Settings } from "../config/settings";

@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { EventController } from "@oh-my-pi/pi-coding-agent/modes/controllers/event-controller";
-import { initTheme } from "@oh-my-pi/pi-coding-agent/modes/theme/theme";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
+import type { AssistantMessage } from "@airis/airis-ai";
+import { resetSettingsForTest, Settings } from "@airis/airis-coding-agent/config/settings";
+import { EventController } from "@airis/airis-coding-agent/modes/controllers/event-controller";
+import { initTheme } from "@airis/airis-coding-agent/modes/theme/theme";
+import type { InteractiveModeContext } from "@airis/airis-coding-agent/modes/types";
 
 async function flushMicrotasks(): Promise<void> {
 	for (let i = 0; i < 10; i++) {

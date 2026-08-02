@@ -1,13 +1,13 @@
 /** Session memory backend lifecycle and transcript resets. */
 
-import type { Agent, AgentTool } from "@oh-my-pi/pi-agent-core";
-import { logger } from "@oh-my-pi/pi-utils";
+import type { Agent, AgentTool } from "@airis/airis-agent-core";
+import { logger } from "@airis/airis-utils";
 import type { ModelRegistry } from "../config/model-registry";
 import type { Settings } from "../config/settings";
 import type { HindsightSessionState } from "../hindsight/state";
 import { resolveMemoryBackend } from "../memory-backend/resolve";
 import type { MemoryBackendStartOptions } from "../memory-backend/types";
-import type { MnemopiSessionState } from "../mnemopi/state";
+import type { MnemosyneSessionState } from "../mnemosyne/state";
 
 /** Capabilities borrowed from the owning AgentSession. */
 export interface SessionMemoryHost {
@@ -18,8 +18,8 @@ export interface SessionMemoryHost {
 	memoryBackendSession(): MemoryBackendStartOptions["session"];
 	getHindsightSessionState(): HindsightSessionState | undefined;
 	setHindsightSessionState(state: HindsightSessionState | undefined): void;
-	getMnemopiSessionState(): MnemopiSessionState | undefined;
-	takeMnemopiSessionState(): MnemopiSessionState | undefined;
+	getMnemosyneSessionState(): MnemosyneSessionState | undefined;
+	takeMnemosyneSessionState(): MnemosyneSessionState | undefined;
 	setBaseSystemPrompt(prompt: string[]): void;
 	refreshBaseSystemPrompt(): Promise<void>;
 	replaceMemoryTools(tools: AgentTool[]): Promise<void>;
@@ -76,7 +76,7 @@ export class SessionMemory {
 	/** Rekeys every active memory backend to the current provider session. */
 	rekeyForCurrentSessionId(): void {
 		this.#rekeyHindsightMemoryForCurrentSessionId();
-		this.#rekeyMnemopiMemoryForCurrentSessionId();
+		this.#rekeyMnemosyneMemoryForCurrentSessionId();
 	}
 
 	#rekeyHindsightMemoryForCurrentSessionId(): void {
@@ -86,11 +86,11 @@ export class SessionMemory {
 		this.#host.getHindsightSessionState()?.setSessionId(sid);
 	}
 
-	#rekeyMnemopiMemoryForCurrentSessionId(): void {
-		if (this.#host.settings.get("memory.backend") !== "mnemopi") return;
+	#rekeyMnemosyneMemoryForCurrentSessionId(): void {
+		if (this.#host.settings.get("memory.backend") !== "mnemosyne") return;
 		const sid = this.#host.agent.sessionId;
 		if (!sid) return;
-		this.#host.getMnemopiSessionState()?.setSessionId(sid);
+		this.#host.getMnemosyneSessionState()?.setSessionId(sid);
 	}
 
 	/** New session file: reset auto-recall / retain-threshold counters for the new transcript. */
@@ -102,9 +102,9 @@ export class SessionMemory {
 		return true;
 	}
 
-	#resetMnemopiConversationTrackingIfMnemopi(): boolean {
-		if (this.#host.settings.get("memory.backend") !== "mnemopi") return false;
-		const state = this.#host.getMnemopiSessionState();
+	#resetMnemosyneConversationTrackingIfMnemosyne(): boolean {
+		if (this.#host.settings.get("memory.backend") !== "mnemosyne") return false;
+		const state = this.#host.getMnemosyneSessionState();
 		if (!state || state.aliasOf) return false;
 		state.resetConversationTracking();
 		return true;
@@ -114,12 +114,12 @@ export class SessionMemory {
 	async resetContextForNewTranscript(): Promise<void> {
 		const hadPromotedMemoryPrompt = this.#baseSystemPromptBeforeMemoryPromotion !== undefined;
 		const resetHindsight = this.#resetHindsightConversationTrackingIfHindsight();
-		const resetMnemopi = this.#resetMnemopiConversationTrackingIfMnemopi();
+		const resetMnemosyne = this.#resetMnemosyneConversationTrackingIfMnemosyne();
 		if (hadPromotedMemoryPrompt) {
 			this.#host.setBaseSystemPrompt(this.#baseSystemPromptBeforeMemoryPromotion!);
 			this.#baseSystemPromptBeforeMemoryPromotion = undefined;
 		}
-		if (resetHindsight || resetMnemopi || hadPromotedMemoryPrompt) {
+		if (resetHindsight || resetMnemosyne || hadPromotedMemoryPrompt) {
 			await this.#host.refreshBaseSystemPrompt();
 		}
 	}
@@ -143,7 +143,7 @@ export class SessionMemory {
 		if (this.#localMemoryStartupAbort?.signal === signal) this.#localMemoryStartupAbort = undefined;
 	}
 
-	async #disposeMemoryBackendState(consolidateMnemopi = true): Promise<void> {
+	async #disposeMemoryBackendState(consolidateMnemosyne = true): Promise<void> {
 		this.cancelLocalMemoryStartup();
 		const hindsight = this.#host.getHindsightSessionState();
 		if (hindsight) {
@@ -156,12 +156,12 @@ export class SessionMemory {
 			hindsight.dispose();
 		}
 
-		const mnemopi = this.#host.takeMnemopiSessionState();
-		if (mnemopi) {
+		const mnemosyne = this.#host.takeMnemosyneSessionState();
+		if (mnemosyne) {
 			try {
-				await mnemopi.dispose({ consolidate: consolidateMnemopi });
+				await mnemosyne.dispose({ consolidate: consolidateMnemosyne });
 			} catch (error) {
-				logger.warn("Memory lifecycle: Mnemopi dispose failed", { error: String(error) });
+				logger.warn("Memory lifecycle: Mnemosyne dispose failed", { error: String(error) });
 			}
 		}
 	}

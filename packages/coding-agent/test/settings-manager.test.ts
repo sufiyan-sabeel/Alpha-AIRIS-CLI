@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { Effort } from "@oh-my-pi/pi-ai";
-import { clearCustomApis } from "@oh-my-pi/pi-ai/api-registry";
-import { createMockModel, registerMockApi } from "@oh-my-pi/pi-ai/providers/mock";
-import { __providerInFlightForTesting, streamSimple } from "@oh-my-pi/pi-ai/stream";
-import type { Context } from "@oh-my-pi/pi-ai/types";
+import { Effort } from "@airis/airis-ai";
+import { clearCustomApis } from "@airis/airis-ai/api-registry";
+import { createMockModel, registerMockApi } from "@airis/airis-ai/providers/mock";
+import { __providerInFlightForTesting, streamSimple } from "@airis/airis-ai/stream";
+import type { Context } from "@airis/airis-ai/types";
 import {
 	getDefault,
 	getEnumValues,
@@ -14,11 +14,11 @@ import {
 	resetSettingsForTest,
 	type SettingPath,
 	Settings,
-} from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import { AUTO_IMAGE_PROVIDER_ORDER } from "@oh-my-pi/pi-coding-agent/tools/image-providers";
-import { SEARCH_PROVIDER_ORDER } from "@oh-my-pi/pi-coding-agent/web/search/types";
-import { getProjectAgentDir, TempDir } from "@oh-my-pi/pi-utils";
+} from "@airis/airis-coding-agent/config/settings";
+import { AgentStorage } from "@airis/airis-coding-agent/session/agent-storage";
+import { AUTO_IMAGE_PROVIDER_ORDER } from "@airis/airis-coding-agent/tools/image-providers";
+import { SEARCH_PROVIDER_ORDER } from "@airis/airis-coding-agent/web/search/types";
+import { getProjectAgentDir, TempDir } from "@airis/airis-utils";
 import { YAML } from "bun";
 import * as fileLock from "../src/config/file-lock";
 import { beginSettingsTest, restoreSettingsTestState, type SettingsTestState } from "./helpers/settings-test-state";
@@ -50,7 +50,7 @@ describe("Settings", () => {
 
 		// Use TempDir for Windows-safe cleanup (retries on EBUSY from SQLite
 		// file handle release delays).
-		tempDir = TempDir.createSync("@pi-settings-test-");
+		tempDir = TempDir.createSync("@airs-settings-test-");
 		agentDir = tempDir.join("agent");
 		projectDir = tempDir.join("project");
 
@@ -252,7 +252,7 @@ describe("Settings", () => {
 
 		it("backs up a corrupted project config and retains the pending project role for retry", async () => {
 			await writeSettings({});
-			const projectConfigPath = path.join(projectDir, ".omp", "config.yml");
+			const projectConfigPath = path.join(projectDir, ".airis", "config.yml");
 			await Bun.write(
 				projectConfigPath,
 				YAML.stringify({ modelRoles: { default: "keep/default" }, custom: { keep: true } }, null, 2),
@@ -345,7 +345,7 @@ describe("Settings", () => {
 
 		it("leaves an unreadable project config untouched and retains its pending role", async () => {
 			await writeSettings({});
-			const projectConfigPath = path.join(projectDir, ".omp", "config.yml");
+			const projectConfigPath = path.join(projectDir, ".airis", "config.yml");
 			const original = YAML.stringify({ modelRoles: { default: "keep/default" }, custom: { keep: true } }, null, 2);
 			await Bun.write(projectConfigPath, original);
 			const settings = await Settings.init({ cwd: projectDir, agentDir });
@@ -371,7 +371,7 @@ describe("Settings", () => {
 			const malformed = 'modelRoles:\n  default: "unterminated\n';
 			await Promise.all([
 				Bun.write(getConfigPath(), malformed),
-				Bun.write(path.join(projectDir, ".omp", "config.yml"), malformed),
+				Bun.write(path.join(projectDir, ".airis", "config.yml"), malformed),
 			]);
 			const unhandled: unknown[] = [];
 			const onUnhandled = (reason: unknown): void => {
@@ -383,7 +383,7 @@ describe("Settings", () => {
 				expect(unhandled).toEqual([]);
 				expect(fs.readdirSync(agentDir).some(name => name.startsWith("config.yml.broken-"))).toBe(true);
 				expect(
-					fs.readdirSync(path.join(projectDir, ".omp")).some(name => name.startsWith("config.yml.broken-")),
+					fs.readdirSync(path.join(projectDir, ".airis")).some(name => name.startsWith("config.yml.broken-")),
 				).toBe(true);
 			} finally {
 				process.removeListener("unhandledRejection", onUnhandled);
@@ -706,7 +706,7 @@ describe("Settings", () => {
 			// Process loads its #global snapshot.
 			const settings = await Settings.init({ cwd: projectDir, agentDir });
 
-			// External edit (another omp instance / manual edit): changes advisor,
+			// External edit (another airis instance / manual edit): changes advisor,
 			// adds vision. This process's #global is now stale.
 			await writeSettings({
 				modelRoles: {
@@ -961,7 +961,7 @@ describe("Settings", () => {
 			expect(settings.get("hindsight.bankId")).toBe("ada-cli");
 		});
 
-		it("migrates the legacy mnemosyne memory backend to mnemopi", async () => {
+		it("migrates the legacy mnemosyne memory backend to mnemosyne", async () => {
 			await writeSettings({
 				memory: { backend: "mnemosyne" },
 				mnemosyne: { dbPath: "/tmp/old.db", scoping: "global" },
@@ -969,20 +969,20 @@ describe("Settings", () => {
 
 			const settings = await Settings.init({ cwd: projectDir, agentDir });
 
-			expect(settings.get("memory.backend")).toBe("mnemopi");
-			expect(settings.get("mnemopi.dbPath")).toBe("/tmp/old.db");
-			expect(settings.get("mnemopi.scoping")).toBe("global");
+			expect(settings.get("memory.backend")).toBe("mnemosyne");
+			expect(settings.get("mnemosyne.dbPath")).toBe("/tmp/old.db");
+			expect(settings.get("mnemosyne.scoping")).toBe("global");
 		});
 
-		it("does not clobber an explicit mnemopi block when the legacy mnemosyne block is also present", async () => {
+		it("does not clobber an explicit mnemosyne block when the legacy mnemosyne block is also present", async () => {
 			await writeSettings({
 				mnemosyne: { dbPath: "/tmp/old.db" },
-				mnemopi: { dbPath: "/tmp/new.db" },
+				mnemosyne: { dbPath: "/tmp/new.db" },
 			});
 
 			const settings = await Settings.init({ cwd: projectDir, agentDir });
 
-			expect(settings.get("mnemopi.dbPath")).toBe("/tmp/new.db");
+			expect(settings.get("mnemosyne.dbPath")).toBe("/tmp/new.db");
 		});
 
 		it("migrates boolean task.eager/todo.eager true to always", async () => {

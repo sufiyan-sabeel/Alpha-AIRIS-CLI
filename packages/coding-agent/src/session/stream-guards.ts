@@ -1,9 +1,9 @@
 import * as fs from "node:fs";
-import type { Agent, AgentEvent, AgentMessage, AgentTurnEndContext } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, AssistantMessageEvent, Model, ToolCall } from "@oh-my-pi/pi-ai";
-import { GeminiHeaderRunDetector, isGeminiThinkingModel } from "@oh-my-pi/pi-ai/utils/thinking-loop";
-import { type RepeatedToolCallDetection, ToolCallLoopGuard } from "@oh-my-pi/pi-ai/utils/tool-call-loop-guard";
-import { isEnoent, logger, prompt } from "@oh-my-pi/pi-utils";
+import type { Agent, AgentEvent, AgentMessage, AgentTurnEndContext } from "@airis/airis-agent-core";
+import type { AssistantMessage, AssistantMessageEvent, Model, ToolCall } from "@airis/airis-ai";
+import { GeminiHeaderRunDetector, isGeminiThinkingModel } from "@airis/airis-ai/utils/thinking-loop";
+import { type RepeatedToolCallDetection, ToolCallLoopGuard } from "@airis/airis-ai/utils/tool-call-loop-guard";
+import { isEnoent, logger, prompt } from "@airis/airis-utils";
 import type { Settings } from "../config/settings";
 import { normalizeDiff, normalizeToLF, ParseError, previewPatch, stripBom } from "../edit";
 import { type LocalProtocolOptions, resolveLocalUrlToPath } from "../internal-urls";

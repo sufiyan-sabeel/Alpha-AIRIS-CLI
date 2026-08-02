@@ -10,14 +10,14 @@
  * which can be cheaper/faster than the main conversation model.
  *
  * Usage:
- *   omp --hook examples/hooks/custom-compaction.ts
+ *   airis --hook examples/hooks/custom-compaction.ts
  */
-import { complete, getModel } from "@oh-my-pi/pi-ai";
-import type { HookAPI } from "@oh-my-pi/pi-coding-agent";
-import { convertToLlm, serializeConversation } from "@oh-my-pi/pi-coding-agent";
+import { complete, getModel } from "@airis/airis-ai";
+import type { HookAPI } from "@airis/airis-coding-agent";
+import { convertToLlm, serializeConversation } from "@airis/airis-coding-agent";
 
-export default function (pi: HookAPI) {
-	pi.on("session_before_compact", async (event, ctx) => {
+export default function (airs: HookAPI) {
+	airs.on("session_before_compact", async (event, ctx) => {
 		ctx.ui.notify("Custom compaction hook triggered", "info");
 
 		const { preparation, branchEntries: _, signal } = event;

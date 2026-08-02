@@ -19,7 +19,7 @@ import * as path from "node:path";
 import { scheduler } from "node:timers/promises";
 import { isPromise } from "node:util/types";
 
-import type { Clipboard, InMemorySnapshotStore } from "@oh-my-pi/hashline";
+import type { Clipboard, InMemorySnapshotStore } from "@airis/airis-hashline";
 import {
 	type AfterToolCallContext,
 	type AfterToolCallResult,
@@ -42,7 +42,7 @@ import {
 	TERMINAL_TOOL_RESULT_ABORT_REASON,
 	type ThinkingLevel,
 	type ToolChoiceDirective,
-} from "@oh-my-pi/pi-agent-core";
+} from "@airis/airis-agent-core";
 import {
 	type CompactionPreparation,
 	type CompactionResult,
@@ -51,7 +51,7 @@ import {
 	estimateTokens,
 	generateBranchSummary,
 	type ShakeConfig,
-} from "@oh-my-pi/pi-agent-core/compaction";
+} from "@airis/airis-agent-core/compaction";
 import type {
 	AssistantMessage,
 	CodexCompactionContext,
@@ -73,13 +73,13 @@ import type {
 	ToolResultMessage,
 	UsageReport,
 	UserMessage,
-} from "@oh-my-pi/pi-ai";
-import { type Effort, streamSimple } from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { resetOpenAICodexHistoryAfterCompaction } from "@oh-my-pi/pi-ai/providers/openai-codex-responses";
-import { toolWireSchema } from "@oh-my-pi/pi-ai/utils/schema";
-import { modelsAreEqual } from "@oh-my-pi/pi-catalog/models";
-import { MacOSPowerAssertion } from "@oh-my-pi/pi-natives";
+} from "@airis/airis-ai";
+import { type Effort, streamSimple } from "@airis/airis-ai";
+import * as AIError from "@airis/airis-ai/error";
+import { resetOpenAICodexHistoryAfterCompaction } from "@airis/airis-ai/providers/openai-codex-responses";
+import { toolWireSchema } from "@airis/airis-ai/utils/schema";
+import { modelsAreEqual } from "@airis/airis-catalog/models";
+import { MacOSPowerAssertion } from "@airis/airis-natives";
 import {
 	escapeXmlText,
 	formatDuration,
@@ -94,7 +94,7 @@ import {
 	Snowflake,
 	stringProperty,
 	withTimeout,
-} from "@oh-my-pi/pi-utils";
+} from "@airis/airis-utils";
 import { type AdvisorConfig, type AdvisorRuntimeStatus, loadAdvisorTranscriptCosts } from "../advisor";
 import { type AsyncJob, AsyncJobManager } from "../async";
 import { shouldEnableAppendOnlyContext } from "../config/append-only-context-mode";
@@ -142,8 +142,8 @@ import type { GoalModeState } from "../goals/state";
 import type { HindsightSessionState } from "../hindsight/state";
 import { type LocalProtocolOptions, resolveLocalUrlToPath } from "../internal-urls";
 import type { IrcMessage } from "../irc/bus";
-import { shutdownMnemopiEmbedClient } from "../mnemopi/embed-client";
-import { getMnemopiSessionState, type MnemopiSessionState, setMnemopiSessionState } from "../mnemopi/state";
+import { shutdownMnemosyneEmbedClient } from "../mnemosyne/embed-client";
+import { getMnemosyneSessionState, type MnemosyneSessionState, setMnemosyneSessionState } from "../mnemosyne/state";
 import { containsOrchestrate, ORCHESTRATE_NOTICE } from "../modes/orchestrate";
 import { theme } from "../modes/theme/theme";
 import { parseTurnBudget } from "../modes/turn-budget";
@@ -608,7 +608,7 @@ export class AgentSession {
 		if (mode === "off") return;
 		try {
 			this.#powerAssertion = MacOSPowerAssertion.start({
-				reason: "Oh My Pi agent session",
+				reason: "Alpha AIRIS-CLI agent session",
 				idle: true,
 				display: mode === "display" || mode === "system",
 				system: mode === "system",
@@ -989,8 +989,8 @@ export class AgentSession {
 			memoryBackendSession: () => this,
 			getHindsightSessionState: () => this.getHindsightSessionState(),
 			setHindsightSessionState: state => this.setHindsightSessionState(state),
-			getMnemopiSessionState: () => this.getMnemopiSessionState(),
-			takeMnemopiSessionState: () => setMnemopiSessionState(this, undefined),
+			getMnemosyneSessionState: () => this.getMnemosyneSessionState(),
+			takeMnemosyneSessionState: () => setMnemosyneSessionState(this, undefined),
 			setBaseSystemPrompt: prompt => {
 				this.#tools.setBaseSystemPrompt(prompt);
 				this.agent.setSystemPrompt(prompt);
@@ -1568,8 +1568,8 @@ export class AgentSession {
 		return previous;
 	}
 
-	getMnemopiSessionState(): MnemopiSessionState | undefined {
-		return getMnemopiSessionState(this);
+	getMnemosyneSessionState(): MnemosyneSessionState | undefined {
+		return getMnemosyneSessionState(this);
 	}
 
 	/** TTSR manager for time-traveling stream rules */
@@ -3401,7 +3401,7 @@ export class AgentSession {
 	 * `metadata.user_id` shaped like real Claude Code's `getAPIMetadata` output:
 	 * `{ session_id, account_uuid, device_id }`. `account_uuid` is included only
 	 * when an Anthropic OAuth credential with a known account UUID is loaded;
-	 * `device_id` is derived from both the persistent omp install id and that
+	 * `device_id` is derived from both the persistent airis install id and that
 	 * account UUID. Resolving live keeps the value in sync with auth-state changes
 	 * (login/logout, token refresh that surfaces a new account UUID) without
 	 * needing to re-call `#syncAgentSessionId()` on every such event.
@@ -3578,15 +3578,15 @@ export class AgentSession {
 		}
 	}
 
-	async #disposeMnemopi(
-		state: MnemopiSessionState | undefined,
+	async #disposeMnemosyne(
+		state: MnemosyneSessionState | undefined,
 		consolidateTimeoutMs: number | undefined,
 	): Promise<void> {
 		try {
 			await state?.dispose({ timeoutMs: consolidateTimeoutMs });
 		} finally {
 			// Consolidation may embed final memories, so terminate its worker only afterward.
-			await shutdownMnemopiEmbedClient();
+			await shutdownMnemosyneEmbedClient();
 		}
 	}
 
@@ -3616,7 +3616,7 @@ export class AgentSession {
 		await this.#memory.transition;
 
 		const hindsightState = this.getHindsightSessionState();
-		const mnemopiState = setMnemopiSessionState(this, undefined);
+		const mnemosyneState = setMnemosyneSessionState(this, undefined);
 		const advisorRecorderClosed = this.#advisors.recorderClosed();
 		const results = await Promise.allSettled([
 			this.#disposeOwnedAsyncJobs(),
@@ -3627,7 +3627,7 @@ export class AgentSession {
 			this.#disconnectOwnedMcp(),
 			advisorRecorderClosed,
 			hindsightState?.flushRetainQueue() ?? Promise.resolve(),
-			this.#disposeMnemopi(mnemopiState, options.mnemopiConsolidateTimeoutMs),
+			this.#disposeMnemosyne(mnemosyneState, options.mnemosyneConsolidateTimeoutMs),
 		]);
 		for (const result of results) {
 			if (result.status === "rejected") {
@@ -4740,7 +4740,7 @@ export class AgentSession {
 
 	/**
 	 * Send a prompt to the agent.
-	 * - Handles extension commands (registered via pi.registerCommand) immediately, even during streaming
+	 * - Handles extension commands (registered via airs.registerCommand) immediately, even during streaming
 	 * - Expands file-based prompt templates by default
 	 * - During streaming, queues via steer() or followUp() based on streamingBehavior option
 	 * - Validates model and API key before sending (when not streaming)
@@ -5207,7 +5207,7 @@ export class AgentSession {
 				// Await the idempotent dispose() before exiting so the browser
 				// reaper and other bounded teardown complete — a fire-and-forget
 				// `void this.dispose()` raced process.exit() and could leave an
-				// OMP-owned Chromium alive (#5643).
+				// AIRIS-owned Chromium alive (#5643).
 				void this.dispose().finally(() => process.exit(0));
 			},
 			getContextUsage: () => this.getContextUsage(),
@@ -7571,7 +7571,7 @@ export class AgentSession {
 			 * (extensions, hooks, ACP, session-extension actions) leaves this
 			 * unset and gets the pre-#5642 plain leaf move onto `ask`
 			 * toolResults instead — they have no picker to re-open and would
-			 * otherwise report a successful no-op navigation (roboomp review on
+			 * otherwise report a successful no-op navigation (roboairis review on
 			 * #5895).
 			 */
 			allowAskReopen?: boolean;
@@ -7645,7 +7645,7 @@ export class AgentSession {
 		// the actual sibling-branch construction once the caller has an answer.
 		// Gated on `allowAskReopen` — callers that don't understand `reopenAsk`
 		// fall straight through to the plain leaf move below instead of
-		// reporting a successful no-op (roboomp review on #5895).
+		// reporting a successful no-op (roboairis review on #5895).
 		if (
 			options.allowAskReopen &&
 			!options.reanswerAskResult &&
@@ -7907,7 +7907,7 @@ export class AgentSession {
 	 * up from the toolResult's parent past any interleaved ancestor entries
 	 * — sibling toolResults from other tool calls in the same turn (`ask`
 	 * runs `exclusive`, which only serializes *execution*, not persistence
-	 * order — roboomp review on #5895), and bookkeeping entries such as the
+	 * order — roboairis review on #5895), and bookkeeping entries such as the
 	 * `tool_execution_start` custom entry `#recordToolExecutionStart()`
 	 * appends before every toolResult in real persisted sessions (chatgpt-codex
 	 * review on #5895) — until it finds the assistant entry that actually
@@ -7948,7 +7948,7 @@ export class AgentSession {
 	 * so this mirrors `refreshMCPTools()`'s `getCustomToolContext` factory
 	 * with real session state instead of a `{ ... } as unknown as
 	 * AgentToolContext` cast that could silently compile with an incomplete
-	 * context (roboomp review on #5895) — every `CustomToolContext` field is
+	 * context (roboairis review on #5895) — every `CustomToolContext` field is
 	 * backed by live session state, so a future required field fails to
 	 * compile here instead of surfacing as `undefined` at runtime.
 	 */
@@ -8402,7 +8402,7 @@ export class AgentSession {
 			})),
 			messages: llmMessages,
 		};
-		const filePath = path.join(os.tmpdir(), `omp-llm-request-${Snowflake.next()}.json`);
+		const filePath = path.join(os.tmpdir(), `airis-llm-request-${Snowflake.next()}.json`);
 		await Bun.write(filePath, `${JSON.stringify(payload, null, 2)}\n`);
 		return filePath;
 	}

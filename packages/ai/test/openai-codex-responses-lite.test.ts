@@ -3,18 +3,18 @@ import {
 	type InputItem,
 	type RequestBody,
 	transformRequestBody,
-} from "@oh-my-pi/pi-ai/providers/openai-codex/request-transformer";
+} from "@airis/airis-ai/providers/openai-codex/request-transformer";
 import {
 	buildTransformedCodexRequestBody,
 	convertCodexResponsesMessages,
 	resetOpenAICodexHistoryAfterCompaction,
 	streamOpenAICodexResponses,
-} from "@oh-my-pi/pi-ai/providers/openai-codex-responses";
-import { isOpenAIResponsesProgressEvent } from "@oh-my-pi/pi-ai/providers/openai-shared";
-import { configureCredentialRedaction } from "@oh-my-pi/pi-ai/providers/transform-messages";
-import type { CodexCompactionRequestContext, Context, FetchImpl, ProviderSessionState } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import * as piUtils from "@oh-my-pi/pi-utils";
+} from "@airis/airis-ai/providers/openai-codex-responses";
+import { isOpenAIResponsesProgressEvent } from "@airis/airis-ai/providers/openai-shared";
+import { configureCredentialRedaction } from "@airis/airis-ai/providers/transform-messages";
+import type { CodexCompactionRequestContext, Context, FetchImpl, ProviderSessionState } from "@airis/airis-ai/types";
+import { buildModel } from "@airis/airis-catalog/build";
+import * as piUtils from "@airis/airis-utils";
 import { createCodexModel } from "./helpers";
 
 beforeAll(() => configureCredentialRedaction(true));

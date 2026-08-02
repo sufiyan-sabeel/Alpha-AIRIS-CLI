@@ -1,9 +1,9 @@
 import { spyOn } from "bun:test";
 import * as path from "node:path";
-import * as buildModule from "@oh-my-pi/pi-catalog/build";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import * as buildModule from "@airis/airis-catalog/build";
+import { ModelRegistry } from "@airis/airis-coding-agent/config/model-registry";
+import { AuthStorage } from "@airis/airis-coding-agent/session/auth-storage";
+import { TempDir } from "@airis/airis-utils";
 
 const tempDir = TempDir.createSync("@model-registry-lazy-probe-");
 const authStorage = await AuthStorage.create(path.join(tempDir.path(), "auth.db"));

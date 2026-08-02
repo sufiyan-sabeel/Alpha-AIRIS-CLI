@@ -1,31 +1,31 @@
 # syntax=docker/dockerfile:1.7-labs
 ###############################################################################
-# oh-my-pi — pi image
+# alpha-airis-cli — airis image
 #
 # Stages:
-#   natives-builder — Rust + Bun → pi_natives.linux-<arch>.node
-#   wheel-builder   — omp_rpc Python wheel
-#   pi-base         — python + bun + rustup launcher + natives + omp_rpc
-#                     + /usr/local/bin/omp shim
-#   pi-runtime      — pi-base + pi source + bun install      (DEFAULT, runnable)
+#   natives-builder — Rust + Bun → airis_natives.linux-<arch>.node
+#   wheel-builder   — airis_rpc Python wheel
+#   airis-base         — python + bun + rustup launcher + natives + airis_rpc
+#                     + /usr/local/bin/airis.shim
+#   airis-runtime      — airis-base + airis source + bun install      (DEFAULT, runnable)
 #
 # Build:
-#     docker build -t oh-my-pi/pi:dev .                          # default = pi-runtime
-#     docker build --target pi-base -t oh-my-pi/pi-base:dev .    # base for derived images
+#     docker build -t airis/airis:dev .                          # default = airis-runtime
+#     docker build --target airis-base -t airis/airis-base:dev .    # base for derived images
 #
 # Run:
-#     docker run --rm oh-my-pi/pi:dev --help
-#     docker run --rm -it -v "$PWD":/work oh-my-pi/pi:dev cli    # interactive omp
+#     docker run --rm airis/airis:dev --help
+#     docker run --rm -it -v "$PWD":/work airis/airis:dev cli    # interactive airis
 #
-# Consume as a base in another Dockerfile (see Dockerfile.robomp):
-#     ARG PI_BASE=oh-my-pi/pi:dev
-#     FROM ${PI_BASE} AS pi-base
+# Consume as a base in another Dockerfile (see Dockerfile.roboairis):
+#     ARG AIRIS_BASE=airis/airis:dev
+#     FROM ${AIRIS_BASE} AS airis-base
 ###############################################################################
 
 ARG BUN_VERSION=1.3.14
 
 ############################
-# 1) natives-builder — Rust + Bun → pi_natives.linux-<arch>.node
+# 1) natives-builder — Rust + Bun → airis_natives.linux-<arch>.node
 ############################
 FROM rust:1.86-slim-bookworm AS natives-builder
 
@@ -50,11 +50,11 @@ RUN apt-get update \
 RUN curl -fsSL https://bun.sh/install | bash -s "bun-v${BUN_VERSION}" \
     && /opt/bun/bin/bun --version
 
-WORKDIR /pi
+WORKDIR /airis
 
 # Layer 1 — manifests + lockfiles only. Source edits under packages/*/src and
 # crates/*/src won't bust `bun install` below. `--parents` preserves the
-# matched path under /pi/ (requires syntax 1.7-labs).
+# matched path under /airis/ (requires syntax 1.7-labs).
 COPY --parents \
     package.json bun.lock bunfig.toml \
     patches/*.patch \
@@ -62,9 +62,9 @@ COPY --parents \
     Cargo.toml Cargo.lock rust-toolchain.toml \
     packages/*/package.json \
     packages/tsconfig.workspace.json \
-    python/robomp/web/package.json \
+    python/roboairis/web/package.json \
     crates/*/Cargo.toml \
-    /pi/
+    /airis/
 
 # Layer 2 — hydrate node_modules from the manifests above.
 RUN bun install --frozen-lockfile --ignore-scripts
@@ -72,22 +72,22 @@ RUN bun install --frozen-lockfile --ignore-scripts
 # Layer 3 — full source. `Dockerfile.dockerignore` keeps target/, node_modules/,
 # dist/, runs/, editor noise, etc. out of the context. node_modules from Layer 2
 # is preserved across this COPY because it's never in the build context.
-COPY . /pi/
+COPY . /airis/
 
-# Layer 4 — compile pi-natives to a Linux N-API addon. Persistent caches keep
+# Layer 4 — compile airis-natives to a Linux N-API addon. Persistent caches keep
 # repeat builds incremental: cargo's package index + git-deps + the workspace
 # target dir.
 RUN --mount=type=cache,target=/root/.cargo/registry \
     --mount=type=cache,target=/root/.cargo/git \
-    --mount=type=cache,target=/pi/target \
+    --mount=type=cache,target=/airis/target \
     set -eux; \
     rustup show; \
     bun --cwd=packages/natives run build; \
     mkdir -p /out; \
-    cp packages/natives/native/pi_natives.linux-*.node /out/
+    cp packages/natives/native/airis_natives.linux-*.node /out/
 
 ############################
-# 2) wheel-builder — omp-rpc wheel
+# 2) wheel-builder — airis-rpc wheel
 ############################
 FROM python:3.12-slim-bookworm AS wheel-builder
 
@@ -98,18 +98,18 @@ RUN apt-get update \
 RUN pip install --upgrade pip build
 
 WORKDIR /src
-COPY python/omp-rpc /src
+COPY python/airis-rpc /src
 RUN python -m build --wheel --outdir /out
 
 ############################
-# 3) pi-base — python + bun + rustup + natives + omp_rpc + omp shim
+# 3) airis-base — python + bun + rustup + natives + airis_rpc + airis.shim
 #
-# Sharable runtime base. Derived images (pi-runtime below, Dockerfile.robomp)
-# extend this and overlay their own source tree. Default PI_ROOT=/work/pi is
-# friendly to derived images that mount a host pi checkout there; pi-runtime
-# overrides it to /pi because its source is baked in.
+# Sharable runtime base. Derived images (airis-runtime below, Dockerfile.roboairis)
+# extend this and overlay their own source tree. Default AIRIS_ROOT=/work/airis is
+# friendly to derived images that mount a host airis checkout there; airis-runtime
+# overrides it to /airis because its source is baked in.
 ############################
-FROM python:3.12-slim-bookworm AS pi-base
+FROM python:3.12-slim-bookworm AS airis-base
 
 ARG BUN_VERSION
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -117,7 +117,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PIP_NO_CACHE_DIR=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
     BUN_INSTALL=/opt/bun \
-    PI_ROOT=/work/pi \
+    AIRIS_ROOT=/work/airis \
     CARGO_HOME=/data/cache/cargo \
     CARGO_TARGET_DIR=/data/cache/cargo-target \
     RUSTUP_HOME=/data/cache/rustup \
@@ -133,7 +133,7 @@ RUN curl -fsSL https://bun.sh/install | bash -s "bun-v${BUN_VERSION}" \
     && /opt/bun/bin/bun --version
 
 # Rustup launcher only — the real toolchain is fetched lazily into RUSTUP_HOME
-# on first cargo invocation, driven by pi's `rust-toolchain.toml`. Keeps the
+# on first cargo invocation, driven by airis's `rust-toolchain.toml`. Keeps the
 # image small while sharing the toolchain across reboots when /data is mounted.
 RUN curl -fsSL https://sh.rustup.rs -o /tmp/rustup-init.sh \
     && CARGO_HOME=/usr/local/cargo RUSTUP_HOME=/usr/local/rustup-bootstrap \
@@ -142,37 +142,37 @@ RUN curl -fsSL https://sh.rustup.rs -o /tmp/rustup-init.sh \
     && rm -rf /usr/local/rustup-bootstrap \
     && /usr/local/cargo/bin/rustup --version
 
-# pi-natives addon: pi's loader probes /opt/bun/bin as a fallback path.
-COPY --from=natives-builder /out/pi_natives.linux-*.node /opt/bun/bin/
+# airis-natives addon: airis's loader probes /opt/bun/bin as a fallback path.
+COPY --from=natives-builder /out/airis_natives.linux-*.node /opt/bun/bin/
 
-# omp-rpc Python wheel.
+# airis-rpc Python wheel.
 COPY --from=wheel-builder /out/*.whl /tmp/wheels/
-RUN pip install /tmp/wheels/omp_rpc-*.whl && rm -rf /tmp/wheels
+RUN pip install /tmp/wheels/airis_rpc-*.whl && rm -rf /tmp/wheels
 
-# `omp` shim — runs the coding-agent CLI against $PI_ROOT via Bun. Derived
-# images override PI_ROOT to point at wherever their pi source lives.
+# `airis` shim — runs the coding-agent CLI against $AIRIS_ROOT via Bun. Derived
+# images override AIRIS_ROOT to point at wherever their airis source lives.
 RUN printf '%s\n' \
     '#!/usr/bin/env bash' \
     'set -euo pipefail' \
-    ': "${PI_ROOT:=/work/pi}"' \
-    'if [ ! -d "$PI_ROOT/packages/coding-agent" ]; then' \
-    '  echo "pi: PI_ROOT=$PI_ROOT does not look like a pi checkout" >&2' \
+    ': "${AIRIS_ROOT:=/work/airis}"' \
+    'if [ ! -d "$AIRIS_ROOT/packages/coding-agent" ]; then' \
+    '  echo "airis: AIRIS_ROOT=$AIRIS_ROOT does not look like a airis checkout" >&2' \
     '  exit 127' \
     'fi' \
-    'exec bun "$PI_ROOT/packages/coding-agent/src/cli.ts" "$@"' \
-    > /usr/local/bin/omp \
-    && chmod +x /usr/local/bin/omp
+    'exec bun "$AIRIS_ROOT/packages/coding-agent/src/cli.ts" "$@"' \
+    > /usr/local/bin/airis \
+    && chmod +x /usr/local/bin/airis
 
 ############################
-# 4) pi-runtime — pi-base + pi source + bun install (DEFAULT)
+# 4) airis-runtime — airis-base + airis source + bun install (DEFAULT)
 #
-# A self-contained, runnable omp image. `docker run oh-my-pi/pi:dev --help`
+# A self-contained, runnable airis image. `docker run airis/airis:dev --help`
 # Just Works without a host checkout.
 ############################
-FROM pi-base AS pi-runtime
+FROM airis-base AS airis-runtime
 
-ENV PI_ROOT=/pi
-WORKDIR /pi
+ENV AERIS_ROOT=/airis
+WORKDIR /airis
 
 # Same manifests-only layered install pattern as natives-builder — `bun install`
 # only re-runs when a package.json / lockfile changes.
@@ -182,19 +182,19 @@ COPY --parents \
     tsconfig.base.json tsconfig.json \
     packages/*/package.json \
     packages/tsconfig.workspace.json \
-    python/robomp/web/package.json \
-    /pi/
+    python/roboairis/web/package.json \
+    /airis/
 
 RUN bun install --frozen-lockfile --ignore-scripts
 
 # Pi source. `Dockerfile.dockerignore` keeps **/node_modules out of the context
 # so stale isolated-linker symlinks from a host install can't shadow the
 # hoisted node_modules that `bun install` just produced.
-COPY . /pi/
+COPY . /airis/
 
 # Regenerate the tool views that `--ignore-scripts` skipped above. The root
 # package.json's `prepare` script normally handles these on a vanilla install.
 RUN bun --cwd=packages/coding-agent run gen:tool-views
 
-ENTRYPOINT ["/usr/bin/tini", "--", "/usr/local/bin/omp"]
+ENTRYPOINT ["/usr/bin/tini", "--", "/usr/local/bin/airis"]
 CMD ["--help"]

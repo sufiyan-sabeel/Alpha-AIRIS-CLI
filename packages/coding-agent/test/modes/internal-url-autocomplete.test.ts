@@ -1,19 +1,19 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import * as capability from "@oh-my-pi/pi-coding-agent/capability";
-import type { Rule } from "@oh-my-pi/pi-coding-agent/capability/rule";
-import { resetActiveRulesForTests, setActiveRules } from "@oh-my-pi/pi-coding-agent/capability/rule";
-import type { SSHHost } from "@oh-my-pi/pi-coding-agent/capability/ssh";
-import type { CapabilityResult } from "@oh-my-pi/pi-coding-agent/capability/types";
-import type { Skill } from "@oh-my-pi/pi-coding-agent/extensibility/skills";
-import { resetActiveSkillsForTests, setActiveSkills } from "@oh-my-pi/pi-coding-agent/extensibility/skills";
-import { InternalUrlRouter } from "@oh-my-pi/pi-coding-agent/internal-urls/router";
+import * as capability from "@airis/airis-coding-agent/capability";
+import type { Rule } from "@airis/airis-coding-agent/capability/rule";
+import { resetActiveRulesForTests, setActiveRules } from "@airis/airis-coding-agent/capability/rule";
+import type { SSHHost } from "@airis/airis-coding-agent/capability/ssh";
+import type { CapabilityResult } from "@airis/airis-coding-agent/capability/types";
+import type { Skill } from "@airis/airis-coding-agent/extensibility/skills";
+import { resetActiveSkillsForTests, setActiveSkills } from "@airis/airis-coding-agent/extensibility/skills";
+import { InternalUrlRouter } from "@airis/airis-coding-agent/internal-urls/router";
 import {
 	applyInternalUrlCompletion,
 	extractInternalUrlContext,
 	getInternalUrlSuggestions,
 	isInternalUrlPrefix,
-} from "@oh-my-pi/pi-coding-agent/modes/internal-url-autocomplete";
-import { PromptActionAutocompleteProvider } from "@oh-my-pi/pi-coding-agent/modes/prompt-action-autocomplete";
+} from "@airis/airis-coding-agent/modes/internal-url-autocomplete";
+import { PromptActionAutocompleteProvider } from "@airis/airis-coding-agent/modes/prompt-action-autocomplete";
 
 function skill(name: string, description = ""): Skill {
 	return { name, description, filePath: `/skills/${name}/SKILL.md`, baseDir: `/skills/${name}`, source: "test" };
@@ -32,7 +32,7 @@ function rule(name: string, description?: string): Rule {
 describe("internal-url-autocomplete", () => {
 	beforeEach(() => {
 		setActiveSkills([skill("humanizer", "Remove AI tells"), skill("react", "React UI"), skill("tla", "TLA+ specs")]);
-		setActiveRules([rule("python", "robomp rules"), rule("style")]);
+		setActiveRules([rule("python", "roboairis rules"), rule("style")]);
 	});
 
 	afterEach(() => {
@@ -100,7 +100,7 @@ describe("internal-url-autocomplete", () => {
 
 		it("carries the candidate description through", async () => {
 			const result = await getInternalUrlSuggestions("rule://python");
-			expect(result!.items[0]).toMatchObject({ value: "rule://python", description: "robomp rules" });
+			expect(result!.items[0]).toMatchObject({ value: "rule://python", description: "roboairis rules" });
 		});
 
 		it("returns null when no candidate matches", async () => {
@@ -174,7 +174,7 @@ describe("internal-url-autocomplete", () => {
 				"history",
 				"local",
 				"memory",
-				"omp",
+				"airis",
 				"rule",
 				"security",
 				"skill",

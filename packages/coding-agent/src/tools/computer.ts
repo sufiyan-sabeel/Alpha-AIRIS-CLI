@@ -4,17 +4,17 @@ import type {
 	AgentToolResult,
 	AgentToolUpdateCallback,
 	ToolApprovalDecision,
-} from "@oh-my-pi/pi-agent-core";
-import type { ComputerAction, ComputerSafetyCheck, ComputerToolCallMetadata, Model } from "@oh-my-pi/pi-ai";
-import { isClaudeModelId } from "@oh-my-pi/pi-catalog/identity";
+} from "@airis/airis-agent-core";
+import type { ComputerAction, ComputerSafetyCheck, ComputerToolCallMetadata, Model } from "@airis/airis-ai";
+import { isClaudeModelId } from "@airis/airis-catalog/identity";
 import type {
 	DesktopAction,
 	DesktopCapabilities,
 	DesktopCapture,
 	DesktopDisplay,
 	DesktopSessionOptions,
-} from "@oh-my-pi/pi-natives";
-import { once, prompt, sanitizeText } from "@oh-my-pi/pi-utils";
+} from "@airis/airis-natives";
+import { once, prompt, sanitizeText } from "@airis/airis-utils";
 import { type Type, type } from "arktype";
 import computerDescription from "../prompts/tools/computer.md" with { type: "text" };
 import { truncateForPrompt } from "./approval";

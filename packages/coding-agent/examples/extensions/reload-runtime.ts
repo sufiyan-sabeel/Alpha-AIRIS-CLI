@@ -5,14 +5,14 @@
  * tool that queues a follow-up command to trigger reload.
  */
 
-import type { ExtensionAPI } from "@oh-my-pi/pi-coding-agent";
+import type { ExtensionAPI } from "@airis/airis-coding-agent";
 
-export default function (pi: ExtensionAPI) {
-	const { z } = pi.zod;
+export default function (airs: ExtensionAPI) {
+	const { z } = airs.zod;
 
 	// Command entrypoint for reload.
 	// Treat reload as terminal for this handler.
-	pi.registerCommand("reload-runtime", {
+	airs.registerCommand("reload-runtime", {
 		description: "Reload extensions, skills, prompts, and themes",
 		handler: async (_args, ctx) => {
 			await ctx.reload();
@@ -22,13 +22,13 @@ export default function (pi: ExtensionAPI) {
 
 	// LLM-callable tool. Tools get ExtensionContext, so they cannot call ctx.reload() directly.
 	// Instead, queue a follow-up user command that executes the command above.
-	pi.registerTool({
+	airs.registerTool({
 		name: "reload_runtime",
 		label: "Reload Runtime",
 		description: "Reload extensions, skills, prompts, and themes",
 		parameters: z.object({}),
 		async execute() {
-			pi.sendUserMessage("/reload-runtime", { deliverAs: "followUp" });
+			airs.sendUserMessage("/reload-runtime", { deliverAs: "followUp" });
 			return {
 				content: [{ type: "text", text: "Queued /reload-runtime as a follow-up command." }],
 				details: {},

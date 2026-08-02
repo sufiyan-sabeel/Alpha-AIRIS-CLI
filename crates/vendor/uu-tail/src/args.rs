@@ -8,7 +8,7 @@
 use std::{ffi::OsString, io::Write, time::Duration};
 
 use clap::{Arg, ArgAction, ArgMatches, Command, value_parser};
-use pi_uutils_ctx::format_usage;
+use airis_uutils_ctx::format_usage;
 use uucore::{
 	error::{UError, UResult, USimpleError, UUsageError},
 	parser::{
@@ -297,12 +297,12 @@ impl Settings {
 		if self.retry {
 			if self.follow.is_none() {
 				let _ = writeln!(
-					pi_uutils_ctx::stderr(),
+					airis_uutils_ctx::stderr(),
 					"tail: warning: --retry ignored; --retry is useful only when following"
 				);
 			} else if self.follow == Some(FollowMode::Descriptor) {
 				let _ = writeln!(
-					pi_uutils_ctx::stderr(),
+					airis_uutils_ctx::stderr(),
 					"tail: warning: --retry only effective for the initial open"
 				);
 			}
@@ -311,18 +311,18 @@ impl Settings {
 		if self.pid != 0 {
 			if self.follow.is_none() {
 				let _ = writeln!(
-					pi_uutils_ctx::stderr(),
+					airis_uutils_ctx::stderr(),
 					"tail: warning: PID ignored; --pid=PID is useful only when following"
 				);
 			} else if !platform::supports_pid_checks(self.pid) {
 				let _ = writeln!(
-					pi_uutils_ctx::stderr(),
+					airis_uutils_ctx::stderr(),
 					"tail: warning: --pid=PID is not supported on this system"
 				);
 			}
 		}
 
-		// pi-uutils: GNU also warns that following standard input indefinitely is
+		// airis-uutils: GNU also warns that following standard input indefinitely is
 		// ineffective when stdin is a tty. The context stdin is a plain reader,
 		// never an interactive terminal, so that warning never applies here and
 		// the fd-0 inspection (same_file::Handle + IsTerminal) is dropped.

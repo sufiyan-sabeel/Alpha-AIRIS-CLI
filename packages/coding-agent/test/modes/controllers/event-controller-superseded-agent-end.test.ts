@@ -1,10 +1,10 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { EventController } from "@oh-my-pi/pi-coding-agent/modes/controllers/event-controller";
-import { initTheme } from "@oh-my-pi/pi-coding-agent/modes/theme/theme";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import type { AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { TERMINAL } from "@oh-my-pi/pi-tui";
+import { resetSettingsForTest, Settings } from "@airis/airis-coding-agent/config/settings";
+import { EventController } from "@airis/airis-coding-agent/modes/controllers/event-controller";
+import { initTheme } from "@airis/airis-coding-agent/modes/theme/theme";
+import type { InteractiveModeContext } from "@airis/airis-coding-agent/modes/types";
+import type { AgentSessionEvent } from "@airis/airis-coding-agent/session/agent-session";
+import { TERMINAL } from "@airis/airis-tui";
 
 /**
  * Models the loader lifecycle InteractiveMode owns: `agent_start` creates the

@@ -1,12 +1,12 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { runEvalAgent } from "@oh-my-pi/pi-coding-agent/eval/agent-bridge";
-import type { LocalProtocolOptions } from "@oh-my-pi/pi-coding-agent/internal-urls";
-import type { MCPManager } from "@oh-my-pi/pi-coding-agent/mcp";
-import * as taskDiscovery from "@oh-my-pi/pi-coding-agent/task/discovery";
-import * as taskExecutor from "@oh-my-pi/pi-coding-agent/task/executor";
-import type { AgentDefinition, SingleResult, StructuredSubagentOutput } from "@oh-my-pi/pi-coding-agent/task/types";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import { runEvalAgent } from "@airis/airis-coding-agent/eval/agent-bridge";
+import type { LocalProtocolOptions } from "@airis/airis-coding-agent/internal-urls";
+import type { MCPManager } from "@airis/airis-coding-agent/mcp";
+import * as taskDiscovery from "@airis/airis-coding-agent/task/discovery";
+import * as taskExecutor from "@airis/airis-coding-agent/task/executor";
+import type { AgentDefinition, SingleResult, StructuredSubagentOutput } from "@airis/airis-coding-agent/task/types";
+import type { ToolSession } from "@airis/airis-coding-agent/tools";
 
 function createResult(overrides: Partial<SingleResult> = {}): SingleResult {
 	return {

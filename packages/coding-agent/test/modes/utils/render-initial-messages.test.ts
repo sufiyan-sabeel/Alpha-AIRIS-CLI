@@ -5,25 +5,25 @@
  * `sessionManager.buildSessionContext()` — the LLM-context builder — must not be
  * consulted for display.
  *
- * Also guards the cold-launch terminal cleanup: `omp` / `omp -c` leave the
+ * Also guards the cold-launch terminal cleanup: `airis` / `airis -c` leave the
  * previous run's transcript in native scrollback because the TUI's initial
  * paint preserves it, so the cold-launch render must request a
  * scrollback-clearing repaint (`clearTerminalHistory`).
  */
 
 import { afterEach, beforeAll, beforeEach, describe, expect, it, type Mock, vi } from "bun:test";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, ImageContent, Usage } from "@oh-my-pi/pi-ai";
-import { kStreamingPartialJson } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AssistantMessageComponent } from "@oh-my-pi/pi-coding-agent/modes/components/assistant-message";
-import { initTheme } from "@oh-my-pi/pi-coding-agent/modes/theme/theme";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { UiHelpers } from "@oh-my-pi/pi-coding-agent/modes/utils/ui-helpers";
-import type { SessionContext } from "@oh-my-pi/pi-coding-agent/session/session-context";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { type Component, Container, Image, ImageProtocol, setTerminalImageProtocol, TERMINAL } from "@oh-my-pi/pi-tui";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import type { AgentMessage } from "@airis/airis-agent-core";
+import type { AssistantMessage, ImageContent, Usage } from "@airis/airis-ai";
+import { kStreamingPartialJson } from "@airis/airis-ai/utils/block-symbols";
+import { resetSettingsForTest, Settings } from "@airis/airis-coding-agent/config/settings";
+import { AssistantMessageComponent } from "@airis/airis-coding-agent/modes/components/assistant-message";
+import { initTheme } from "@airis/airis-coding-agent/modes/theme/theme";
+import type { InteractiveModeContext } from "@airis/airis-coding-agent/modes/types";
+import { UiHelpers } from "@airis/airis-coding-agent/modes/utils/ui-helpers";
+import type { SessionContext } from "@airis/airis-coding-agent/session/session-context";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import { type Component, Container, Image, ImageProtocol, setTerminalImageProtocol, TERMINAL } from "@airis/airis-tui";
+import { TempDir } from "@airis/airis-utils";
 
 beforeAll(() => {
 	initTheme();
@@ -309,7 +309,7 @@ describe("UiHelpers.renderInitialMessages — image replay", () => {
 	it("replays reopened session image blocks through the cold-start rebuild path", async () => {
 		await Settings.init({ inMemory: true, overrides: { "terminal.showImages": true } });
 		setTerminalImageProtocol(ImageProtocol.Sixel);
-		using tempDir = TempDir.createSync("@pi-render-initial-image-replay-");
+		using tempDir = TempDir.createSync("@airs-render-initial-image-replay-");
 		const session = SessionManager.create(tempDir.path(), tempDir.path());
 		session.appendMessage(assistantToolCall("read-reopened", "read", { path: "reopened.png" }));
 		session.appendMessage({

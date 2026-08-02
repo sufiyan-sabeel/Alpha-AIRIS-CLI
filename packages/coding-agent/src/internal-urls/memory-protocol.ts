@@ -1,8 +1,8 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { getAgentDir, isEnoent } from "@oh-my-pi/pi-utils";
+import { getAgentDir, isEnoent } from "@airis/airis-utils";
 import { getMemoryRoot } from "../memories";
-import { getMnemopiSessionState, type MnemopiScopedMemoryHit, type MnemopiSessionState } from "../mnemopi/state";
+import { getMnemosyneSessionState, type MnemosyneScopedMemoryHit, type MnemosyneSessionState } from "../mnemosyne/state";
 import { AgentRegistry } from "../registry/agent-registry";
 import { isMarkdownPath } from "../utils/lang-from-path";
 import { buildDirectoryResource } from "./filesystem-resource";
@@ -199,20 +199,20 @@ async function tryResolveInRoot(url: InternalUrl, memoryRoot: string): Promise<I
 }
 
 /**
- * Snapshot of live mnemopi session states, deduplicated. A mnemopi backend
+ * Snapshot of live mnemosyne session states, deduplicated. A mnemosyne backend
  * always keeps its state on the {@link AgentSession} it was initialised for;
  * subagents alias their parent's state, so different `session` objects can
  * point at the same underlying banks. The dedupe below picks the
  * canonical (non-aliased) state per bank set so `memory://<id>` resolves in
  * one pass regardless of how many subagents are alive.
  */
-function mnemopiSessionStatesFromRegistry(): MnemopiSessionState[] {
+function mnemosyneSessionStatesFromRegistry(): MnemosyneSessionState[] {
 	const seen = new Set<unknown>();
-	const states: MnemopiSessionState[] = [];
+	const states: MnemosyneSessionState[] = [];
 	for (const ref of AgentRegistry.global().list()) {
 		const session = ref.session;
 		if (!session) continue;
-		const state = getMnemopiSessionState(session);
+		const state = getMnemosyneSessionState(session);
 		if (!state) continue;
 		const primary = state.aliasOf ?? state;
 		if (seen.has(primary)) continue;
@@ -223,11 +223,11 @@ function mnemopiSessionStatesFromRegistry(): MnemopiSessionState[] {
 }
 
 /**
- * Look up a mnemopi memory row by id across every live session's scoped banks.
+ * Look up a mnemosyne memory row by id across every live session's scoped banks.
  * First hit wins; returns `null` when the id is not stored anywhere in scope.
  */
-function tryResolveMnemopiMemory(id: string): MnemopiScopedMemoryHit | null {
-	for (const state of mnemopiSessionStatesFromRegistry()) {
+function tryResolveMnemosyneMemory(id: string): MnemosyneScopedMemoryHit | null {
+	for (const state of mnemosyneSessionStatesFromRegistry()) {
 		const hit = state?.getScopedMemory(id);
 		if (hit) return hit;
 	}
@@ -235,12 +235,12 @@ function tryResolveMnemopiMemory(id: string): MnemopiScopedMemoryHit | null {
 }
 
 /**
- * Render a mnemopi memory row as text/markdown with a small YAML-front-matter
+ * Render a mnemosyne memory row as text/markdown with a small YAML-front-matter
  * header. The frontmatter carries the metadata an agent needs to reason about
  * a working vs episodic memory (bank, store, timestamps, importance) without
  * having to reconstruct it from the recall preview.
  */
-function renderMnemopiMemory(url: InternalUrl, hit: MnemopiScopedMemoryHit): InternalResource {
+function renderMnemosyneMemory(url: InternalUrl, hit: MnemosyneScopedMemoryHit): InternalResource {
 	const { row, bank, store } = hit;
 	const meta = row.metadata == null ? "" : `metadata: ${JSON.stringify(row.metadata)}\n`;
 	const header =
@@ -283,22 +283,22 @@ export class MemoryProtocolHandler implements ProtocolHandler {
 			throw new Error("memory:// URL requires a namespace: memory://root or memory://<memory-id>");
 		}
 
-		// Mnemopi rows live in SQLite banks per session, keyed by memory id.
+		// Mnemosyne rows live in SQLite banks per session, keyed by memory id.
 		// Any host other than the file-backed `root` namespace is treated as a
-		// mnemopi memory id lookup. This is the read counterpart to
+		// mnemosyne memory id lookup. This is the read counterpart to
 		// `memory_edit update` and lets agents inspect the full content of a
 		// clipped recall preview before overwriting it (issue #4443).
 		if (namespace !== MEMORY_NAMESPACE) {
-			const mnemopiStates = mnemopiSessionStatesFromRegistry();
-			if (mnemopiStates.length === 0) {
+			const mnemosyneStates = mnemosyneSessionStatesFromRegistry();
+			if (mnemosyneStates.length === 0) {
 				throw new Error(
-					`Unknown memory namespace: ${namespace}. Supported: ${MEMORY_NAMESPACE} (file-backed memory summary), or a mnemopi memory id when memory.backend=mnemopi is active.`,
+					`Unknown memory namespace: ${namespace}. Supported: ${MEMORY_NAMESPACE} (file-backed memory summary), or a mnemosyne memory id when memory.backend=mnemosyne is active.`,
 				);
 			}
-			const hit = tryResolveMnemopiMemory(namespace);
-			if (hit) return renderMnemopiMemory(url, hit);
+			const hit = tryResolveMnemosyneMemory(namespace);
+			if (hit) return renderMnemosyneMemory(url, hit);
 			throw new Error(
-				`Mnemopi memory ${namespace} not found in any scoped bank. Use \`recall\` to list available ids.`,
+				`Mnemosyne memory ${namespace} not found in any scoped bank. Use \`recall\` to list available ids.`,
 			);
 		}
 
@@ -336,10 +336,10 @@ export class MemoryProtocolHandler implements ProtocolHandler {
 		if (memoryRootsForContext(context).length > 0) {
 			completions.push({ value: MEMORY_NAMESPACE, description: "Project memory summary" });
 		}
-		if (mnemopiSessionStatesFromRegistry().length > 0) {
+		if (mnemosyneSessionStatesFromRegistry().length > 0) {
 			completions.push({
 				value: "<memory-id>",
-				description: "Full mnemopi memory by id (from recall)",
+				description: "Full mnemosyne memory by id (from recall)",
 			});
 		}
 		return completions;

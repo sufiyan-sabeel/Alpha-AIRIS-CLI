@@ -2,7 +2,7 @@
 /**
  * Publish workspace packages.
  *
- * The default mode publishes public JS packages and the `@oh-my-pi/pi-natives`
+ * The default mode publishes public JS packages and the `@airis/airis-natives`
  * core package. Generated native leaf packages are published separately with
  * `--native-leaf <tag>` from the release_binary matrix after that matrix entry
  * downloads the matching `.node` artifacts.
@@ -92,7 +92,7 @@ export const packages: PublishPackage[] = [
 	{ dir: "packages/natives", kind: "native" },
 	{ dir: "packages/tui", kind: "typescript" },
 	{ dir: "packages/hashline", kind: "typescript" },
-	{ dir: "packages/mnemopi", kind: "typescript" },
+	{ dir: "packages/mnemosyne", kind: "typescript" },
 	{ dir: "packages/snapcompact", kind: "typescript" },
 	{
 		dir: "packages/stats",
@@ -102,7 +102,7 @@ export const packages: PublishPackage[] = [
 		extraTypeConfigs: ["tsconfig.publish.client.json"],
 	},
 	{ dir: "packages/agent", kind: "typescript" },
-	{ dir: "packages/coding-agent", kind: "typescript", publishBin: { omp: "dist/cli.js" } },
+	{ dir: "packages/coding-agent", kind: "typescript", publishBin: { airis: "dist/cli.js" } },
 ];
 
 function rewriteSrcPath(value: string): string {
@@ -188,7 +188,7 @@ export async function applyPublishBin(pkgRelDir: string, write: boolean): Promis
 function buildNativeOptionalDependencies(version: string): JsonObject {
 	const optionalDependencies: JsonObject = {};
 	for (const target of LEAF_TARGETS) {
-		optionalDependencies[`@oh-my-pi/pi-natives-${target.tag}`] = version;
+		optionalDependencies[`@airis/airis-natives-${target.tag}`] = version;
 	}
 	return optionalDependencies;
 }
@@ -254,7 +254,7 @@ async function packAndPublish(dir: string, name: string): Promise<void> {
 		return;
 	}
 	console.log(`Publishing ${name}…`);
-	const packDir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-pack-"));
+	const packDir = await fs.mkdtemp(path.join(os.tmpdir(), "airis-pack-"));
 	try {
 		const packed = await $`bun pm pack --quiet --destination ${packDir}`.cwd(dir).quiet().nothrow();
 		const packOutput = `${packed.stdout.toString()}${packed.stderr.toString()}`.trim();

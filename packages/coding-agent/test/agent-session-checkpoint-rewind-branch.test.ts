@@ -1,20 +1,20 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { Agent, type AgentMessage, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, Message, ThinkingContent } from "@oh-my-pi/pi-ai";
-import { z } from "@oh-my-pi/pi-ai";
-import { createMockModel, type MockContent, type MockModel, type MockResponse } from "@oh-my-pi/pi-ai/providers/mock";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { ExtensionRuntime, loadExtensionFromFactory } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { RewindTool, type ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent, type AgentMessage, type AgentTool } from "@airis/airis-agent-core";
+import type { AssistantMessage, Message, ThinkingContent } from "@airis/airis-ai";
+import { z } from "@airis/airis-ai";
+import { createMockModel, type MockContent, type MockModel, type MockResponse } from "@airis/airis-ai/providers/mock";
+import { ModelRegistry } from "@airis/airis-coding-agent/config/model-registry";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import { ExtensionRuntime, loadExtensionFromFactory } from "@airis/airis-coding-agent/extensibility/extensions/loader";
+import { ExtensionRunner } from "@airis/airis-coding-agent/extensibility/extensions/runner";
+import { AgentSession } from "@airis/airis-coding-agent/session/agent-session";
+import { AuthStorage } from "@airis/airis-coding-agent/session/auth-storage";
+import { convertToLlm } from "@airis/airis-coding-agent/session/messages";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import { RewindTool, type ToolSession } from "@airis/airis-coding-agent/tools";
+import { EventBus } from "@airis/airis-coding-agent/utils/event-bus";
+import { TempDir } from "@airis/airis-utils";
 
 const checkpointSchema = z.object({ goal: z.string() });
 const rewindSchema = z.object({ report: z.string() });
@@ -109,7 +109,7 @@ async function createHarness(
 	tools: AgentTool[] = [checkpointTool as AgentTool, rewindTool as AgentTool],
 	options?: { onAgentEnd?: (willContinue: boolean | undefined) => void },
 ): Promise<Harness & { mock: MockModel }> {
-	const tempDir = TempDir.createSync("@pi-checkpoint-rewind-branch-");
+	const tempDir = TempDir.createSync("@airs-checkpoint-rewind-branch-");
 	const authStorage = await AuthStorage.create(path.join(tempDir.path(), "auth.db"));
 	authStorage.setRuntimeApiKey("mock", "test-key");
 

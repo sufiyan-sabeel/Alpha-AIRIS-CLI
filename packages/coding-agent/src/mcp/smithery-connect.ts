@@ -1,6 +1,6 @@
 import { withTimeoutSignal } from "../utils/fetch-timeout";
 
-const SMITHERY_API_BASE_URL = (process.env.SMITHERY_API_URL || "https://api.smithery.ai").replace(/\/+$/, "");
+const SMITHERY_AAIRIS_BASE_URL = (process.env.SMITHERY_API_URL || "https://api.smithery.ai").replace(/\/+$/, "");
 const SMITHERY_CONNECT_TIMEOUT_MS = 10_000;
 
 export class SmitheryConnectError extends Error {
@@ -48,7 +48,7 @@ function buildAuthHeaders(apiKey: string): Headers {
 }
 
 function toApiUrl(path: string): string {
-	return `${SMITHERY_API_BASE_URL}${path}`;
+	return `${SMITHERY_AAIRIS_BASE_URL}${path}`;
 }
 
 async function expectOk(response: Response, context: string): Promise<void> {
@@ -59,7 +59,7 @@ async function expectOk(response: Response, context: string): Promise<void> {
 }
 
 export function getSmitheryApiBaseUrl(): string {
-	return SMITHERY_API_BASE_URL;
+	return SMITHERY_AAIRIS_BASE_URL;
 }
 
 export async function listSmitheryNamespaces(apiKey: string): Promise<SmitheryNamespace[]> {

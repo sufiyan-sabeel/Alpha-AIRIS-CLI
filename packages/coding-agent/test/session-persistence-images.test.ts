@@ -1,11 +1,11 @@
 import { describe, expect, it } from "bun:test";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { ImageContent, TextContent } from "@oh-my-pi/pi-ai";
-import { BlobStore, isBlobRef } from "@oh-my-pi/pi-coding-agent/session/blob-store";
-import type { FileEntry, SessionMessageEntry } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { resolveBlobRefsInEntries } from "@oh-my-pi/pi-coding-agent/session/session-loader";
-import { prepareEntryForPersistence } from "@oh-my-pi/pi-coding-agent/session/session-persistence";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import type { AgentMessage } from "@airis/airis-agent-core";
+import type { ImageContent, TextContent } from "@airis/airis-ai";
+import { BlobStore, isBlobRef } from "@airis/airis-coding-agent/session/blob-store";
+import type { FileEntry, SessionMessageEntry } from "@airis/airis-coding-agent/session/session-entries";
+import { resolveBlobRefsInEntries } from "@airis/airis-coding-agent/session/session-loader";
+import { prepareEntryForPersistence } from "@airis/airis-coding-agent/session/session-persistence";
+import { TempDir } from "@airis/airis-utils";
 
 type ImagePayload = { data: string; mimeType: string; type?: "image" };
 type ToolResultMessage = Extract<AgentMessage, { role: "toolResult" }>;

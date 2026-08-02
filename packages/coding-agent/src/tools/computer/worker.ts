@@ -1,5 +1,5 @@
-import type { DesktopAction, DesktopCapture, DesktopSession, DesktopSessionOptions } from "@oh-my-pi/pi-natives";
-import { createDesktopSession } from "@oh-my-pi/pi-natives/desktop";
+import type { DesktopAction, DesktopCapture, DesktopSession, DesktopSessionOptions } from "@airis/airis-natives";
+import { createDesktopSession } from "@airis/airis-natives/desktop";
 import type { ComputerWorkerError, ComputerWorkerInbound, ComputerWorkerTransport } from "./protocol";
 
 export interface NativeDesktopSession {

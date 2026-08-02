@@ -11,9 +11,9 @@
  *
  * The generated prompt appears as a draft in the editor for review/editing.
  */
-import { complete, type Message } from "@oh-my-pi/pi-ai";
-import type { HookAPI, SessionEntry } from "@oh-my-pi/pi-coding-agent";
-import { BorderedLoader, convertToLlm, serializeConversation } from "@oh-my-pi/pi-coding-agent";
+import { complete, type Message } from "@airis/airis-ai";
+import type { HookAPI, SessionEntry } from "@airis/airis-coding-agent";
+import { BorderedLoader, convertToLlm, serializeConversation } from "@airis/airis-coding-agent";
 
 const SYSTEM_PROMPT = `You are a context transfer assistant. Given a conversation history and the user's goal for a new thread, generate a focused prompt that:
 
@@ -37,8 +37,8 @@ Files involved:
 ## Task
 [Clear description of what to do next based on user's goal]`;
 
-export default function (pi: HookAPI) {
-	pi.registerCommand("handoff", {
+export default function (airs: HookAPI) {
+	airs.registerCommand("handoff", {
 		description: "Transfer context to a new focused session",
 		handler: async (args, ctx) => {
 			if (!ctx.hasUI) {

@@ -1,15 +1,15 @@
 /**
- * OpenAI Responses HTTP wire-format ↔ omp Context bridge for the auth-gateway.
+ * OpenAI Responses HTTP wire-format ↔ airis Context bridge for the auth-gateway.
  *
  * Inbound: parses `POST /v1/responses` request bodies into a {@link ParsedRequest}.
- * Outbound: encodes omp's {@link AssistantMessage} (and event stream) back into
+ * Outbound: encodes airis's {@link AssistantMessage} (and event stream) back into
  * the documented `response.*` SSE taxonomy or the non-streaming JSON shape.
  *
  * Spec: https://platform.openai.com/docs/api-reference/responses
  * Inverse direction (source-of-truth for item shapes): ../../providers/openai-responses.ts
  */
 
-import { logger, structuredCloneJSON } from "@oh-my-pi/pi-utils";
+import { logger, structuredCloneJSON } from "@airis/airis-utils";
 import { type } from "arktype";
 import { resolvePromptCacheKey } from "../auth-gateway/http";
 import type { AuthGatewayStreamControl, AuthGatewayParsedRequest as ParsedRequest } from "../auth-gateway/types";
@@ -79,7 +79,7 @@ function isObj(v: unknown): v is Record<string, unknown> {
 }
 
 const UNSUPPORTED_EXPLICIT_PROMPT_CACHE_MESSAGE =
-	"openai-responses: prompt_cache_options and prompt_cache_breakpoint are unsupported by this auth-gateway route; use /v1/pi/stream with options.promptCache instead";
+	"openai-responses: prompt_cache_options and prompt_cache_breakpoint are unsupported by this auth-gateway route; use /v1/airis/stream with options.promptCache instead";
 
 function hasUnsupportedExplicitPromptCacheFields(body: unknown): boolean {
 	if (!isObj(body)) return false;
@@ -233,7 +233,7 @@ function mapToolChoice(value: ParsedToolChoice | undefined): ParsedRequest["opti
 	if ("type" in value) {
 		if (value.type === "function" || value.type === "custom") return { name: value.name };
 		if (value.type === "computer") return { type: "computer" };
-		// Other hosted tools + allowed_tools are not surfaced to pi-ai.
+		// Other hosted tools + allowed_tools are not surfaced to airis-ai.
 		return "auto";
 	}
 	return undefined;
@@ -442,7 +442,7 @@ export function parseRequest(body: unknown, headers?: Headers): ParsedRequest {
 			if (effectiveType === "custom_tool_call") {
 				const call = item as { id?: string; call_id: string; name: string; input: string };
 				// Custom tools carry a raw input string. We stash it in `arguments.input`
-				// matching pi-ai's openai-shared convention, and tag the call
+				// matching airis-ai's openai-shared convention, and tag the call
 				// with `customWireName` so encoders re-emit it as `custom_tool_call`.
 				const toolCall: ToolCall = {
 					type: "toolCall",
@@ -547,7 +547,7 @@ export function parseRequest(body: unknown, headers?: Headers): ParsedRequest {
 		options.reasoning = data.reasoning.effort;
 	}
 	// OpenAI summary: `none` → suppress; `auto`/`concise`/`detailed` → request
-	// visible summary. pi-ai has no per-level plumbing — log once and let the
+	// visible summary. airis-ai has no per-level plumbing — log once and let the
 	// provider default kick in.
 	if (data.reasoning?.summary === "none") {
 		options.hideThinkingSummary = true;
@@ -575,7 +575,7 @@ export function parseRequest(body: unknown, headers?: Headers): ParsedRequest {
 	if (data.previous_response_id !== undefined) options.previousResponseId = data.previous_response_id;
 	if (data.user !== undefined) options.user = data.user;
 	if (isObj(data.metadata)) options.metadata = data.metadata;
-	// `store` is a stateful-storage hint that omp's gateway doesn't honour;
+	// `store` is a stateful-storage hint that airis's gateway doesn't honour;
 	// silently accepted by the schema. No typed slot — drop.
 
 	return {
@@ -713,7 +713,7 @@ function reasoningItemId(part: ThinkingContent): string {
 }
 
 /**
- * pi-ai responses providers mint composite `"{call_id}|{item_id}"` tool-call
+ * airis-ai responses providers mint composite `"{call_id}|{item_id}"` tool-call
  * ids ({@link encodeResponsesToolCallId}). Only the call_id half belongs on
  * the wire: third-party clients validate the `call_id` charset
  * (`^[a-zA-Z0-9_-]+$`) or echo it to other backends, and `|` fails both.
@@ -1226,7 +1226,7 @@ export function encodeStream(
 								delta: ev.delta,
 								logprobs: [],
 							});
-							// TODO: when pi-ai surfaces output_text annotations
+							// TODO: when airis-ai surfaces output_text annotations
 							// (web_search citations, …), emit
 							// `response.output_text.annotation.added` here.
 							break;
@@ -1349,7 +1349,7 @@ export function encodeStream(
 									name: cur.name,
 								});
 							} else {
-								// Standard JSON tool: arguments object on the omp side, the
+								// Standard JSON tool: arguments object on the airis side, the
 								// wire wants the JSON string the model emitted (= streamed deltas).
 								const argsJson = cur.argsText || JSON.stringify(tc.arguments ?? {});
 								cur.argsText = argsJson;

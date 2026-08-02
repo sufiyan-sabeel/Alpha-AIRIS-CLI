@@ -5,7 +5,7 @@
 // spell-checker:ignore numberparse
 //! Errors returned by seq.
 
-// pi-uutils: `translate!` message lookups are literalized with the en-US
+// airis-uutils: `translate!` message lookups are literalized with the en-US
 // strings from upstream's locales/en-US.ftl.
 
 use thiserror::Error;

@@ -127,7 +127,7 @@ export function filterChildShellEnv(
 		}
 		if (launchEnvValues || projectEnvNamesLoadedByOmp.has(key)) {
 			// Strong provenance: the launch environment is known and this name is
-			// absent from it, or OMP itself injected the value — either way it came
+			// absent from it, or AIRIS itself injected the value — either way it came
 			// from a project dotenv file, not the parent shell.
 			delete result[key];
 		} else if (result[key] === launchEnv[key] || result[key] === expandedLaunchEnv[key]) {
@@ -169,7 +169,7 @@ function parseEnvLine(line: string): { key: string; value: string } | undefined 
 /**
  * Parses a .env file synchronously into key-value string pairs using
  * {@link parseEnvLine} for Bun-compatible line semantics, then mirrors valid
- * `OMP_` variables to their `PI_` aliases.
+ * `AIRIS_` variables to their `PI_` aliases.
  */
 export function parseEnvFile(filePath: string): Record<string, string> {
 	const result: Record<string, string> = {};
@@ -183,9 +183,9 @@ export function parseEnvFile(filePath: string): Record<string, string> {
 		// File doesn't exist or can't be read - return empty result
 	}
 
-	// OMP_ overrides PI_
+	// AIRIS_ overrides PI_
 	for (const k in result) {
-		if (k.startsWith("OMP_")) {
+		if (k.startsWith("AIRIS_")) {
 			result[`PI_${k.slice(4)}`] = result[k];
 		}
 	}
@@ -225,7 +225,7 @@ refreshDirsFromEnv();
 /**
  * Intentional re-export of Bun.env.
  *
- * All users should import this env module (import { $env } from "@oh-my-pi/pi-utils")
+ * All users should import this env module (import { $env } from "@airis/airis-utils")
  * before using environment variables. This ensures that .env files have been loaded and
  * overrides (project, home) have been applied, so $env always reflects the correct values.
  */
@@ -319,11 +319,11 @@ export function setInteractiveHost(interactive: boolean): boolean {
  * binary. Detects via the embedded virtual-filesystem path markers
  * (`$bunfs`, `~BUN`, or its URL-encoded form `%7EBUN`) in `import.meta.url`,
  * which Bun rewrites for every module bundled into the executable. The
- * `PI_COMPILED` env var (set by the build script's `--define`) is checked
+ * `AIRIS_COMPILED` env var (set by the build script's `--define`) is checked
  * first for cheap fast-path detection.
  */
 export function isCompiledBinary(): boolean {
-	if (process.env.PI_COMPILED || Bun.env.PI_COMPILED) return true;
+	if (process.env.AIRIS_COMPILED || Bun.env.AIRIS_COMPILED) return true;
 	const url = import.meta.url;
 	return url.includes("$bunfs") || url.includes("~BUN") || url.includes("%7EBUN");
 }

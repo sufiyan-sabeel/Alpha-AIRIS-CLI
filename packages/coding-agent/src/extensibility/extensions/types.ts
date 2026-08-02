@@ -14,8 +14,8 @@ import type {
 	ThinkingLevel,
 	ToolApproval,
 	ToolLoadMode,
-} from "@oh-my-pi/pi-agent-core";
-import type { CompactionResult } from "@oh-my-pi/pi-agent-core/compaction";
+} from "@airis/airis-agent-core";
+import type { CompactionResult } from "@airis/airis-agent-core/compaction";
 import type {
 	Api,
 	AssistantMessageEvent,
@@ -32,10 +32,10 @@ import type {
 	Static,
 	TextContent,
 	TSchema,
-} from "@oh-my-pi/pi-ai";
-import type { OAuthCredentials, OAuthLoginCallbacks } from "@oh-my-pi/pi-ai/oauth/types";
-import type { AutocompleteItem, AutocompleteProvider, Component, EditorTheme, KeyId, TUI } from "@oh-my-pi/pi-tui";
-import type { logger as PiLogger } from "@oh-my-pi/pi-utils";
+} from "@airis/airis-ai";
+import type { OAuthCredentials, OAuthLoginCallbacks } from "@airis/airis-ai/oauth/types";
+import type { AutocompleteItem, AutocompleteProvider, Component, EditorTheme, KeyId, TUI } from "@airis/airis-tui";
+import type { logger as PiLogger } from "@airis/airis-utils";
 import type { Type as arktype } from "arktype";
 import type * as zod from "zod/v4";
 import type { KeybindingsManager } from "../../config/keybindings";
@@ -44,7 +44,7 @@ import type { EditToolDetails } from "../../edit";
 import type { PythonResult } from "../../eval/py/executor";
 import type { BashResult } from "../../exec/bash-executor";
 import type { ExecOptions, ExecResult } from "../../exec/exec";
-import type * as PiCodingAgent from "../../index";
+import type * as AirisCodingAgent from "../../index";
 import type { LocalProtocolOptions } from "../../internal-urls/local-protocol";
 import type { MemoryRuntimeContext } from "../../memory-backend";
 import type { CustomEditor } from "../../modes/components/custom-editor";
@@ -725,7 +725,7 @@ export interface CredentialDisabledEvent {
  * AFTER the runtime's own handling of known list/update methods. Unknown or
  * server-custom methods are delivered too — extensions can bridge them into
  * session behavior by inspecting `method`/`params` and injecting a follow-up
- * via `pi.sendMessage(..., { deliverAs })` or `pi.sendUserMessage(...)`.
+ * via `airs.sendMessage(..., { deliverAs })` or `airs.sendUserMessage(...)`.
  */
 export interface McpNotificationEvent {
 	type: "mcp_notification";
@@ -1102,7 +1102,7 @@ export interface ExtensionAPI {
 	zod: typeof zod;
 
 	/** Injected pi-coding-agent exports for accessing SDK utilities */
-	pi: typeof PiCodingAgent;
+	airs: typeof AirisCodingAgent;
 
 	// =========================================================================
 	// Event Subscription
@@ -1300,7 +1300,7 @@ export interface ExtensionAPI {
 	 *
 	 * @example
 	 * // Register a new provider with custom models and streaming
-	 * pi.registerProvider("google-vertex-claude", {
+	 * airs.registerProvider("google-vertex-claude", {
 	 *   baseUrl: "https://us-east5-aiplatform.googleapis.com",
 	 *   apiKey: "GOOGLE_CLOUD_PROJECT",
 	 *   api: "vertex-claude-api",
@@ -1320,7 +1320,7 @@ export interface ExtensionAPI {
 	 *
 	 * @example
 	 * // Override baseUrl for an existing provider
-	 * pi.registerProvider("anthropic", {
+	 * airs.registerProvider("anthropic", {
 	 *   baseUrl: "https://proxy.example.com"
 	 * });
 	 */
@@ -1334,7 +1334,7 @@ export interface ExtensionAPI {
 // Provider Registration Types
 // ============================================================================
 
-/** Configuration for registering a provider via pi.registerProvider(). */
+/** Configuration for registering a provider via airs.registerProvider(). */
 export interface ProviderConfig {
 	/** Base URL for the API endpoint. Required when defining models. */
 	baseUrl?: string;
@@ -1401,7 +1401,7 @@ export interface ProviderModelConfig {
 }
 
 /** Extension factory function type. Supports both sync and async initialization. */
-export type ExtensionFactory = (pi: ExtensionAPI) => void | Promise<void>;
+export type ExtensionFactory = (airs: ExtensionAPI) => void | Promise<void>;
 
 // ============================================================================
 // Loaded Extension Types

@@ -21,25 +21,25 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { AsyncJobManager } from "@oh-my-pi/pi-coding-agent/async/job-manager";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentLifecycleManager } from "@oh-my-pi/pi-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
+import { AsyncJobManager } from "@airis/airis-coding-agent/async/job-manager";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import { AgentLifecycleManager } from "@airis/airis-coding-agent/registry/agent-lifecycle";
+import { AgentRegistry } from "@airis/airis-coding-agent/registry/agent-registry";
+import type { AgentSession } from "@airis/airis-coding-agent/session/agent-session";
 import {
 	SessionManager,
 	SessionPersistenceIndeterminateError,
-} from "@oh-my-pi/pi-coding-agent/session/session-manager";
+} from "@airis/airis-coding-agent/session/session-manager";
 import {
 	FileSessionStorage,
 	type SessionStorage,
 	type SessionStorageWriter,
 	type WriteTextAtomicOptions,
-} from "@oh-my-pi/pi-coding-agent/session/session-storage";
-import * as executorModule from "@oh-my-pi/pi-coding-agent/task/executor";
-import type { AgentProgress, SingleResult } from "@oh-my-pi/pi-coding-agent/task/types";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { VibeSessionRegistry } from "@oh-my-pi/pi-coding-agent/vibe/runtime";
+} from "@airis/airis-coding-agent/session/session-storage";
+import * as executorModule from "@airis/airis-coding-agent/task/executor";
+import type { AgentProgress, SingleResult } from "@airis/airis-coding-agent/task/types";
+import type { ToolSession } from "@airis/airis-coding-agent/tools";
+import { VibeSessionRegistry } from "@airis/airis-coding-agent/vibe/runtime";
 
 const PERSISTED_WORKER_SYSTEM_PROMPT = "Persisted vibe worker";
 const PERSISTED_WORKER_TOOLS = ["read", "yield"];
@@ -332,7 +332,7 @@ describe("vibe session registry", () => {
 	const tempRoots: string[] = [];
 
 	async function createPersistedParent(storage?: SessionStorage): Promise<SessionManager> {
-		const root = await fs.mkdtemp(path.join(os.tmpdir(), "omp-vibe-resume-"));
+		const root = await fs.mkdtemp(path.join(os.tmpdir(), "airis-vibe-resume-"));
 		tempRoots.push(root);
 		const cwd = path.join(root, "workspace");
 		await fs.mkdir(cwd, { recursive: true });

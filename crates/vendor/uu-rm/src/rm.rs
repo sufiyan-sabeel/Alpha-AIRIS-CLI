@@ -23,7 +23,7 @@ use clap::{
 	parser::ValueSource,
 };
 use indicatif::{ProgressBar, ProgressStyle};
-use pi_uutils_ctx::format_usage;
+use airis_uutils_ctx::format_usage;
 use thiserror::Error;
 use uucore::{
 	display::Quotable,
@@ -32,15 +32,15 @@ use uucore::{
 	parser::shortcut_value_parser::ShortcutValueParser,
 };
 
-// pi-uutils: in-process replacements for uucore's process-global `show_error!`
-// and `prompt_yes!` macros — both route through the thread-local pi-uutils-ctx
+// airis-uutils: in-process replacements for uucore's process-global `show_error!`
+// and `prompt_yes!` macros — both route through the thread-local airis-uutils-ctx
 // streams rather than the process-global ones, so prompts/diagnostics follow
 // the embedding shell's (possibly redirected) fds. Defined before `mod
 // platform;` so the platform submodule picks them up via textual macro scope.
 macro_rules! show_error {
     ($($args:tt)+) => ({
         use std::io::Write as _;
-        let mut err = pi_uutils_ctx::stderr();
+        let mut err = airis_uutils_ctx::stderr();
         let _ = write!(err, "rm: ");
         let _ = writeln!(err, $($args)+);
     })
@@ -49,7 +49,7 @@ macro_rules! show_error {
 macro_rules! prompt_yes {
     ($($args:tt)+) => ({
         use std::io::Write as _;
-        let mut err = pi_uutils_ctx::stderr();
+        let mut err = airis_uutils_ctx::stderr();
         let _ = write!(err, "rm: ");
         let _ = write!(err, $($args)+);
         let _ = write!(err, " ");
@@ -58,14 +58,14 @@ macro_rules! prompt_yes {
     })
 }
 
-/// pi-uutils: replacement for `uucore::read_yes()` reading from the context
+/// airis-uutils: replacement for `uucore::read_yes()` reading from the context
 /// stdin (a plain `Box<dyn Read>`) instead of the process-global stdin. Reads
 /// bytes up to and including the first newline — avoiding the over-read a fresh
 /// `BufReader` would cause across consecutive prompts on a piped stdin — and
 /// returns true when the first character is `y`/`Y`.
 fn read_yes() -> bool {
 	use std::io::Read as _;
-	let mut stdin = pi_uutils_ctx::stdin();
+	let mut stdin = airis_uutils_ctx::stdin();
 	let mut byte = [0u8; 1];
 	let mut first: Option<u8> = None;
 	loop {
@@ -115,7 +115,7 @@ impl UError for RmError {}
 fn verbose_removed_file(path: &Path, options: &Options) {
 	if options.verbose {
 		let _ =
-			writeln!(pi_uutils_ctx::stdout(), "removed {}", uucore::fs::normalize_path(path).quote());
+			writeln!(airis_uutils_ctx::stdout(), "removed {}", uucore::fs::normalize_path(path).quote());
 	}
 }
 
@@ -123,7 +123,7 @@ fn verbose_removed_file(path: &Path, options: &Options) {
 fn verbose_removed_directory(path: &Path, options: &Options) {
 	if options.verbose {
 		let _ = writeln!(
-			pi_uutils_ctx::stdout(),
+			airis_uutils_ctx::stdout(),
 			"removed directory {}",
 			uucore::fs::normalize_path(path).quote()
 		);
@@ -149,7 +149,7 @@ fn show_permission_denied_error(path: &Path) -> bool {
 
 /// Helper function to remove a directory and handle results
 fn remove_dir_with_feedback(path: &Path, options: &Options) -> bool {
-	match fs::remove_dir(pi_uutils_ctx::resolve(path)) {
+	match fs::remove_dir(airis_uutils_ctx::resolve(path)) {
 		Ok(_) => {
 			verbose_removed_directory(path, options);
 			false
@@ -350,13 +350,13 @@ fn run_matches(matches: &ArgMatches, args: &[OsString]) -> UResult<()> {
 		// diagnostic per file, like GNU rm). Record the non-zero status on the
 		// context instead of returning a message-less `Err(1)`, which the entry
 		// point would re-print as a spurious, empty `rm:` line.
-		pi_uutils_ctx::set_exit_code(1);
+		airis_uutils_ctx::set_exit_code(1);
 	}
 
 	Ok(())
 }
 
-/// In-process builtin entry point. The host installs a [`pi_uutils_ctx`] scope
+/// In-process builtin entry point. The host installs a [`airis_uutils_ctx`] scope
 /// (stdio + working directory) on a dedicated blocking thread, then calls this.
 ///
 /// Unlike uutils' attribute-macro entry point, this never aborts the process
@@ -368,18 +368,18 @@ pub fn run(args: Vec<OsString>) -> i32 {
 		Err(err) => {
 			let rendered = err.to_string();
 			if err.use_stderr() {
-				let _ = write!(pi_uutils_ctx::stderr(), "{rendered}");
+				let _ = write!(airis_uutils_ctx::stderr(), "{rendered}");
 				return 1;
 			}
-			let _ = write!(pi_uutils_ctx::stdout(), "{rendered}");
+			let _ = write!(airis_uutils_ctx::stdout(), "{rendered}");
 			return 0;
 		},
 	};
 	match run_matches(&matches, &args) {
-		Ok(()) => pi_uutils_ctx::exit_code(),
+		Ok(()) => airis_uutils_ctx::exit_code(),
 		Err(err) => {
 			let code = err.code();
-			let _ = writeln!(pi_uutils_ctx::stderr(), "rm: {err}");
+			let _ = writeln!(airis_uutils_ctx::stderr(), "rm: {err}");
 			if code == 0 { 1 } else { code }
 		},
 	}
@@ -552,7 +552,7 @@ fn count_files(paths: &[&OsStr], recursive: bool) -> u64 {
 			continue;
 		}
 		let path = Path::new(p);
-		if let Ok(md) = fs::symlink_metadata(pi_uutils_ctx::resolve(path)) {
+		if let Ok(md) = fs::symlink_metadata(airis_uutils_ctx::resolve(path)) {
 			if md.is_dir() && !is_symlink_dir(&md) {
 				if recursive {
 					total += count_files_in_directory(path);
@@ -569,7 +569,7 @@ fn count_files(paths: &[&OsStr], recursive: bool) -> u64 {
 
 /// A helper for `count_files` specialized for directories.
 fn count_files_in_directory(p: &Path) -> u64 {
-	let entries_count = fs::read_dir(pi_uutils_ctx::resolve(p)).map_or(0, |entries| {
+	let entries_count = fs::read_dir(airis_uutils_ctx::resolve(p)).map_or(0, |entries| {
 		entries
 			.flatten()
 			.map(|entry| match entry.file_type() {
@@ -602,7 +602,7 @@ pub fn remove(files: &[&OsStr], options: &Options) -> bool {
 		let file = Path::new(filename);
 
 		// An empty operand can never name a real file. Guard it before
-		// `pi_uutils_ctx::resolve`, which joins "" onto the shell's working
+		// `airis_uutils_ctx::resolve`, which joins "" onto the shell's working
 		// directory — without this, `rm -rf ""` resolves to the cwd and
 		// recursively deletes it. GNU rm reports ENOENT for an empty operand
 		// (and `rm -f` stays silent), so mirror that here.
@@ -627,7 +627,7 @@ pub fn remove(files: &[&OsStr], options: &Options) -> bool {
 			continue;
 		}
 
-		had_err = match pi_uutils_ctx::resolve(file).symlink_metadata() {
+		had_err = match airis_uutils_ctx::resolve(file).symlink_metadata() {
 			Ok(metadata) => {
 				// Create progress bar on first successful file metadata read
 				if options.progress && progress_bar.is_none() {
@@ -675,7 +675,7 @@ pub fn remove(files: &[&OsStr], options: &Options) -> bool {
 /// `path` must be a directory. If there is an error reading the
 /// contents of the directory, this returns `false`.
 fn is_dir_empty(path: &Path) -> bool {
-	fs::read_dir(pi_uutils_ctx::resolve(path)).is_ok_and(|mut iter| iter.next().is_none())
+	fs::read_dir(airis_uutils_ctx::resolve(path)).is_ok_and(|mut iter| iter.next().is_none())
 }
 
 #[cfg(unix)]
@@ -718,7 +718,7 @@ fn remove_dir_recursive(
 	// a directory and we don't want to recurse. In particular, this
 	// avoids an infinite recursion in the case of a link to the current
 	// directory, like `ln -s . link`.
-	let fs_path = pi_uutils_ctx::resolve(path);
+	let fs_path = airis_uutils_ctx::resolve(path);
 	if !fs_path.is_dir() || fs_path.is_symlink() {
 		return remove_file(path, options, progress_bar);
 	}
@@ -742,7 +742,7 @@ fn remove_dir_recursive(
 	{
 		if let Some(s) = path.to_str() {
 			if s.len() > 1000 {
-				match fs::remove_dir_all(pi_uutils_ctx::resolve(path)) {
+				match fs::remove_dir_all(airis_uutils_ctx::resolve(path)) {
 					Ok(_) => return false,
 					Err(e) => {
 						let e = e.map_err_context(|| format!("cannot remove {}", path.quote()));
@@ -755,7 +755,7 @@ fn remove_dir_recursive(
 
 		// Recursive case: this is a directory.
 		let mut error = false;
-		match fs::read_dir(pi_uutils_ctx::resolve(path)) {
+		match fs::read_dir(airis_uutils_ctx::resolve(path)) {
 			Err(e) if e.kind() == io::ErrorKind::PermissionDenied => {
 				// This is not considered an error.
 			},
@@ -779,7 +779,7 @@ fn remove_dir_recursive(
 		}
 
 		// Try removing the directory itself.
-		match fs::remove_dir(pi_uutils_ctx::resolve(path)) {
+		match fs::remove_dir(airis_uutils_ctx::resolve(path)) {
 			Err(_) if !error && !is_readable(path) => {
 				// For compatibility with GNU test case
 				// `tests/rm/unread2.sh`, show "Permission denied" in this
@@ -814,7 +814,7 @@ fn is_root_path(path: &Path) -> bool {
 	}
 
 	// Check if path resolves to "/" after following symlinks
-	if let Ok(canonical) = pi_uutils_ctx::resolve(path).canonicalize() {
+	if let Ok(canonical) = airis_uutils_ctx::resolve(path).canonicalize() {
 		canonical.has_root() && canonical.parent().is_none()
 	} else {
 		false
@@ -908,7 +908,7 @@ fn remove_file(path: &Path, options: &Options, progress_bar: Option<&ProgressBar
 		}
 
 		// Fallback method for non-Unix, Redox, or when safe traversal is unavailable
-		match fs::remove_file(pi_uutils_ctx::resolve(path)) {
+		match fs::remove_file(airis_uutils_ctx::resolve(path)) {
 			Ok(_) => {
 				verbose_removed_file(path, options);
 			},
@@ -938,7 +938,7 @@ fn prompt_dir(path: &Path, options: &Options) -> bool {
 
 	// We can't use metadata.permissions.readonly for directories because it only
 	// works on files So we have to handle whether a directory is writable manually
-	if let Ok(metadata) = fs::metadata(pi_uutils_ctx::resolve(path)) {
+	if let Ok(metadata) = fs::metadata(airis_uutils_ctx::resolve(path)) {
 		handle_writable_directory(path, options, &metadata)
 	} else {
 		true
@@ -951,7 +951,7 @@ fn prompt_file(path: &Path, options: &Options) -> bool {
 		return true;
 	}
 
-	let Ok(metadata) = fs::symlink_metadata(pi_uutils_ctx::resolve(path)) else {
+	let Ok(metadata) = fs::symlink_metadata(airis_uutils_ctx::resolve(path)) else {
 		return true;
 	};
 
@@ -1128,7 +1128,7 @@ mod tests {
 
 	/// Regression: `rm -rf ""` must never delete the shell working directory.
 	///
-	/// An empty operand used to reach `pi_uutils_ctx::resolve`, which joins ""
+	/// An empty operand used to reach `airis_uutils_ctx::resolve`, which joins ""
 	/// onto the cwd and yields the cwd itself, so `-rf` recursively removed it
 	/// (issue #6287). The builtin now rejects the empty operand before
 	/// resolution, leaving the cwd and its contents intact.
@@ -1144,7 +1144,7 @@ mod tests {
 			time::{SystemTime, UNIX_EPOCH},
 		};
 
-		use pi_uutils_ctx::{ScopeIo, scope};
+		use airis_uutils_ctx::{ScopeIo, scope};
 
 		// Unique disposable working directory with a sentinel file inside it.
 		static COUNTER: AtomicU32 = AtomicU32::new(0);

@@ -1,9 +1,9 @@
 import { describe, expect, it } from "bun:test";
-import { Agent, type AgentEvent, type AgentTool, ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import { type SimpleStreamOptions, type ToolResultMessage, z } from "@oh-my-pi/pi-ai";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { kCursorExecResolved } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
+import { Agent, type AgentEvent, type AgentTool, ThinkingLevel } from "@airis/airis-agent-core";
+import { type SimpleStreamOptions, type ToolResultMessage, z } from "@airis/airis-ai";
+import { createMockModel } from "@airis/airis-ai/providers/mock";
+import { kCursorExecResolved } from "@airis/airis-ai/utils/block-symbols";
+import { AssistantMessageEventStream } from "@airis/airis-ai/utils/event-stream";
 import { createAssistantMessage } from "./helpers";
 
 describe("Agent", () => {

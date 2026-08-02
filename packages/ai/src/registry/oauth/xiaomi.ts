@@ -16,13 +16,13 @@ const PROVIDER_ID = "xiaomi";
 const PROVIDER_NAME = "Xiaomi MiMo";
 const STANDARD_AUTH_URL = "https://platform.xiaomimimo.com/#/console/api-keys";
 const TOKEN_PLAN_AUTH_URL = "https://platform.xiaomimimo.com/console/plan-manage";
-const STANDARD_API_BASE_URL = "https://api.xiaomimimo.com/v1";
+const STANDARD_AAIRIS_BASE_URL = "https://api.xiaomimimo.com/v1";
 const TOKEN_PLAN_KEY_PREFIX = "tp-";
 const STANDARD_VALIDATION_MODEL = "mimo-v2.5";
 const TOKEN_PLAN_VALIDATION_MODEL = "mimo-v2.5";
-const TOKEN_PLAN_SGP_API_BASE_URL = "https://token-plan-sgp.xiaomimimo.com/v1";
-const TOKEN_PLAN_AMS_API_BASE_URL = "https://token-plan-ams.xiaomimimo.com/v1";
-const TOKEN_PLAN_CN_API_BASE_URL = "https://token-plan-cn.xiaomimimo.com/v1";
+const TOKEN_PLAN_SGP_AAIRIS_BASE_URL = "https://token-plan-sgp.xiaomimimo.com/v1";
+const TOKEN_PLAN_AMS_AAIRIS_BASE_URL = "https://token-plan-ams.xiaomimimo.com/v1";
+const TOKEN_PLAN_CN_AAIRIS_BASE_URL = "https://token-plan-cn.xiaomimimo.com/v1";
 
 /** Region codes accepted by the Xiaomi Token Plan login flow. */
 export type XiaomiTokenPlanRegion = "sgp" | "ams" | "cn";
@@ -33,9 +33,9 @@ type XiaomiValidationEndpoint = {
 };
 
 const TOKEN_PLAN_VALIDATION_ENDPOINTS: Record<XiaomiTokenPlanRegion, XiaomiValidationEndpoint> = {
-	sgp: { baseUrl: TOKEN_PLAN_SGP_API_BASE_URL, model: TOKEN_PLAN_VALIDATION_MODEL },
-	ams: { baseUrl: TOKEN_PLAN_AMS_API_BASE_URL, model: TOKEN_PLAN_VALIDATION_MODEL },
-	cn: { baseUrl: TOKEN_PLAN_CN_API_BASE_URL, model: TOKEN_PLAN_VALIDATION_MODEL },
+	sgp: { baseUrl: TOKEN_PLAN_SGP_AAIRIS_BASE_URL, model: TOKEN_PLAN_VALIDATION_MODEL },
+	ams: { baseUrl: TOKEN_PLAN_AMS_AAIRIS_BASE_URL, model: TOKEN_PLAN_VALIDATION_MODEL },
+	cn: { baseUrl: TOKEN_PLAN_CN_AAIRIS_BASE_URL, model: TOKEN_PLAN_VALIDATION_MODEL },
 };
 
 const TOKEN_PLAN_REGION_NAMES: Record<XiaomiTokenPlanRegion, string> = {
@@ -67,7 +67,7 @@ async function validateXiaomiApiKey(
 					TOKEN_PLAN_VALIDATION_ENDPOINTS.ams,
 					TOKEN_PLAN_VALIDATION_ENDPOINTS.cn,
 				]
-			: [{ baseUrl: STANDARD_API_BASE_URL, model: STANDARD_VALIDATION_MODEL }];
+			: [{ baseUrl: STANDARD_AAIRIS_BASE_URL, model: STANDARD_VALIDATION_MODEL }];
 
 	let lastError: Error | null = null;
 

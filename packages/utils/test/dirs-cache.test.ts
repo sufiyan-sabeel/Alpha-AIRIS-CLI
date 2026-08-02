@@ -9,8 +9,8 @@ import {
 	getDocumentConversionCacheDir,
 	getProfileRootDir,
 	setAgentDir,
-} from "@oh-my-pi/pi-utils/dirs";
-import { Snowflake } from "@oh-my-pi/pi-utils/snowflake";
+} from "@airis/airis-utils/dirs";
+import { Snowflake } from "@airis/airis-utils/snowflake";
 
 function restoreEnv(key: string, value: string | undefined): void {
 	if (value === undefined) {
@@ -22,14 +22,14 @@ function restoreEnv(key: string, value: string | undefined): void {
 
 describe("document conversion cache directory", () => {
 	let tempRoot = "";
-	let originalPiCodingAgentDir: string | undefined;
+	let originalAirisCodingAgentDir: string | undefined;
 	let originalOmpProfile: string | undefined;
 	let originalPiProfile: string | undefined;
 	let originalXdgCacheHome: string | undefined;
 
 	beforeEach(async () => {
-		originalPiCodingAgentDir = process.env.PI_CODING_AGENT_DIR;
-		originalOmpProfile = process.env.OMP_PROFILE;
+		originalAirisCodingAgentDir = process.env.PI_CODING_AGENT_DIR;
+		originalOmpProfile = process.env.AIRIS_PROFILE;
 		originalPiProfile = process.env.PI_PROFILE;
 		originalXdgCacheHome = process.env.XDG_CACHE_HOME;
 		tempRoot = path.join(os.tmpdir(), "pi-utils-document-cache", Snowflake.next());
@@ -37,25 +37,25 @@ describe("document conversion cache directory", () => {
 	});
 
 	afterEach(async () => {
-		restoreEnv("PI_CODING_AGENT_DIR", originalPiCodingAgentDir);
-		restoreEnv("OMP_PROFILE", originalOmpProfile);
+		restoreEnv("PI_CODING_AGENT_DIR", originalAirisCodingAgentDir);
+		restoreEnv("AIRIS_PROFILE", originalOmpProfile);
 		restoreEnv("PI_PROFILE", originalPiProfile);
 		restoreEnv("XDG_CACHE_HOME", originalXdgCacheHome);
 		__resetDirsFromEnvForTests();
 		await fs.rm(tempRoot, { recursive: true, force: true });
 	});
 
-	it("uses XDG_CACHE_HOME for the default agent dir when $XDG_CACHE_HOME/omp exists", async () => {
+	it("uses XDG_CACHE_HOME for the default agent dir when $XDG_CACHE_HOME/airis exists", async () => {
 		if (process.platform === "win32") return;
 
 		process.env.XDG_CACHE_HOME = path.join(tempRoot, "cache");
-		await fs.mkdir(path.join(process.env.XDG_CACHE_HOME, "omp"), { recursive: true });
+		await fs.mkdir(path.join(process.env.XDG_CACHE_HOME, "airis"), { recursive: true });
 
 		const defaultAgentDir = path.join(os.homedir(), getConfigDirName(), "agent");
 		setAgentDir(defaultAgentDir);
 
 		expect(getDocumentConversionCacheDir()).toBe(
-			path.join(process.env.XDG_CACHE_HOME, "omp", "cache", "document-conversions"),
+			path.join(process.env.XDG_CACHE_HOME, "airis", "cache", "document-conversions"),
 		);
 	});
 
@@ -70,12 +70,12 @@ describe("document conversion cache directory", () => {
 
 describe("test directory state cleanup", () => {
 	it("restores the active profile from the current env after setAgentDir mutations", () => {
-		const originalPiCodingAgentDir = process.env.PI_CODING_AGENT_DIR;
-		const originalOmpProfile = process.env.OMP_PROFILE;
+		const originalAirisCodingAgentDir = process.env.PI_CODING_AGENT_DIR;
+		const originalOmpProfile = process.env.AIRIS_PROFILE;
 		const originalPiProfile = process.env.PI_PROFILE;
 		const originalXdgCacheHome = process.env.XDG_CACHE_HOME;
 		try {
-			process.env.OMP_PROFILE = "cache-profile";
+			process.env.AIRIS_PROFILE = "cache-profile";
 			delete process.env.PI_PROFILE;
 			delete process.env.PI_CODING_AGENT_DIR;
 			delete process.env.XDG_CACHE_HOME;
@@ -84,7 +84,7 @@ describe("test directory state cleanup", () => {
 			setAgentDir(path.join(os.tmpdir(), "pi-utils-document-cache", Snowflake.next(), "agent"));
 			expect(getActiveProfile()).toBeUndefined();
 
-			process.env.OMP_PROFILE = "cache-profile";
+			process.env.AIRIS_PROFILE = "cache-profile";
 			delete process.env.PI_PROFILE;
 			delete process.env.PI_CODING_AGENT_DIR;
 			__resetDirsFromEnvForTests();
@@ -94,8 +94,8 @@ describe("test directory state cleanup", () => {
 				path.join(getProfileRootDir("cache-profile"), "agent", "cache", "document-conversions"),
 			);
 		} finally {
-			restoreEnv("PI_CODING_AGENT_DIR", originalPiCodingAgentDir);
-			restoreEnv("OMP_PROFILE", originalOmpProfile);
+			restoreEnv("PI_CODING_AGENT_DIR", originalAirisCodingAgentDir);
+			restoreEnv("AIRIS_PROFILE", originalOmpProfile);
 			restoreEnv("PI_PROFILE", originalPiProfile);
 			restoreEnv("XDG_CACHE_HOME", originalXdgCacheHome);
 			__resetDirsFromEnvForTests();

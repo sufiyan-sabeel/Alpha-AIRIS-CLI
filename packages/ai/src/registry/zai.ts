@@ -3,7 +3,7 @@ import type { OAuthLoginCallbacks } from "./oauth/types";
 import type { ProviderDefinition } from "./types";
 
 const AUTH_URL = "https://z.ai/manage-apikey/apikey-list";
-const API_BASE_URL = "https://api.z.ai/api/coding/paas/v4";
+const AAIRIS_BASE_URL = "https://api.z.ai/api/coding/paas/v4";
 const VALIDATION_MODEL = "glm-5.2";
 
 export const loginZai = createApiKeyLogin({
@@ -15,7 +15,7 @@ export const loginZai = createApiKeyLogin({
 	validation: {
 		kind: "chat-completions",
 		provider: "Z.AI",
-		baseUrl: API_BASE_URL,
+		baseUrl: AAIRIS_BASE_URL,
 		model: VALIDATION_MODEL,
 	},
 });

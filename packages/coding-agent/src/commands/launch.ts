@@ -2,8 +2,8 @@
  * Root command for the coding agent CLI.
  */
 
-import { APP_NAME } from "@oh-my-pi/pi-utils";
-import { Args, Command, Flags } from "@oh-my-pi/pi-utils/cli";
+import { APP_NAME } from "@airis/airis-utils";
+import { Args, Command, Flags } from "@airis/airis-utils/cli";
 import { type Args as ParsedArgs, parseArgs, reportCliUsageError } from "../cli/args";
 import { runRootCommand } from "../main";
 import { prepareAcpTerminalAuthArgs } from "../modes/acp/terminal-auth";
@@ -100,10 +100,10 @@ export default class Index extends Command {
 			description: "Resume a session (by ID prefix, path, or picker if omitted)",
 		}),
 		"from-claude": Flags.boolean({
-			description: "Import a Claude Code session into OMP",
+			description: "Import a Claude Code session into AIRIS",
 		}),
 		"from-codex": Flags.boolean({
-			description: "Import a Codex session into OMP",
+			description: "Import a Codex session into AIRIS",
 		}),
 		"session-dir": Flags.string({
 			description: "Directory for session storage and lookup",
@@ -193,10 +193,10 @@ export default class Index extends Command {
 		`# Include files in initial message\n  ${APP_NAME} @prompt.md @image.png "What color is the sky?"`,
 		`# Non-interactive mode (process and exit)\n  ${APP_NAME} -p "List all .ts files in src/"`,
 		`# Continue previous session\n  ${APP_NAME} --continue "What did we discuss?"`,
-		`# Create a shell shortcut for a work profile\n  ${APP_NAME} --profile work --alias omp-work`,
+		`# Create a shell shortcut for a work profile\n  ${APP_NAME} --profile work --alias airis-work`,
 		`# Use different model (fuzzy matching)\n  ${APP_NAME} --model opus "Help me refactor this code"`,
 		`# Limit model cycling to specific models\n  ${APP_NAME} --models claude-sonnet,claude-haiku,gpt-4o`,
-		`# Export a session file to HTML\n  ${APP_NAME} --export ~/.omp/agent/sessions/--path--/session.jsonl`,
+		`# Export a session file to HTML\n  ${APP_NAME} --export ~/.airis/agent/sessions/--path--/session.jsonl`,
 	];
 
 	static strict = false;

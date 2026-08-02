@@ -1,17 +1,17 @@
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import type { Model, Usage } from "@oh-my-pi/pi-catalog/types";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
+import type { AssistantMessage } from "@airis/airis-ai";
+import * as AIError from "@airis/airis-ai/error";
+import { getBundledModel } from "@airis/airis-catalog/models";
+import type { Model, Usage } from "@airis/airis-catalog/types";
+import { ModelRegistry } from "@airis/airis-coding-agent/config/model-registry";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import { AuthStorage } from "@airis/airis-coding-agent/session/auth-storage";
 import {
 	type RecoveryCompactionResult,
 	TurnRecovery,
 	type TurnRecoveryHost,
-} from "@oh-my-pi/pi-coding-agent/session/turn-recovery";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@airis/airis-coding-agent/session/turn-recovery";
+import { TempDir } from "@airis/airis-utils";
 import { createProviderErrorMessage } from "../../ai/src/providers/error-message";
 
 const USAGE: Usage = {
@@ -85,7 +85,7 @@ describe("TurnRecovery replay-unsafe output classification", () => {
 	let modelRegistry: ModelRegistry;
 
 	beforeAll(async () => {
-		tempDir = TempDir.createSync("@pi-turn-recovery-replay-");
+		tempDir = TempDir.createSync("@airs-turn-recovery-replay-");
 		authStorage = await AuthStorage.create(tempDir.join("testauth.db"));
 		modelRegistry = new ModelRegistry(authStorage, tempDir.join("models.yml"));
 	});

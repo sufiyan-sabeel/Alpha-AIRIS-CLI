@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { getBundledModel } from "@airis/airis-catalog/models";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import { TempDir } from "@airis/airis-utils";
 
 const tempDirs: TempDir[] = [];
 
@@ -64,7 +64,7 @@ function messageContent(entry: Record<string, unknown>): unknown {
 
 describe("SessionManager immediate JSONL persistence", () => {
 	it("writes the first assistant turn and later entries before appendMessage returns", () => {
-		const cwd = makeTempDir("@pi-immediate-cwd-");
+		const cwd = makeTempDir("@airs-immediate-cwd-");
 		const sessionDir = path.join(cwd, "sessions");
 		const manager = SessionManager.create(cwd, sessionDir);
 		const sessionFile = manager.getSessionFile();
@@ -90,7 +90,7 @@ describe("SessionManager immediate JSONL persistence", () => {
 	});
 
 	it("keeps pre-assistant sessions out of history during shutdown", async () => {
-		const cwd = makeTempDir("@pi-empty-session-cwd-");
+		const cwd = makeTempDir("@airs-empty-session-cwd-");
 		const sessionDir = path.join(cwd, "sessions");
 		const manager = SessionManager.create(cwd, sessionDir);
 		const sessionFile = manager.getSessionFile();
@@ -110,7 +110,7 @@ describe("SessionManager immediate JSONL persistence", () => {
 	});
 
 	it("lets explicit rewrites materialize pre-assistant entries", async () => {
-		const cwd = makeTempDir("@pi-explicit-rewrite-cwd-");
+		const cwd = makeTempDir("@airs-explicit-rewrite-cwd-");
 		const sessionDir = path.join(cwd, "sessions");
 		const manager = SessionManager.create(cwd, sessionDir);
 		const sessionFile = manager.getSessionFile();

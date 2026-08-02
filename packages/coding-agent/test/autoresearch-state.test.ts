@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { createAutoresearchExtension } from "@oh-my-pi/pi-coding-agent/autoresearch";
+import { createAutoresearchExtension } from "@airis/airis-coding-agent/autoresearch";
 import {
 	buildExperimentState,
 	computeConfidence,
@@ -7,23 +7,23 @@ import {
 	findBaselineRunNumber,
 	findBestKeptMetric,
 	reconstructControlState,
-} from "@oh-my-pi/pi-coding-agent/autoresearch/state";
-import { AutoresearchStorage, closeAllAutoresearchStorages } from "@oh-my-pi/pi-coding-agent/autoresearch/storage";
-import type { ExperimentResult } from "@oh-my-pi/pi-coding-agent/autoresearch/types";
+} from "@airis/airis-coding-agent/autoresearch/state";
+import { AutoresearchStorage, closeAllAutoresearchStorages } from "@airis/airis-coding-agent/autoresearch/storage";
+import type { ExperimentResult } from "@airis/airis-coding-agent/autoresearch/types";
 import type {
 	ExtensionAPI,
 	ExtensionCommandContext,
 	RegisteredCommand,
-} from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import * as git from "@oh-my-pi/pi-coding-agent/utils/git";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@airis/airis-coding-agent/extensibility/extensions";
+import * as git from "@airis/airis-coding-agent/utils/git";
+import { TempDir } from "@airis/airis-utils";
 
 afterEach(() => {
 	vi.restoreAllMocks();
 });
 
 function makeTempDir(): TempDir {
-	return TempDir.createSync("@pi-autoresearch-test-");
+	return TempDir.createSync("@airs-autoresearch-test-");
 }
 
 function makeResult(partial: Partial<ExperimentResult>): ExperimentResult {
@@ -516,13 +516,13 @@ describe("autoresearch slash command", () => {
 	let dbOverride: TempDir | undefined;
 
 	beforeEach(() => {
-		dbOverride = TempDir.createSync("@pi-autoresearch-cmd-");
-		process.env.OMP_AUTORESEARCH_DB_DIR = dbOverride.path();
+		dbOverride = TempDir.createSync("@airs-autoresearch-cmd-");
+		process.env.AIRIS_AUTORESEARCH_DB_DIR = dbOverride.path();
 		cleanups.push(dbOverride);
 	});
 
 	afterEach(() => {
-		delete process.env.OMP_AUTORESEARCH_DB_DIR;
+		delete process.env.AIRIS_AUTORESEARCH_DB_DIR;
 		closeAllAutoresearchStorages();
 		for (const dir of cleanups.splice(0)) {
 			dir.removeSync();
@@ -583,13 +583,13 @@ describe("autoresearch tool-call hook", () => {
 	let dbOverride: TempDir;
 
 	beforeEach(() => {
-		dbOverride = TempDir.createSync("@pi-autoresearch-hook-");
-		process.env.OMP_AUTORESEARCH_DB_DIR = dbOverride.path();
+		dbOverride = TempDir.createSync("@airs-autoresearch-hook-");
+		process.env.AIRIS_AUTORESEARCH_DB_DIR = dbOverride.path();
 		cleanups.push(dbOverride);
 	});
 
 	afterEach(() => {
-		delete process.env.OMP_AUTORESEARCH_DB_DIR;
+		delete process.env.AIRIS_AUTORESEARCH_DB_DIR;
 		closeAllAutoresearchStorages();
 		for (const dir of cleanups.splice(0)) {
 			dir.removeSync();

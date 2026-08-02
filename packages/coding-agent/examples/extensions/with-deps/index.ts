@@ -4,14 +4,14 @@
  *
  * Requires: npm install in this directory
  */
-import type { ExtensionAPI } from "@oh-my-pi/pi-coding-agent";
+import type { ExtensionAPI } from "@airis/airis-coding-agent";
 import ms from "ms";
 
-export default function (pi: ExtensionAPI) {
-	const { z } = pi.zod;
+export default function (airs: ExtensionAPI) {
+	const { z } = airs.zod;
 
 	// Register a tool that uses ms
-	pi.registerTool({
+	airs.registerTool({
 		name: "parse_duration",
 		label: "Parse Duration",
 		description: "Parse a human-readable duration string (e.g., '2 days', '1h', '5m') to milliseconds",

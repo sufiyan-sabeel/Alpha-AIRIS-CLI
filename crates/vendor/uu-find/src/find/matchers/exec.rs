@@ -6,7 +6,7 @@
 
 use std::{cell::RefCell, error::Error, ffi::OsString, io::Write, path::Path, process::Command};
 
-use pi_uutils_ctx::stderr;
+use airis_uutils_ctx::stderr;
 
 use super::{Matcher, MatcherIO, WalkEntry};
 
@@ -80,12 +80,12 @@ impl Matcher for SingleExecMatcher {
 		} else {
 			// GNU runs `-exec` in find's working directory; resolve the
 			// operand-relative `{}` against the shell cwd, not the host cwd.
-			command.current_dir(pi_uutils_ctx::cwd());
+			command.current_dir(airis_uutils_ctx::cwd());
 		}
-		command.env_clear().envs(pi_uutils_ctx::env_snapshot());
+		command.env_clear().envs(airis_uutils_ctx::env_snapshot());
 		// The host process's stdio belongs to the embedding TUI; route the
 		// child's output through the scope streams instead of inheriting.
-		match pi_uutils_ctx::run_captured(&mut command) {
+		match airis_uutils_ctx::run_captured(&mut command) {
 			Ok(status) => status.success(),
 			Err(e) => {
 				writeln!(&mut stderr(), "Failed to run {}: {}", self.executable, e).unwrap();
@@ -129,7 +129,7 @@ impl MultiExecMatcher {
 		if !self.exec_in_parent_dir {
 			// `-exec ... +` (non-execdir) dispatches in find's working dir;
 			// resolve the operand-relative paths against the shell cwd.
-			command.current_dir(pi_uutils_ctx::cwd());
+			command.current_dir(airis_uutils_ctx::cwd());
 		}
 		command
 	}
@@ -144,8 +144,8 @@ impl MultiExecMatcher {
 		if let Some(dir) = command.get_current_dir() {
 			std_command.current_dir(dir);
 		}
-		std_command.env_clear().envs(pi_uutils_ctx::env_snapshot());
-		match pi_uutils_ctx::run_captured(&mut std_command) {
+		std_command.env_clear().envs(airis_uutils_ctx::env_snapshot());
+		match airis_uutils_ctx::run_captured(&mut std_command) {
 			Ok(status) => {
 				if !status.success() {
 					matcher_io.set_exit_code(1);

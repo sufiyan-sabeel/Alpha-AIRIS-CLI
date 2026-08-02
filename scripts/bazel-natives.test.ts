@@ -32,10 +32,10 @@ describe("hostTargetName", () => {
 
 	test("rejects hosts without an addon target", () => {
 		expect(() => hostTargetName({ platform: "freebsd", arch: "x64", avx2: false })).toThrow(
-			/No pi_natives addon target/,
+			/No airis_natives addon target/,
 		);
 		expect(() => hostTargetName({ platform: "win32", arch: "arm64", avx2: false })).toThrow(
-			/No pi_natives addon target/,
+			/No airis_natives addon target/,
 		);
 	});
 });
@@ -62,18 +62,18 @@ describe("resolveTargetLabels", () => {
 describe("conventionOutputPaths", () => {
 	test("builds bazel-bin paths with canonical filenames (musl reuses linux names)", () => {
 		expect(conventionOutputPaths(["linux-musl-x64-baseline", "win32-x64-baseline"], macArm)).toEqual([
-			"bazel-bin/natives-linux-musl-x64-baseline/pi_natives.linux-x64-baseline.node",
-			"bazel-bin/natives-win32-x64-baseline/pi_natives.win32-x64-baseline.node",
+			"bazel-bin/natives-linux-musl-x64-baseline/airis_natives.linux-x64-baseline.node",
+			"bazel-bin/natives-win32-x64-baseline/airis_natives.win32-x64-baseline.node",
 		]);
 	});
 
 	test("expands aggregates and the host pseudo-target", () => {
 		expect(conventionOutputPaths(["darwin-all"], macArm)).toEqual([
-			"bazel-bin/natives-darwin-arm64/pi_natives.darwin-arm64.node",
-			"bazel-bin/natives-darwin-x64-baseline/pi_natives.darwin-x64-baseline.node",
+			"bazel-bin/natives-darwin-arm64/airis_natives.darwin-arm64.node",
+			"bazel-bin/natives-darwin-x64-baseline/airis_natives.darwin-x64-baseline.node",
 		]);
 		expect(conventionOutputPaths(["host"], linuxBaseline)).toEqual([
-			"bazel-bin/natives-linux-x64-baseline/pi_natives.linux-x64-baseline.node",
+			"bazel-bin/natives-linux-x64-baseline/airis_natives.linux-x64-baseline.node",
 		]);
 	});
 });
@@ -81,15 +81,15 @@ describe("conventionOutputPaths", () => {
 describe("parseBazelFilesOutput", () => {
 	test("keeps only .node paths, trimmed and deduplicated", () => {
 		const output = [
-			"bazel-bin/natives-linux-x64-baseline/pi_natives.linux-x64-baseline.node",
-			"  bazel-bin/natives-linux-x64-modern/pi_natives.linux-x64-modern.node  ",
-			"bazel-bin/natives-linux-x64-baseline/pi_natives.linux-x64-baseline.node",
+			"bazel-bin/natives-linux-x64-baseline/airis_natives.linux-x64-baseline.node",
+			"  bazel-bin/natives-linux-x64-modern/airis_natives.linux-x64-modern.node  ",
+			"bazel-bin/natives-linux-x64-baseline/airis_natives.linux-x64-baseline.node",
 			"INFO: Analyzed 2 targets (0 packages loaded, 0 targets configured).",
 			"",
 		].join("\n");
 		expect(parseBazelFilesOutput(output)).toEqual([
-			"bazel-bin/natives-linux-x64-baseline/pi_natives.linux-x64-baseline.node",
-			"bazel-bin/natives-linux-x64-modern/pi_natives.linux-x64-modern.node",
+			"bazel-bin/natives-linux-x64-baseline/airis_natives.linux-x64-baseline.node",
+			"bazel-bin/natives-linux-x64-modern/airis_natives.linux-x64-modern.node",
 		]);
 	});
 
@@ -130,11 +130,11 @@ describe("parseCliArgs", () => {
 
 describe("artifact source install", () => {
 	test("installs exact target outputs without invoking Bazel", async () => {
-		const root = await fs.mkdtemp(path.join(os.tmpdir(), "omp-native-artifacts-"));
+		const root = await fs.mkdtemp(path.join(os.tmpdir(), "airis-native-artifacts-"));
 		const source = path.join(root, "source");
 		const dest = path.join(root, "dest");
-		const baseline = "pi_natives.linux-x64-baseline.node";
-		const modern = "pi_natives.linux-x64-modern.node";
+		const baseline = "airis_natives.linux-x64-baseline.node";
+		const modern = "airis_natives.linux-x64-modern.node";
 		try {
 			await fs.mkdir(path.join(source, "natives-linux-x64-baseline"), { recursive: true });
 			await fs.mkdir(path.join(source, "natives-linux-x64-modern"), { recursive: true });

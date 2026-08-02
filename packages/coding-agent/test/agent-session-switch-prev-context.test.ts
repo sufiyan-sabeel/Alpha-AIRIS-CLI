@@ -1,15 +1,15 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import type { BuildSessionContextOptions, SessionContext } from "@oh-my-pi/pi-coding-agent/session/session-context";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@airis/airis-agent-core";
+import type { Model } from "@airis/airis-ai";
+import { getBundledModel } from "@airis/airis-catalog/models";
+import { ModelRegistry } from "@airis/airis-coding-agent/config/model-registry";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import { AgentSession } from "@airis/airis-coding-agent/session/agent-session";
+import { AuthStorage } from "@airis/airis-coding-agent/session/auth-storage";
+import type { BuildSessionContextOptions, SessionContext } from "@airis/airis-coding-agent/session/session-context";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import { TempDir } from "@airis/airis-utils";
 
 /**
  * Regression for issue #3846: in-TUI `/resume` rebuilt the *previous*
@@ -29,7 +29,7 @@ describe("AgentSession.switchSession previous-context build", () => {
 	const sessions: AgentSession[] = [];
 
 	beforeAll(async () => {
-		sharedDir = TempDir.createSync("@pi-switch-prev-ctx-shared-");
+		sharedDir = TempDir.createSync("@airs-switch-prev-ctx-shared-");
 		authStorage = await AuthStorage.create(path.join(sharedDir.path(), "testauth.db"));
 		authStorage.setRuntimeApiKey("anthropic", "test-key");
 		modelRegistry = new ModelRegistry(authStorage);
@@ -101,7 +101,7 @@ describe("AgentSession.switchSession previous-context build", () => {
 	}
 
 	it("skips building the previous display context when switching to a different session", async () => {
-		const tempDir = TempDir.createSync("@pi-switch-prev-ctx-different-");
+		const tempDir = TempDir.createSync("@airs-switch-prev-ctx-different-");
 		tempDirs.push(tempDir);
 
 		const { session, sessionManager } = buildSession(tempDir);
@@ -133,7 +133,7 @@ describe("AgentSession.switchSession previous-context build", () => {
 	});
 
 	it("builds the previous display context for same-session reloads", async () => {
-		const tempDir = TempDir.createSync("@pi-switch-prev-ctx-reload-");
+		const tempDir = TempDir.createSync("@airs-switch-prev-ctx-reload-");
 		tempDirs.push(tempDir);
 
 		const { session, sessionManager } = buildSession(tempDir);

@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
-import type { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import type { ScopedModel } from "@oh-my-pi/pi-coding-agent/config/model-resolver";
-import { buildModelScopeNotification } from "@oh-my-pi/pi-coding-agent/main";
+import type { ThinkingLevel } from "@airis/airis-agent-core";
+import { buildModel } from "@airis/airis-catalog/build";
+import type { ScopedModel } from "@airis/airis-coding-agent/config/model-resolver";
+import { buildModelScopeNotification } from "@airis/airis-coding-agent/main";
 
 function scopedModel(id: string): ScopedModel {
 	return {

@@ -1,22 +1,22 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import type { ImageContent, TextContent } from "@oh-my-pi/pi-ai";
-import { createSessionRuntime } from "@oh-my-pi/pi-coding-agent/autoresearch/state";
+import type { ImageContent, TextContent } from "@airis/airis-ai";
+import { createSessionRuntime } from "@airis/airis-coding-agent/autoresearch/state";
 import {
 	type AutoresearchStorage,
 	closeAllAutoresearchStorages,
 	openAutoresearchStorage,
 	type SessionRow,
-} from "@oh-my-pi/pi-coding-agent/autoresearch/storage";
-import { createInitExperimentTool } from "@oh-my-pi/pi-coding-agent/autoresearch/tools/init-experiment";
-import { createLogExperimentTool } from "@oh-my-pi/pi-coding-agent/autoresearch/tools/log-experiment";
-import { createRunExperimentTool } from "@oh-my-pi/pi-coding-agent/autoresearch/tools/run-experiment";
-import { createUpdateNotesTool } from "@oh-my-pi/pi-coding-agent/autoresearch/tools/update-notes";
-import type { ASIData, LogDetails, NumericMetricMap, RunDetails } from "@oh-my-pi/pi-coding-agent/autoresearch/types";
-import type { ExtensionAPI, ExtensionContext } from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import * as git from "@oh-my-pi/pi-coding-agent/utils/git";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@airis/airis-coding-agent/autoresearch/storage";
+import { createInitExperimentTool } from "@airis/airis-coding-agent/autoresearch/tools/init-experiment";
+import { createLogExperimentTool } from "@airis/airis-coding-agent/autoresearch/tools/log-experiment";
+import { createRunExperimentTool } from "@airis/airis-coding-agent/autoresearch/tools/run-experiment";
+import { createUpdateNotesTool } from "@airis/airis-coding-agent/autoresearch/tools/update-notes";
+import type { ASIData, LogDetails, NumericMetricMap, RunDetails } from "@airis/airis-coding-agent/autoresearch/types";
+import type { ExtensionAPI, ExtensionContext } from "@airis/airis-coding-agent/extensibility/extensions";
+import * as git from "@airis/airis-coding-agent/utils/git";
+import { TempDir } from "@airis/airis-utils";
 import { $ } from "bun";
 
 afterEach(() => {
@@ -29,7 +29,7 @@ function firstTextBlockText(content: Array<TextContent | ImageContent>): string 
 	return block.text;
 }
 
-function makeTempDir(prefix = "@pi-autoresearch-tools-"): TempDir {
+function makeTempDir(prefix = "@airs-autoresearch-tools-"): TempDir {
 	return TempDir.createSync(prefix);
 }
 
@@ -46,14 +46,14 @@ function createCtx(cwd: string): ExtensionContext {
 	return { cwd, hasUI: false } as ExtensionContext;
 }
 
-interface PiHarness {
+interface AirisHarness {
 	api: ExtensionAPI;
 	activeTools: string[];
 	appendEntries: Array<{ customType: string; data: unknown }>;
 	setActiveToolsCalls: string[][];
 }
 
-function createPiHarness(initialTools: string[] = []): PiHarness {
+function createAirisHarness(initialTools: string[] = []): AirisHarness {
 	const activeTools = [...initialTools];
 	const appendEntries: Array<{ customType: string; data: unknown }> = [];
 	const setActiveToolsCalls: string[][] = [];
@@ -81,7 +81,7 @@ let templateBranchRepo: TempDir;
 let templateBaselineCommit: string;
 
 beforeAll(async () => {
-	templateRepo = makeTempDir("@pi-autoresearch-template-");
+	templateRepo = makeTempDir("@airs-autoresearch-template-");
 	await Bun.write(path.join(templateRepo.path(), "README.md"), "# baseline\n");
 	await $`git init --initial-branch=main && git config core.autocrlf false && git config core.fsmonitor false && git config user.email tester@example.com && git config user.name Tester && git add -A && git commit -m baseline`
 		.cwd(templateRepo.path())
@@ -89,7 +89,7 @@ beforeAll(async () => {
 	templateBaselineCommit = (await $`git rev-parse HEAD`.cwd(templateRepo.path()).text()).trim();
 	// Second fixture: harness committed and already on an `autoresearch/*` branch,
 	// the baseline for log_experiment's on-branch keep/discard scenarios.
-	templateBranchRepo = makeTempDir("@pi-autoresearch-template-branch-");
+	templateBranchRepo = makeTempDir("@airs-autoresearch-template-branch-");
 	fs.cpSync(templateRepo.path(), templateBranchRepo.path(), { recursive: true });
 	await Bun.write(path.join(templateBranchRepo.path(), "autoresearch.sh"), "#!/usr/bin/env bash\necho METRIC m=1\n");
 	await $`git add -A && git commit -m harness && git checkout -b autoresearch/base`
@@ -167,12 +167,12 @@ describe("init_experiment", () => {
 	let dbOverride: TempDir;
 
 	beforeEach(() => {
-		dbOverride = makeTempDir("@pi-autoresearch-init-db-");
-		process.env.OMP_AUTORESEARCH_DB_DIR = dbOverride.path();
+		dbOverride = makeTempDir("@airs-autoresearch-init-db-");
+		process.env.AIRIS_AUTORESEARCH_DB_DIR = dbOverride.path();
 	});
 
 	afterEach(async () => {
-		delete process.env.OMP_AUTORESEARCH_DB_DIR;
+		delete process.env.AIRIS_AUTORESEARCH_DB_DIR;
 		closeAllAutoresearchStorages();
 		await Bun.sleep(0);
 		await dbOverride.remove();
@@ -185,7 +185,7 @@ describe("init_experiment", () => {
 		const tool = createInitExperimentTool({
 			dashboard: dashboardStub(),
 			getRuntime: () => runtime,
-			pi: createPiHarness().api,
+			airs: createAirisHarness().api,
 		});
 
 		const result = await tool.execute(
@@ -227,7 +227,7 @@ describe("init_experiment", () => {
 		const tool = createInitExperimentTool({
 			dashboard: dashboardStub(),
 			getRuntime: () => runtime,
-			pi: createPiHarness().api,
+			airs: createAirisHarness().api,
 		});
 
 		await tool.execute(
@@ -258,7 +258,7 @@ describe("init_experiment", () => {
 		const tool = createInitExperimentTool({
 			dashboard: dashboardStub(),
 			getRuntime: () => runtime,
-			pi: createPiHarness().api,
+			airs: createAirisHarness().api,
 		});
 		await tool.execute("a", { name: "x", primary_metric: "ms" }, undefined, undefined, createCtx(dir));
 		const result = await tool.execute(
@@ -278,7 +278,7 @@ describe("init_experiment", () => {
 		const tool = createInitExperimentTool({
 			dashboard: dashboardStub(),
 			getRuntime: () => runtime,
-			pi: createPiHarness().api,
+			airs: createAirisHarness().api,
 		});
 		const result = await tool.execute(
 			"call-1",
@@ -300,7 +300,7 @@ describe("init_experiment", () => {
 		const tool = createInitExperimentTool({
 			dashboard: dashboardStub(),
 			getRuntime: () => runtime,
-			pi: createPiHarness().api,
+			airs: createAirisHarness().api,
 		});
 		const result = await tool.execute(
 			"call-1",
@@ -326,7 +326,7 @@ describe("init_experiment", () => {
 		const tool = createInitExperimentTool({
 			dashboard: dashboardStub(),
 			getRuntime: () => runtime,
-			pi: createPiHarness().api,
+			airs: createAirisHarness().api,
 		});
 		const result = await tool.execute(
 			"call-1",
@@ -347,12 +347,12 @@ describe("run_experiment", () => {
 	let dbOverride: TempDir;
 
 	beforeEach(() => {
-		dbOverride = makeTempDir("@pi-autoresearch-run-db-");
-		process.env.OMP_AUTORESEARCH_DB_DIR = dbOverride.path();
+		dbOverride = makeTempDir("@airs-autoresearch-run-db-");
+		process.env.AIRIS_AUTORESEARCH_DB_DIR = dbOverride.path();
 	});
 
 	afterEach(async () => {
-		delete process.env.OMP_AUTORESEARCH_DB_DIR;
+		delete process.env.AIRIS_AUTORESEARCH_DB_DIR;
 		closeAllAutoresearchStorages();
 		await Bun.sleep(0);
 		await dbOverride.remove();
@@ -364,7 +364,7 @@ describe("run_experiment", () => {
 		const run = createRunExperimentTool({
 			dashboard: dashboardStub(),
 			getRuntime: () => runtime,
-			pi: createPiHarness().api,
+			airs: createAirisHarness().api,
 		});
 		const result = await run.execute("call-1", {}, undefined, undefined, createCtx(dir));
 		expect(firstTextBlockText(result.content)).toContain("no active autoresearch session");
@@ -377,7 +377,7 @@ describe("run_experiment", () => {
 		const init = createInitExperimentTool({
 			dashboard: dashboardStub(),
 			getRuntime: () => runtime,
-			pi: createPiHarness().api,
+			airs: createAirisHarness().api,
 		});
 		await init.execute(
 			"i",
@@ -389,7 +389,7 @@ describe("run_experiment", () => {
 		const run = createRunExperimentTool({
 			dashboard: dashboardStub(),
 			getRuntime: () => runtime,
-			pi: createPiHarness().api,
+			airs: createAirisHarness().api,
 		});
 		const result = await run.execute("r", { timeout_seconds: 5 }, undefined, undefined, createCtx(dir));
 		const details = result.details as RunDetails;
@@ -415,13 +415,13 @@ describe("run_experiment", () => {
 		const initTool = createInitExperimentTool({
 			dashboard: dashboardStub(),
 			getRuntime: () => runtime,
-			pi: createPiHarness().api,
+			airs: createAirisHarness().api,
 		});
 		await initTool.execute("i", { name: "x", primary_metric: "m" }, undefined, undefined, createCtx(dir));
 		const run = createRunExperimentTool({
 			dashboard: dashboardStub(),
 			getRuntime: () => runtime,
-			pi: createPiHarness().api,
+			airs: createAirisHarness().api,
 		});
 		// A seeded pending run stands in for the first run_experiment; the contract
 		// under test is that the second run abandons it rather than blocking.
@@ -438,12 +438,12 @@ describe("log_experiment", () => {
 	let dbOverride: TempDir;
 
 	beforeEach(() => {
-		dbOverride = makeTempDir("@pi-autoresearch-log-db-");
-		process.env.OMP_AUTORESEARCH_DB_DIR = dbOverride.path();
+		dbOverride = makeTempDir("@airs-autoresearch-log-db-");
+		process.env.AIRIS_AUTORESEARCH_DB_DIR = dbOverride.path();
 	});
 
 	afterEach(async () => {
-		delete process.env.OMP_AUTORESEARCH_DB_DIR;
+		delete process.env.AIRIS_AUTORESEARCH_DB_DIR;
 		closeAllAutoresearchStorages();
 		await Bun.sleep(0);
 		await dbOverride.remove();
@@ -451,11 +451,11 @@ describe("log_experiment", () => {
 
 	async function setupRun(dir: string, runtime = createSessionRuntime()) {
 		await writeHarnessStub(dir, "echo METRIC runtime_ms=10");
-		const harness = createPiHarness();
+		const harness = createAirisHarness();
 		const init = createInitExperimentTool({
 			dashboard: dashboardStub(),
 			getRuntime: () => runtime,
-			pi: harness.api,
+			airs: harness.api,
 		});
 		await init.execute(
 			"i",
@@ -479,7 +479,7 @@ describe("log_experiment", () => {
 		const log = createLogExperimentTool({
 			dashboard: dashboardStub(),
 			getRuntime: () => runtime,
-			pi: harness.api,
+			airs: harness.api,
 		});
 		return { runtime, log, harness };
 	}
@@ -488,17 +488,17 @@ describe("log_experiment", () => {
 		const dir = freshRepo().dir;
 		await writeHarnessStub(dir);
 		const runtime = createSessionRuntime();
-		const harness = createPiHarness();
+		const harness = createAirisHarness();
 		const init = createInitExperimentTool({
 			dashboard: dashboardStub(),
 			getRuntime: () => runtime,
-			pi: harness.api,
+			airs: harness.api,
 		});
 		await init.execute("i", { name: "x", primary_metric: "m" }, undefined, undefined, createCtx(dir));
 		const log = createLogExperimentTool({
 			dashboard: dashboardStub(),
 			getRuntime: () => runtime,
-			pi: harness.api,
+			airs: harness.api,
 		});
 		const result = await log.execute(
 			"l",
@@ -633,7 +633,7 @@ describe("log_experiment", () => {
 		const log = createLogExperimentTool({
 			dashboard: dashboardStub(),
 			getRuntime: () => runtime,
-			pi: createPiHarness().api,
+			airs: createAirisHarness().api,
 		});
 		const second = await log.execute(
 			"l2",
@@ -664,11 +664,11 @@ describe("log_experiment", () => {
 		await Bun.write(path.join(dir, "src", "edit-me.ts"), "export const v = 1;\n");
 		await $`git add -A && git commit -m seed`.cwd(dir).quiet();
 		const runtime = createSessionRuntime();
-		const harness = createPiHarness();
+		const harness = createAirisHarness();
 		const init = createInitExperimentTool({
 			dashboard: dashboardStub(),
 			getRuntime: () => runtime,
-			pi: harness.api,
+			airs: harness.api,
 		});
 		await init.execute(
 			"i",
@@ -680,7 +680,7 @@ describe("log_experiment", () => {
 		const run = createRunExperimentTool({
 			dashboard: dashboardStub(),
 			getRuntime: () => runtime,
-			pi: harness.api,
+			airs: harness.api,
 		});
 		// Pre-existing untracked file (will not be touched by revert because it was dirty before run)
 		await Bun.write(path.join(dir, "preexisting.txt"), "leave me\n");
@@ -692,7 +692,7 @@ describe("log_experiment", () => {
 		const log = createLogExperimentTool({
 			dashboard: dashboardStub(),
 			getRuntime: () => runtime,
-			pi: harness.api,
+			airs: harness.api,
 		});
 		await log.execute(
 			"l",
@@ -712,11 +712,11 @@ describe("log_experiment", () => {
 	it("on an autoresearch branch, discard reverts uncommitted changes but preserves prior commits", async () => {
 		const dir = freshBranchRepo().dir;
 		const runtime = createSessionRuntime();
-		const harness = createPiHarness();
+		const harness = createAirisHarness();
 		const init = createInitExperimentTool({
 			dashboard: dashboardStub(),
 			getRuntime: () => runtime,
-			pi: harness.api,
+			airs: harness.api,
 		});
 		await init.execute("i", { name: "x", primary_metric: "m" }, undefined, undefined, createCtx(dir));
 		// Simulate a previously kept iteration by committing it directly on the branch.
@@ -735,7 +735,7 @@ describe("log_experiment", () => {
 		const log = createLogExperimentTool({
 			dashboard: dashboardStub(),
 			getRuntime: () => runtime,
-			pi: harness.api,
+			airs: harness.api,
 		});
 		await log.execute(
 			"l",
@@ -760,11 +760,11 @@ describe("log_experiment", () => {
 		await Bun.write(path.join(dir, "src", "store.ts"), "export const v = 1;\n");
 		await $`git add -A && git commit -m seed`.cwd(dir).quiet();
 		const runtime = createSessionRuntime();
-		const harness = createPiHarness();
+		const harness = createAirisHarness();
 		const init = createInitExperimentTool({
 			dashboard: dashboardStub(),
 			getRuntime: () => runtime,
-			pi: harness.api,
+			airs: harness.api,
 		});
 		await init.execute(
 			"i",
@@ -782,7 +782,7 @@ describe("log_experiment", () => {
 		const log = createLogExperimentTool({
 			dashboard: dashboardStub(),
 			getRuntime: () => runtime,
-			pi: harness.api,
+			airs: harness.api,
 		});
 		const result = await log.execute(
 			"l",
@@ -802,11 +802,11 @@ describe("log_experiment", () => {
 	it("flags off-scope dirty files even when they were dirty before run_experiment", async () => {
 		const dir = freshBranchRepo().dir;
 		const runtime = createSessionRuntime();
-		const harness = createPiHarness();
+		const harness = createAirisHarness();
 		const init = createInitExperimentTool({
 			dashboard: dashboardStub(),
 			getRuntime: () => runtime,
-			pi: harness.api,
+			airs: harness.api,
 		});
 		await init.execute(
 			"i",
@@ -824,7 +824,7 @@ describe("log_experiment", () => {
 		const log = createLogExperimentTool({
 			dashboard: dashboardStub(),
 			getRuntime: () => runtime,
-			pi: harness.api,
+			airs: harness.api,
 		});
 		const result = await log.execute(
 			"l",
@@ -842,12 +842,12 @@ describe("update_notes", () => {
 	let dbOverride: TempDir;
 
 	beforeEach(() => {
-		dbOverride = makeTempDir("@pi-autoresearch-notes-db-");
-		process.env.OMP_AUTORESEARCH_DB_DIR = dbOverride.path();
+		dbOverride = makeTempDir("@airs-autoresearch-notes-db-");
+		process.env.AIRIS_AUTORESEARCH_DB_DIR = dbOverride.path();
 	});
 
 	afterEach(async () => {
-		delete process.env.OMP_AUTORESEARCH_DB_DIR;
+		delete process.env.AIRIS_AUTORESEARCH_DB_DIR;
 		closeAllAutoresearchStorages();
 		await Bun.sleep(0);
 		await dbOverride.remove().catch(() => {});
@@ -857,17 +857,17 @@ describe("update_notes", () => {
 		const dir = freshRepo().dir;
 		await writeHarnessStub(dir);
 		const runtime = createSessionRuntime();
-		const harness = createPiHarness();
+		const harness = createAirisHarness();
 		const init = createInitExperimentTool({
 			dashboard: dashboardStub(),
 			getRuntime: () => runtime,
-			pi: harness.api,
+			airs: harness.api,
 		});
 		await init.execute("i", { name: "x", primary_metric: "m" }, undefined, undefined, createCtx(dir));
 		const notes = createUpdateNotesTool({
 			dashboard: dashboardStub(),
 			getRuntime: () => runtime,
-			pi: harness.api,
+			airs: harness.api,
 		});
 		const result = await notes.execute("n", { body: "## Plan\n- step one\n" }, undefined, undefined, createCtx(dir));
 		expect(result.details?.notes).toContain("step one");

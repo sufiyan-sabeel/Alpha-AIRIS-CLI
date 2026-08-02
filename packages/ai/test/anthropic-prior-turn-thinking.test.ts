@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { renderDemotedThinking } from "@oh-my-pi/pi-ai/dialect";
-import { convertAnthropicMessages } from "@oh-my-pi/pi-ai/providers/anthropic";
+import { renderDemotedThinking } from "@airis/airis-ai/dialect";
+import { convertAnthropicMessages } from "@airis/airis-ai/providers/anthropic";
 import type {
 	AssistantMessage,
 	Message,
@@ -8,8 +8,8 @@ import type {
 	ModelSpec,
 	ToolResultMessage,
 	UserMessage,
-} from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+} from "@airis/airis-ai/types";
+import { buildModel } from "@airis/airis-catalog/build";
 
 /**
  * Cross-model `anthropic-messages` continuations must preserve the prior

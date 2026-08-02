@@ -2,7 +2,7 @@
 //
 // For the full copyright and license information, please view the LICENSE
 // file that was distributed with this source code.
-// Vendored from uutils/coreutils 0.8.0 and patched for pi-uutils context I/O.
+// Vendored from uutils/coreutils 0.8.0 and patched for airis-uutils context I/O.
 
 use std::{
 	cmp::Ordering,
@@ -13,7 +13,7 @@ use std::{
 };
 
 use clap::{Arg, ArgAction, ArgMatches, Command};
-use pi_uutils_ctx::format_usage;
+use airis_uutils_ctx::format_usage;
 use uucore::{
 	display::Quotable,
 	error::{FromIo, UResult, USimpleError},
@@ -66,7 +66,7 @@ impl OrderChecker {
 		let ordered = line >= self.last_line.as_slice();
 		if !ordered && !self.has_error {
 			let _ = writeln!(
-				pi_uutils_ctx::stderr(),
+				airis_uutils_ctx::stderr(),
 				"comm: file {} is not in sorted order",
 				self.file_num.as_str()
 			);
@@ -151,7 +151,7 @@ fn compare(
 		usize::from(!opts.get_flag(options::COLUMN_1))
 			+ usize::from(!opts.get_flag(options::COLUMN_2)),
 	);
-	let mut writer = BufWriter::new(pi_uutils_ctx::stdout());
+	let mut writer = BufWriter::new(airis_uutils_ctx::stdout());
 	let (mut ra, mut rb) = (Vec::new(), Vec::new());
 	let mut na = a
 		.read_line(&mut ra)
@@ -232,7 +232,7 @@ fn compare(
 		.map_err_context(|| "write error".to_string())?;
 	if should_check && (c1.has_error || c2.has_error) {
 		if delayed_error {
-			let _ = writeln!(pi_uutils_ctx::stderr(), "comm: input is not in sorted order");
+			let _ = writeln!(airis_uutils_ctx::stderr(), "comm: input is not in sorted order");
 		}
 		Ok(false)
 	} else {
@@ -242,9 +242,9 @@ fn compare(
 
 fn open_file(name: &OsStr, ending: LineEnding) -> io::Result<LineReader> {
 	if name == "-" {
-		return Ok(LineReader::new(Box::new(BufReader::new(pi_uutils_ctx::stdin())), ending));
+		return Ok(LineReader::new(Box::new(BufReader::new(airis_uutils_ctx::stdin())), ending));
 	}
-	let resolved = pi_uutils_ctx::resolve(name);
+	let resolved = airis_uutils_ctx::resolve(name);
 	if fs::metadata(&resolved)?.is_dir() {
 		return Err(io::Error::other("is a directory"));
 	}
@@ -275,7 +275,7 @@ fn comm_main(matches: &ArgMatches) -> UResult<bool> {
 	let identical = if name1 == "-" || name2 == "-" {
 		false
 	} else {
-		files_identical(&pi_uutils_ctx::resolve(name1), &pi_uutils_ctx::resolve(name2))
+		files_identical(&airis_uutils_ctx::resolve(name1), &airis_uutils_ctx::resolve(name2))
 			.unwrap_or(false)
 	};
 	compare(&mut f1, &mut f2, name1, name2, delim, matches, identical)
@@ -288,19 +288,19 @@ pub fn run(argv: Vec<OsString>) -> i32 {
 		Err(e) => {
 			let rendered = e.to_string();
 			if e.use_stderr() {
-				let _ = write!(pi_uutils_ctx::stderr(), "{rendered}");
+				let _ = write!(airis_uutils_ctx::stderr(), "{rendered}");
 				return 1;
 			}
-			let _ = write!(pi_uutils_ctx::stdout(), "{rendered}");
+			let _ = write!(airis_uutils_ctx::stdout(), "{rendered}");
 			return 0;
 		},
 	};
 	match comm_main(&matches) {
-		Ok(true) => pi_uutils_ctx::exit_code(),
+		Ok(true) => airis_uutils_ctx::exit_code(),
 		Ok(false) => 1,
 		Err(e) => {
 			let code = e.code();
-			let _ = writeln!(pi_uutils_ctx::stderr(), "comm: {e}");
+			let _ = writeln!(airis_uutils_ctx::stderr(), "comm: {e}");
 			if code == 0 { 1 } else { code }
 		},
 	}

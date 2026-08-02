@@ -1,16 +1,16 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import { Effort, type Model } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@airis/airis-agent-core";
+import { Effort, type Model } from "@airis/airis-ai";
+import { getBundledModel } from "@airis/airis-catalog/models";
+import { ModelRegistry } from "@airis/airis-coding-agent/config/model-registry";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import { AgentSession } from "@airis/airis-coding-agent/session/agent-session";
+import { AuthStorage } from "@airis/airis-coding-agent/session/auth-storage";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import { TempDir } from "@airis/airis-utils";
 
-// Regression for https://github.com/can1357/oh-my-pi/issues/4579.
+// Regression for https://github.com/sufiyan-sabeel/Alpha-AIRIS-CLI/issues/4579.
 //
 // When the advisor role resolves to a reasoning model without a controllable
 // effort surface (Devin `devin-agent`: `reasoning: true`, `thinking: undefined`
@@ -31,7 +31,7 @@ describe("AgentSession advisor descriptor thinking level", () => {
 	let devinModel: Model;
 
 	beforeAll(async () => {
-		sharedDir = TempDir.createSync("@pi-advisor-devin-thinking-shared-");
+		sharedDir = TempDir.createSync("@airs-advisor-devin-thinking-shared-");
 		authStorage = await AuthStorage.create(path.join(sharedDir.path(), "testauth.db"));
 		authStorage.setRuntimeApiKey("anthropic", "test-key");
 		modelRegistry = new ModelRegistry(authStorage);
@@ -80,7 +80,7 @@ describe("AgentSession advisor descriptor thinking level", () => {
 	let sessionManager: SessionManager;
 
 	beforeEach(async () => {
-		tempDir = TempDir.createSync("@pi-advisor-devin-thinking-");
+		tempDir = TempDir.createSync("@airs-advisor-devin-thinking-");
 		sessionManager = SessionManager.create(tempDir.path(), tempDir.path());
 		const agent = new Agent({
 			initialState: {

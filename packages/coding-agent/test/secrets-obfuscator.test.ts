@@ -6,13 +6,13 @@ import { describe, expect, it, spyOn } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, Context, Message, TextContent } from "@oh-my-pi/pi-ai";
+import type { AgentMessage } from "@airis/airis-agent-core";
+import type { AssistantMessage, Context, Message, TextContent } from "@airis/airis-ai";
 import {
 	getExistingSecretPlaceholderKey,
 	getSecretPlaceholderKey,
 	loadSecrets,
-} from "@oh-my-pi/pi-coding-agent/secrets";
+} from "@airis/airis-coding-agent/secrets";
 import {
 	deobfuscateAgentMessages,
 	deobfuscateToolArguments,
@@ -25,9 +25,9 @@ import {
 	secretEntriesNeedPlaceholderKey,
 	secretEntryNeedsPlaceholderKey,
 	stripPendingSecretPlaceholderSuffix,
-} from "@oh-my-pi/pi-coding-agent/secrets/obfuscator";
-import { compileSecretRegex } from "@oh-my-pi/pi-coding-agent/secrets/regex";
-import { getActiveProfile, getAgentDir, setProfile } from "@oh-my-pi/pi-utils/dirs";
+} from "@airis/airis-coding-agent/secrets/obfuscator";
+import { compileSecretRegex } from "@airis/airis-coding-agent/secrets/regex";
+import { getActiveProfile, getAgentDir, setProfile } from "@airis/airis-utils/dirs";
 import { type } from "arktype";
 
 describe("compileSecretRegex", () => {
@@ -230,7 +230,7 @@ describe("getSecretPlaceholderKey", () => {
 	async function withTempAgentHome(run: () => Promise<void>): Promise<void> {
 		const originalProfile = getActiveProfile();
 		const originalHome = process.env.HOME;
-		const tempHomeDir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-secret-key-"));
+		const tempHomeDir = await fs.mkdtemp(path.join(os.tmpdir(), "airis-secret-key-"));
 		process.env.HOME = tempHomeDir;
 		const homedirSpy = spyOn(os, "homedir").mockReturnValue(tempHomeDir);
 		try {
@@ -2873,14 +2873,14 @@ describe("SecretObfuscator friendlyName placeholders", () => {
 	});
 
 	it("omits invalid friendlyName metadata without dropping the secret", async () => {
-		const root = await fs.mkdtemp(path.join(os.tmpdir(), "omp-secret-friendly-"));
+		const root = await fs.mkdtemp(path.join(os.tmpdir(), "airis-secret-friendly-"));
 		try {
 			const project = path.join(root, "project");
 			const agentDir = path.join(root, "agent");
-			await fs.mkdir(path.join(project, ".omp"), { recursive: true });
+			await fs.mkdir(path.join(project, ".airis"), { recursive: true });
 			await fs.mkdir(agentDir, { recursive: true });
 			await fs.writeFile(
-				path.join(project, ".omp", "secrets.yml"),
+				path.join(project, ".airis", "secrets.yml"),
 				"- type: plain\n  content: invalid-friendly-secret\n  friendlyName: '***'\n",
 			);
 
@@ -2899,14 +2899,14 @@ describe("SecretObfuscator friendlyName placeholders", () => {
 	});
 
 	it("omits non-string friendlyName metadata without dropping the secret", async () => {
-		const root = await fs.mkdtemp(path.join(os.tmpdir(), "omp-secret-friendly-"));
+		const root = await fs.mkdtemp(path.join(os.tmpdir(), "airis-secret-friendly-"));
 		try {
 			const project = path.join(root, "project");
 			const agentDir = path.join(root, "agent");
-			await fs.mkdir(path.join(project, ".omp"), { recursive: true });
+			await fs.mkdir(path.join(project, ".airis"), { recursive: true });
 			await fs.mkdir(agentDir, { recursive: true });
 			await fs.writeFile(
-				path.join(project, ".omp", "secrets.yml"),
+				path.join(project, ".airis", "secrets.yml"),
 				"- type: plain\n  content: non-string-friendly-secret\n  friendlyName: 123\n",
 			);
 
@@ -2925,14 +2925,14 @@ describe("SecretObfuscator friendlyName placeholders", () => {
 	});
 
 	it("rejects a secrets.yml replace regex entry that can never redact a 1-2 char match distinctly from itself", async () => {
-		const root = await fs.mkdtemp(path.join(os.tmpdir(), "omp-secret-friendly-"));
+		const root = await fs.mkdtemp(path.join(os.tmpdir(), "airis-secret-friendly-"));
 		try {
 			const project = path.join(root, "project");
 			const agentDir = path.join(root, "agent");
-			await fs.mkdir(path.join(project, ".omp"), { recursive: true });
+			await fs.mkdir(path.join(project, ".airis"), { recursive: true });
 			await fs.mkdir(agentDir, { recursive: true });
 			await fs.writeFile(
-				path.join(project, ".omp", "secrets.yml"),
+				path.join(project, ".airis", "secrets.yml"),
 				'- type: regex\n  mode: replace\n  content: "."\n',
 			);
 
@@ -2954,14 +2954,14 @@ describe("SecretObfuscator friendlyName placeholders", () => {
 		// case-sensitive/punctuated pattern like `tok_[a-z0-9]+` can never match
 		// an already-uppercased, separator-stripped rendering of itself. The fix
 		// still validates the friendlyName but returns it unsanitized.
-		const root = await fs.mkdtemp(path.join(os.tmpdir(), "omp-secret-friendly-"));
+		const root = await fs.mkdtemp(path.join(os.tmpdir(), "airis-secret-friendly-"));
 		try {
 			const project = path.join(root, "project");
 			const agentDir = path.join(root, "agent");
-			await fs.mkdir(path.join(project, ".omp"), { recursive: true });
+			await fs.mkdir(path.join(project, ".airis"), { recursive: true });
 			await fs.mkdir(agentDir, { recursive: true });
 			await fs.writeFile(
-				path.join(project, ".omp", "secrets.yml"),
+				path.join(project, ".airis", "secrets.yml"),
 				'- type: regex\n  content: "tok_[a-z0-9]+"\n  friendlyName: "tok_abc123"\n',
 			);
 

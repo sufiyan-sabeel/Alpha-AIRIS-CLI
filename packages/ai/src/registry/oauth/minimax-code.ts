@@ -17,8 +17,8 @@ import { createApiKeyLogin } from "../api-key-login";
 
 const AUTH_URL_INTL = "https://platform.minimax.io/subscribe/token-plan";
 const AUTH_URL_CN = "https://platform.minimaxi.com/subscribe/token-plan";
-const API_BASE_URL_INTL = "https://api.minimax.io/v1";
-const API_BASE_URL_CN = "https://api.minimaxi.com/v1";
+const AAIRIS_BASE_URL_INTL = "https://api.minimax.io/v1";
+const AAIRIS_BASE_URL_CN = "https://api.minimaxi.com/v1";
 const VALIDATION_MODEL = "MiniMax-M3";
 
 function createMiniMaxLogin(authUrl: string, baseUrl: string, provider: string) {
@@ -43,11 +43,11 @@ function createMiniMaxLogin(authUrl: string, baseUrl: string, provider: string) 
  * Opens browser to subscription page, prompts user to paste their API key.
  * Returns the API key directly (not OAuthCredentials - this isn't OAuth).
  */
-export const loginMiniMaxCode = createMiniMaxLogin(AUTH_URL_INTL, API_BASE_URL_INTL, "MiniMax Token Plan");
+export const loginMiniMaxCode = createMiniMaxLogin(AUTH_URL_INTL, AAIRIS_BASE_URL_INTL, "MiniMax Token Plan");
 
 /**
  * Login to MiniMax Token Plan (China).
  *
  * Same flow as international but uses China endpoint.
  */
-export const loginMiniMaxCodeCn = createMiniMaxLogin(AUTH_URL_CN, API_BASE_URL_CN, "MiniMax Token Plan (China)");
+export const loginMiniMaxCodeCn = createMiniMaxLogin(AUTH_URL_CN, AAIRIS_BASE_URL_CN, "MiniMax Token Plan (China)");

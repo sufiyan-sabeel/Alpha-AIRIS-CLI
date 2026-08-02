@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { buildMcpToolDefinitions } from "@oh-my-pi/pi-ai/providers/cursor";
-import type { Tool } from "@oh-my-pi/pi-ai/types";
+import { buildMcpToolDefinitions } from "@airis/airis-ai/providers/cursor";
+import type { Tool } from "@airis/airis-ai/types";
 
 const tool = (name: string): Tool => ({
 	name,
@@ -33,14 +33,14 @@ describe("cursor buildMcpToolDefinitions", () => {
 		expect(names).not.toContain("bash");
 		expect(names).not.toContain("todo");
 
-		// The forwarded write must be a routable pi-agent MCP tool, so Cursor
+		// The forwarded write must be a routable airis-agent MCP tool, so Cursor
 		// dispatches it back through the coding-agent write tool's xd:// handler.
 		const writeDef = defs.find(def => def.name === "write");
-		expect(writeDef?.providerIdentifier).toBe("pi-agent");
+		expect(writeDef?.providerIdentifier).toBe("airis-agent");
 		expect(writeDef?.toolName).toBe("write");
 	});
 
-	it("keeps write out when only native tools are advertised (no pi-agent device needs resolution)", () => {
+	it("keeps write out when only native tools are advertised (no airis-agent device needs resolution)", () => {
 		const names = buildMcpToolDefinitions([tool("read"), tool("write"), tool("bash")]).map(def => def.name);
 		expect(names).toEqual([]);
 	});
@@ -53,7 +53,7 @@ describe("cursor buildMcpToolDefinitions", () => {
 
 		const lspDef = defs.find(def => def.name === "lsp");
 		expect(lspDef).toBeDefined();
-		expect(lspDef?.providerIdentifier).toBe("pi-agent");
+		expect(lspDef?.providerIdentifier).toBe("airis-agent");
 		expect(lspDef?.toolName).toBe("lsp");
 	});
 });

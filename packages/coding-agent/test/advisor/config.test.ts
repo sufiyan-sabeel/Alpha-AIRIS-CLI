@@ -19,9 +19,9 @@ describe("discoverAdvisorConfigs", () => {
 	let agentDir: string;
 
 	beforeEach(async () => {
-		tmp = await fsp.mkdtemp(path.join(os.tmpdir(), "omp-advisor-config-"));
-		// Empty agent dir so the user-level search path can't pick up a real ~/.omp/WATCHDOG.yml.
-		agentDir = await fsp.mkdtemp(path.join(os.tmpdir(), "omp-advisor-agentdir-"));
+		tmp = await fsp.mkdtemp(path.join(os.tmpdir(), "airis-advisor-config-"));
+		// Empty agent dir so the user-level search path can't pick up a real ~/.airis/WATCHDOG.yml.
+		agentDir = await fsp.mkdtemp(path.join(os.tmpdir(), "airis-advisor-agentdir-"));
 	});
 
 	afterEach(async () => {
@@ -194,7 +194,7 @@ describe("getOrCreateAdvisorProviderSessionId", () => {
 describe("WATCHDOG.yml file round-trip", () => {
 	let tmp: string;
 	beforeEach(async () => {
-		tmp = await fsp.mkdtemp(path.join(os.tmpdir(), "omp-advisor-file-"));
+		tmp = await fsp.mkdtemp(path.join(os.tmpdir(), "airis-advisor-file-"));
 	});
 	afterEach(async () => {
 		await fsp.rm(tmp, { recursive: true, force: true });
@@ -274,11 +274,11 @@ describe("WATCHDOG.yml file round-trip", () => {
 	});
 
 	it("resolves project and user scope paths", () => {
-		expect(advisorConfigFilePath("project", { projectDir: "/repo", agentDir: "/home/.omp" })).toBe(
+		expect(advisorConfigFilePath("project", { projectDir: "/repo", agentDir: "/home/.airis" })).toBe(
 			path.join("/repo", "WATCHDOG.yml"),
 		);
-		expect(advisorConfigFilePath("user", { projectDir: "/repo", agentDir: "/home/.omp" })).toBe(
-			path.join("/home/.omp", "WATCHDOG.yml"),
+		expect(advisorConfigFilePath("user", { projectDir: "/repo", agentDir: "/home/.airis" })).toBe(
+			path.join("/home/.airis", "WATCHDOG.yml"),
 		);
 	});
 });
@@ -286,7 +286,7 @@ describe("WATCHDOG.yml file round-trip", () => {
 describe("resolveAdvisorConfigEditPath", () => {
 	let tmp: string;
 	beforeEach(async () => {
-		tmp = await fsp.mkdtemp(path.join(os.tmpdir(), "omp-advisor-resolve-"));
+		tmp = await fsp.mkdtemp(path.join(os.tmpdir(), "airis-advisor-resolve-"));
 	});
 	afterEach(async () => {
 		await fsp.rm(tmp, { recursive: true, force: true });
@@ -312,7 +312,7 @@ describe("resolveAdvisorConfigEditPath", () => {
 
 describe("per-advisor enabled field", () => {
 	it("preserves explicit true, explicit false, and absence through save and discovery", async () => {
-		const tmp = await fsp.mkdtemp(path.join(os.tmpdir(), "omp-advisor-enabled-"));
+		const tmp = await fsp.mkdtemp(path.join(os.tmpdir(), "airis-advisor-enabled-"));
 		try {
 			const doc: WatchdogConfigDoc = {
 				advisors: [

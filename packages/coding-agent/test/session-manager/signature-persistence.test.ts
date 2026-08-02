@@ -1,10 +1,10 @@
 import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import type { AssistantMessage, ImageContent } from "@oh-my-pi/pi-ai";
-import type { SessionMessageEntry } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { getBlobsDir, TempDir } from "@oh-my-pi/pi-utils";
+import type { AssistantMessage, ImageContent } from "@airis/airis-ai";
+import type { SessionMessageEntry } from "@airis/airis-coding-agent/session/session-entries";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import { getBlobsDir, TempDir } from "@airis/airis-utils";
 
 function isAssistantSessionEntry(entry: unknown): entry is SessionMessageEntry & { message: AssistantMessage } {
 	return (
@@ -28,7 +28,7 @@ function getAssistantMessage(session: SessionManager): AssistantMessage {
 
 describe("SessionManager signature persistence", () => {
 	it("externalizes provider image data URLs and restores preserved history payloads across reload", async () => {
-		using tempDir = TempDir.createSync("@pi-session-provider-image-persistence-");
+		using tempDir = TempDir.createSync("@airs-session-provider-image-persistence-");
 		const session = SessionManager.create(tempDir.path(), tempDir.path());
 		const largeImageUrl = `data:image/png;base64,${"a".repeat(600_000)}`;
 
@@ -99,7 +99,7 @@ describe("SessionManager signature persistence", () => {
 	});
 
 	it("externalizes and restores tool result image blocks across reload", async () => {
-		using tempDir = TempDir.createSync("@pi-session-tool-image-persistence-");
+		using tempDir = TempDir.createSync("@airs-session-tool-image-persistence-");
 		const session = SessionManager.create(tempDir.path(), tempDir.path());
 		const contentImage: ImageContent = {
 			type: "image",
@@ -164,7 +164,7 @@ describe("SessionManager signature persistence", () => {
 	});
 
 	it("rehydrates assistant replay metadata in memory without rewriting the session file", async () => {
-		using tempDir = TempDir.createSync("@pi-session-rehydrate-persistence-");
+		using tempDir = TempDir.createSync("@airs-session-rehydrate-persistence-");
 		const session = SessionManager.create(tempDir.path(), tempDir.path());
 		const providerPayload = {
 			type: "openaiResponsesHistory" as const,
@@ -227,7 +227,7 @@ describe("SessionManager signature persistence", () => {
 	}, 15_000);
 
 	it("drops a reasoning signature duplicated by the provider payload and keeps the payload on reload", async () => {
-		using tempDir = TempDir.createSync("@pi-session-reasoning-dedup-e2e-");
+		using tempDir = TempDir.createSync("@airs-session-reasoning-dedup-e2e-");
 		const session = SessionManager.create(tempDir.path(), tempDir.path());
 		// >MAX_PERSIST_CHARS: regresses persistence truncating providerPayload reasoning items.
 		const encrypted = `ENCRYPTED_REASONING_BLOB_UNIQUE_TOKEN_${"E".repeat(600_000)}`;
@@ -279,7 +279,7 @@ describe("SessionManager signature persistence", () => {
 	}, 15_000);
 
 	it("preserves oversized Anthropic web-search results byte-for-byte across reload", async () => {
-		using tempDir = TempDir.createSync("@pi-session-anthropic-server-tool-persistence-");
+		using tempDir = TempDir.createSync("@airs-session-anthropic-server-tool-persistence-");
 		const session = SessionManager.create(tempDir.path(), tempDir.path());
 		const encryptedContent = `ENCRYPTED_WEB_SEARCH_RESULT_${"W".repeat(600_000)}`;
 		const serverToolContent: AssistantMessage["content"] = [

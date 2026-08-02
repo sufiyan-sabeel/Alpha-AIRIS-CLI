@@ -1,6 +1,6 @@
 import { describe, expect, it, spyOn } from "bun:test";
 import * as fs from "node:fs";
-import * as logger from "@oh-my-pi/pi-utils/logger";
+import * as logger from "@airis/airis-utils/logger";
 
 /** Run `fn` with PI_DEBUG_STARTUP set, capturing `[startup]` stderr markers. */
 function withMarkerCapture<T>(fn: () => T): { result: T; markers: string[] } {
@@ -28,7 +28,7 @@ describe("PI_DEBUG_STARTUP streaming markers", () => {
 	// Contract: with PI_DEBUG_STARTUP set, every logger.time phase leaves a
 	// synchronous `:start` marker before running — so a phase that hangs the
 	// process forever is still identified by the last marker on stderr. This
-	// must work without startTiming() (markers are independent of PI_TIMING).
+	// must work without startTiming() (markers are independent of AIRIS_TIMING).
 	it("brackets a phase with start/done markers", () => {
 		const { result, markers } = withMarkerCapture(() => logger.time("phase:test", () => 42));
 		expect(result).toBe(42);

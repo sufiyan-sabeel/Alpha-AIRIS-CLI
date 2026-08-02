@@ -67,6 +67,290 @@ dependencies = [
 ]
 
 [[package]]
+name = "airis-ast"
+version = "17.2.1"
+dependencies = [
+ "anyhow",
+ "ast-grep-core",
+ "globset",
+ "ignore",
+ "phf 0.13.1",
+ "serde",
+ "tree-sitter",
+ "tree-sitter-astro-next",
+ "tree-sitter-bash",
+ "tree-sitter-c",
+ "tree-sitter-c-sharp",
+ "tree-sitter-clojure",
+ "tree-sitter-cmake",
+ "tree-sitter-cpp",
+ "tree-sitter-css",
+ "tree-sitter-dart",
+ "tree-sitter-diff",
+ "tree-sitter-dockerfile-updated",
+ "tree-sitter-elisp",
+ "tree-sitter-elixir",
+ "tree-sitter-erlang",
+ "tree-sitter-fortran",
+ "tree-sitter-go",
+ "tree-sitter-graphql",
+ "tree-sitter-haskell",
+ "tree-sitter-hcl",
+ "tree-sitter-html",
+ "tree-sitter-ini",
+ "tree-sitter-java",
+ "tree-sitter-javascript",
+ "tree-sitter-json",
+ "tree-sitter-julia",
+ "tree-sitter-just",
+ "tree-sitter-kotlin-sg",
+ "tree-sitter-lua",
+ "tree-sitter-make",
+ "tree-sitter-md",
+ "tree-sitter-nix",
+ "tree-sitter-objc",
+ "tree-sitter-ocaml",
+ "tree-sitter-odin",
+ "tree-sitter-php",
+ "tree-sitter-powershell",
+ "tree-sitter-proto",
+ "tree-sitter-python",
+ "tree-sitter-r",
+ "tree-sitter-regex",
+ "tree-sitter-ruby",
+ "tree-sitter-rust",
+ "tree-sitter-scala",
+ "tree-sitter-sequel",
+ "tree-sitter-solidity",
+ "tree-sitter-starlark",
+ "tree-sitter-svelte-next",
+ "tree-sitter-swift",
+ "tree-sitter-tlaplus",
+ "tree-sitter-toml-ng",
+ "tree-sitter-typescript",
+ "tree-sitter-verilog",
+ "tree-sitter-vue-next",
+ "tree-sitter-xml",
+ "tree-sitter-yaml",
+ "tree-sitter-zig",
+]
+
+[[package]]
+name = "airis-iso"
+version = "17.2.1"
+dependencies = [
+ "async-trait",
+ "libc",
+ "parking_lot",
+ "similar 3.1.1",
+ "tokio",
+ "windows-sys 0.61.2",
+]
+
+[[package]]
+name = "airis-natives"
+version = "17.2.1"
+dependencies = [
+ "airis-ast",
+ "airis-iso",
+ "airis-shell",
+ "airis-uutils-ctx",
+ "airis-voice",
+ "airis-walker",
+ "anyhow",
+ "arboard",
+ "ast-grep-core",
+ "base64",
+ "clap",
+ "clipboard-win",
+ "core-graphics",
+ "enigo",
+ "flume",
+ "fontdue",
+ "globset",
+ "grep-matcher",
+ "grep-pcre2",
+ "grep-regex",
+ "grep-searcher",
+ "html-to-markdown-rs",
+ "icy_sixel",
+ "ignore",
+ "image",
+ "inferno",
+ "libc",
+ "napi",
+ "napi-build",
+ "napi-derive",
+ "parking_lot",
+ "phf 0.13.1",
+ "png",
+ "portable-pty",
+ "rayon",
+ "regex",
+ "serde",
+ "serde_json",
+ "smallvec",
+ "syntect",
+ "tempfile",
+ "tiktoken-rs",
+ "tokio",
+ "tokio-util",
+ "toml",
+ "unicode-segmentation",
+ "unicode-width 0.2.2",
+ "windows-sys 0.61.2",
+ "winreg 0.56.0",
+ "x11rb",
+ "xcap",
+ "xkeysym",
+ "xxhash-rust",
+]
+
+[[package]]
+name = "airis-shell"
+version = "17.2.1"
+dependencies = [
+ "airis-uutils-ctx",
+ "airis-walker",
+ "airis_uu_diff",
+ "airis_uu_grep",
+ "anyhow",
+ "brush-builtins",
+ "brush-core",
+ "brush-parser 0.3.0",
+ "bytes",
+ "clap",
+ "flume",
+ "globset",
+ "ignore",
+ "jaq",
+ "jiff",
+ "libc",
+ "memchr",
+ "os_pipe",
+ "parking_lot",
+ "regex",
+ "serde",
+ "serde_json",
+ "smallvec",
+ "tempfile",
+ "tokio",
+ "tokio-util",
+ "toml",
+ "uu_b2sum",
+ "uu_base64",
+ "uu_basename",
+ "uu_cat",
+ "uu_comm",
+ "uu_cut",
+ "uu_date",
+ "uu_dirname",
+ "uu_find",
+ "uu_head",
+ "uu_hostname",
+ "uu_ln",
+ "uu_ls",
+ "uu_md5sum",
+ "uu_mkdir",
+ "uu_mktemp",
+ "uu_mv",
+ "uu_nproc",
+ "uu_paste",
+ "uu_printenv",
+ "uu_readlink",
+ "uu_realpath",
+ "uu_rm",
+ "uu_sed",
+ "uu_seq",
+ "uu_sha1sum",
+ "uu_sha224sum",
+ "uu_sha256sum",
+ "uu_sha384sum",
+ "uu_sha512sum",
+ "uu_sort",
+ "uu_stat",
+ "uu_tac",
+ "uu_tail",
+ "uu_tee",
+ "uu_touch",
+ "uu_tr",
+ "uu_truncate",
+ "uu_uname",
+ "uu_uniq",
+ "uu_wc",
+ "uu_whoami",
+ "uu_xargs",
+ "uu_yes",
+ "windows-sys 0.61.2",
+ "winreg 0.56.0",
+ "xxhash-rust",
+]
+
+[[package]]
+name = "airis-uutils-ctx"
+version = "0.1.0"
+dependencies = [
+ "libc",
+]
+
+[[package]]
+name = "airis-voice"
+version = "17.2.1"
+dependencies = [
+ "audiopus_sys",
+ "bytes",
+ "flume",
+ "maudio",
+ "opus",
+ "parking_lot",
+ "tokio",
+ "webrtc",
+]
+
+[[package]]
+name = "airis-walker"
+version = "17.2.1"
+dependencies = [
+ "dashmap",
+ "globset",
+ "ignore",
+ "libc",
+ "parking_lot",
+ "rayon",
+ "windows-sys 0.61.2",
+]
+
+[[package]]
+name = "airis_uu_diff"
+version = "0.8.0"
+dependencies = [
+ "airis-uutils-ctx",
+ "clap",
+ "parking_lot",
+ "similar 3.1.1",
+ "tempfile",
+]
+
+[[package]]
+name = "airis_uu_grep"
+version = "0.8.0"
+dependencies = [
+ "airis-uutils-ctx",
+ "airis-walker",
+ "clap",
+ "globset",
+ "grep-cli",
+ "grep-matcher",
+ "grep-pcre2",
+ "grep-printer",
+ "grep-regex",
+ "grep-searcher",
+ "ignore",
+ "parking_lot",
+ "serde_json",
+]
+
+[[package]]
 name = "allocator-api2"
 version = "0.2.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3295,6 +3579,7 @@ checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
 name = "jaq"
 version = "2.3.0"
 dependencies = [
+ "airis-uutils-ctx",
  "codesnake",
  "hifijson",
  "jaq-core",
@@ -3302,7 +3587,6 @@ dependencies = [
  "jaq-std",
  "memmap2",
  "parking_lot",
- "pi-uutils-ctx",
  "tempfile",
  "unicode-width 0.1.14",
  "yansi",
@@ -4728,290 +5012,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e57fef6bc5981e38c2ce2d63bfa546861309f875b8a75f092d1d54ae2d64f266"
 dependencies = [
  "siphasher",
-]
-
-[[package]]
-name = "pi-ast"
-version = "17.2.1"
-dependencies = [
- "anyhow",
- "ast-grep-core",
- "globset",
- "ignore",
- "phf 0.13.1",
- "serde",
- "tree-sitter",
- "tree-sitter-astro-next",
- "tree-sitter-bash",
- "tree-sitter-c",
- "tree-sitter-c-sharp",
- "tree-sitter-clojure",
- "tree-sitter-cmake",
- "tree-sitter-cpp",
- "tree-sitter-css",
- "tree-sitter-dart",
- "tree-sitter-diff",
- "tree-sitter-dockerfile-updated",
- "tree-sitter-elisp",
- "tree-sitter-elixir",
- "tree-sitter-erlang",
- "tree-sitter-fortran",
- "tree-sitter-go",
- "tree-sitter-graphql",
- "tree-sitter-haskell",
- "tree-sitter-hcl",
- "tree-sitter-html",
- "tree-sitter-ini",
- "tree-sitter-java",
- "tree-sitter-javascript",
- "tree-sitter-json",
- "tree-sitter-julia",
- "tree-sitter-just",
- "tree-sitter-kotlin-sg",
- "tree-sitter-lua",
- "tree-sitter-make",
- "tree-sitter-md",
- "tree-sitter-nix",
- "tree-sitter-objc",
- "tree-sitter-ocaml",
- "tree-sitter-odin",
- "tree-sitter-php",
- "tree-sitter-powershell",
- "tree-sitter-proto",
- "tree-sitter-python",
- "tree-sitter-r",
- "tree-sitter-regex",
- "tree-sitter-ruby",
- "tree-sitter-rust",
- "tree-sitter-scala",
- "tree-sitter-sequel",
- "tree-sitter-solidity",
- "tree-sitter-starlark",
- "tree-sitter-svelte-next",
- "tree-sitter-swift",
- "tree-sitter-tlaplus",
- "tree-sitter-toml-ng",
- "tree-sitter-typescript",
- "tree-sitter-verilog",
- "tree-sitter-vue-next",
- "tree-sitter-xml",
- "tree-sitter-yaml",
- "tree-sitter-zig",
-]
-
-[[package]]
-name = "pi-iso"
-version = "17.2.1"
-dependencies = [
- "async-trait",
- "libc",
- "parking_lot",
- "similar 3.1.1",
- "tokio",
- "windows-sys 0.61.2",
-]
-
-[[package]]
-name = "pi-natives"
-version = "17.2.1"
-dependencies = [
- "anyhow",
- "arboard",
- "ast-grep-core",
- "base64",
- "clap",
- "clipboard-win",
- "core-graphics",
- "enigo",
- "flume",
- "fontdue",
- "globset",
- "grep-matcher",
- "grep-pcre2",
- "grep-regex",
- "grep-searcher",
- "html-to-markdown-rs",
- "icy_sixel",
- "ignore",
- "image",
- "inferno",
- "libc",
- "napi",
- "napi-build",
- "napi-derive",
- "parking_lot",
- "phf 0.13.1",
- "pi-ast",
- "pi-iso",
- "pi-shell",
- "pi-uutils-ctx",
- "pi-voice",
- "pi-walker",
- "png",
- "portable-pty",
- "rayon",
- "regex",
- "serde",
- "serde_json",
- "smallvec",
- "syntect",
- "tempfile",
- "tiktoken-rs",
- "tokio",
- "tokio-util",
- "toml",
- "unicode-segmentation",
- "unicode-width 0.2.2",
- "windows-sys 0.61.2",
- "winreg 0.56.0",
- "x11rb",
- "xcap",
- "xkeysym",
- "xxhash-rust",
-]
-
-[[package]]
-name = "pi-shell"
-version = "17.2.1"
-dependencies = [
- "anyhow",
- "brush-builtins",
- "brush-core",
- "brush-parser 0.3.0",
- "bytes",
- "clap",
- "flume",
- "globset",
- "ignore",
- "jaq",
- "jiff",
- "libc",
- "memchr",
- "os_pipe",
- "parking_lot",
- "pi-uutils-ctx",
- "pi-walker",
- "pi_uu_diff",
- "pi_uu_grep",
- "regex",
- "serde",
- "serde_json",
- "smallvec",
- "tempfile",
- "tokio",
- "tokio-util",
- "toml",
- "uu_b2sum",
- "uu_base64",
- "uu_basename",
- "uu_cat",
- "uu_comm",
- "uu_cut",
- "uu_date",
- "uu_dirname",
- "uu_find",
- "uu_head",
- "uu_hostname",
- "uu_ln",
- "uu_ls",
- "uu_md5sum",
- "uu_mkdir",
- "uu_mktemp",
- "uu_mv",
- "uu_nproc",
- "uu_paste",
- "uu_printenv",
- "uu_readlink",
- "uu_realpath",
- "uu_rm",
- "uu_sed",
- "uu_seq",
- "uu_sha1sum",
- "uu_sha224sum",
- "uu_sha256sum",
- "uu_sha384sum",
- "uu_sha512sum",
- "uu_sort",
- "uu_stat",
- "uu_tac",
- "uu_tail",
- "uu_tee",
- "uu_touch",
- "uu_tr",
- "uu_truncate",
- "uu_uname",
- "uu_uniq",
- "uu_wc",
- "uu_whoami",
- "uu_xargs",
- "uu_yes",
- "windows-sys 0.61.2",
- "winreg 0.56.0",
- "xxhash-rust",
-]
-
-[[package]]
-name = "pi-uutils-ctx"
-version = "0.1.0"
-dependencies = [
- "libc",
-]
-
-[[package]]
-name = "pi-voice"
-version = "17.2.1"
-dependencies = [
- "audiopus_sys",
- "bytes",
- "flume",
- "maudio",
- "opus",
- "parking_lot",
- "tokio",
- "webrtc",
-]
-
-[[package]]
-name = "pi-walker"
-version = "17.2.1"
-dependencies = [
- "dashmap",
- "globset",
- "ignore",
- "libc",
- "parking_lot",
- "rayon",
- "windows-sys 0.61.2",
-]
-
-[[package]]
-name = "pi_uu_diff"
-version = "0.8.0"
-dependencies = [
- "clap",
- "parking_lot",
- "pi-uutils-ctx",
- "similar 3.1.1",
- "tempfile",
-]
-
-[[package]]
-name = "pi_uu_grep"
-version = "0.8.0"
-dependencies = [
- "clap",
- "globset",
- "grep-cli",
- "grep-matcher",
- "grep-pcre2",
- "grep-printer",
- "grep-regex",
- "grep-searcher",
- "ignore",
- "parking_lot",
- "pi-uutils-ctx",
- "pi-walker",
- "serde_json",
 ]
 
 [[package]]
@@ -7418,8 +7418,8 @@ checksum = "06abde3611657adf66d383f00b093d7faecc7fa57071cce2578660c9f1010821"
 name = "uu_b2sum"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "clap",
- "pi-uutils-ctx",
  "uu_checksum_common",
  "uucore 0.8.0",
 ]
@@ -7428,8 +7428,8 @@ dependencies = [
 name = "uu_base32"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "clap",
- "pi-uutils-ctx",
  "uucore 0.8.0",
 ]
 
@@ -7437,9 +7437,9 @@ dependencies = [
 name = "uu_base64"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "clap",
  "parking_lot",
- "pi-uutils-ctx",
  "tempfile",
  "uu_base32",
  "uucore 0.8.0",
@@ -7449,8 +7449,8 @@ dependencies = [
 name = "uu_basename"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "clap",
- "pi-uutils-ctx",
  "uucore 0.8.0",
 ]
 
@@ -7458,9 +7458,9 @@ dependencies = [
 name = "uu_cat"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "clap",
  "memchr",
- "pi-uutils-ctx",
  "thiserror 2.0.19",
  "uucore 0.8.0",
 ]
@@ -7469,11 +7469,11 @@ dependencies = [
 name = "uu_checksum_common"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "base64-simd",
  "clap",
  "hex",
  "os_display",
- "pi-uutils-ctx",
  "uucore 0.8.0",
 ]
 
@@ -7481,8 +7481,8 @@ dependencies = [
 name = "uu_comm"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "clap",
- "pi-uutils-ctx",
  "uucore 0.8.0",
 ]
 
@@ -7490,10 +7490,10 @@ dependencies = [
 name = "uu_cut"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "bstr",
  "clap",
  "memchr",
- "pi-uutils-ctx",
  "uucore 0.8.0",
 ]
 
@@ -7501,11 +7501,11 @@ dependencies = [
 name = "uu_date"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "clap",
  "jiff",
  "parking_lot",
  "parse_datetime",
- "pi-uutils-ctx",
  "regex",
  "rustix 1.1.4",
  "tempfile",
@@ -7516,9 +7516,9 @@ dependencies = [
 name = "uu_dirname"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "clap",
  "parking_lot",
- "pi-uutils-ctx",
  "uucore 0.8.0",
 ]
 
@@ -7526,6 +7526,8 @@ dependencies = [
 name = "uu_find"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
+ "airis-walker",
  "argmax",
  "chrono",
  "clap",
@@ -7534,8 +7536,6 @@ dependencies = [
  "nix 0.29.0",
  "onig",
  "parking_lot",
- "pi-uutils-ctx",
- "pi-walker",
  "regex",
  "tempfile",
  "uucore 0.0.30",
@@ -7545,9 +7545,9 @@ dependencies = [
 name = "uu_head"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "clap",
  "memchr",
- "pi-uutils-ctx",
  "thiserror 2.0.19",
  "uucore 0.8.0",
 ]
@@ -7556,11 +7556,11 @@ dependencies = [
 name = "uu_hostname"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "clap",
  "dns-lookup",
  "hostname",
  "parking_lot",
- "pi-uutils-ctx",
  "uucore 0.8.0",
  "windows-sys 0.61.2",
 ]
@@ -7569,9 +7569,9 @@ dependencies = [
 name = "uu_ln"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "clap",
  "parking_lot",
- "pi-uutils-ctx",
  "tempfile",
  "thiserror 2.0.19",
  "uucore 0.8.0",
@@ -7581,12 +7581,12 @@ dependencies = [
 name = "uu_ls"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "ansi-width",
  "clap",
  "glob",
  "hostname",
  "lscolors",
- "pi-uutils-ctx",
  "rustc-hash 2.1.3",
  "thiserror 2.0.19",
  "uucore 0.8.0",
@@ -7606,8 +7606,8 @@ dependencies = [
 name = "uu_mkdir"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "clap",
- "pi-uutils-ctx",
  "rustix 1.1.4",
  "uucore 0.8.0",
 ]
@@ -7616,9 +7616,9 @@ dependencies = [
 name = "uu_mktemp"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "clap",
  "parking_lot",
- "pi-uutils-ctx",
  "rand 0.10.2",
  "tempfile",
  "thiserror 2.0.19",
@@ -7629,11 +7629,11 @@ dependencies = [
 name = "uu_mv"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "clap",
  "fs_extra",
  "indicatif",
  "libc",
- "pi-uutils-ctx",
  "rustc-hash 2.1.3",
  "thiserror 2.0.19",
  "uucore 0.8.0",
@@ -7644,10 +7644,10 @@ dependencies = [
 name = "uu_nproc"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "clap",
  "libc",
  "parking_lot",
- "pi-uutils-ctx",
  "uucore 0.8.0",
 ]
 
@@ -7655,8 +7655,8 @@ dependencies = [
 name = "uu_paste"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "clap",
- "pi-uutils-ctx",
  "uucore 0.8.0",
 ]
 
@@ -7664,9 +7664,9 @@ dependencies = [
 name = "uu_printenv"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "clap",
  "parking_lot",
- "pi-uutils-ctx",
  "uucore 0.8.0",
 ]
 
@@ -7674,9 +7674,9 @@ dependencies = [
 name = "uu_readlink"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "clap",
  "parking_lot",
- "pi-uutils-ctx",
  "tempfile",
  "uucore 0.8.0",
 ]
@@ -7685,9 +7685,9 @@ dependencies = [
 name = "uu_realpath"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "clap",
  "parking_lot",
- "pi-uutils-ctx",
  "tempfile",
  "uucore 0.8.0",
 ]
@@ -7696,10 +7696,10 @@ dependencies = [
 name = "uu_rm"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "clap",
  "indicatif",
  "libc",
- "pi-uutils-ctx",
  "thiserror 2.0.19",
  "uucore 0.8.0",
  "windows-sys 0.61.2",
@@ -7709,12 +7709,12 @@ dependencies = [
 name = "uu_sed"
 version = "0.1.1"
 dependencies = [
+ "airis-uutils-ctx",
  "clap",
  "fancy-regex 0.18.0",
  "memchr",
  "memmap2",
  "parking_lot",
- "pi-uutils-ctx",
  "regex",
  "tempfile",
  "uucore 0.9.0",
@@ -7724,12 +7724,12 @@ dependencies = [
 name = "uu_seq"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "bigdecimal",
  "clap",
  "num-bigint",
  "num-traits",
  "parking_lot",
- "pi-uutils-ctx",
  "thiserror 2.0.19",
  "uucore 0.8.0",
 ]
@@ -7738,8 +7738,8 @@ dependencies = [
 name = "uu_sha1sum"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "clap",
- "pi-uutils-ctx",
  "uu_checksum_common",
  "uucore 0.8.0",
 ]
@@ -7748,8 +7748,8 @@ dependencies = [
 name = "uu_sha224sum"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "clap",
- "pi-uutils-ctx",
  "uu_checksum_common",
  "uucore 0.8.0",
 ]
@@ -7758,8 +7758,8 @@ dependencies = [
 name = "uu_sha256sum"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "clap",
- "pi-uutils-ctx",
  "uu_checksum_common",
  "uucore 0.8.0",
 ]
@@ -7768,8 +7768,8 @@ dependencies = [
 name = "uu_sha384sum"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "clap",
- "pi-uutils-ctx",
  "uu_checksum_common",
  "uucore 0.8.0",
 ]
@@ -7778,8 +7778,8 @@ dependencies = [
 name = "uu_sha512sum"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "clap",
- "pi-uutils-ctx",
  "uu_checksum_common",
  "uucore 0.8.0",
 ]
@@ -7788,6 +7788,7 @@ dependencies = [
 name = "uu_sort"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "bigdecimal",
  "binary-heap-plus",
  "clap",
@@ -7797,7 +7798,6 @@ dependencies = [
  "itertools 0.14.0",
  "memchr",
  "nix 0.31.3",
- "pi-uutils-ctx",
  "rand 0.10.2",
  "rayon",
  "self_cell",
@@ -7810,9 +7810,9 @@ dependencies = [
 name = "uu_stat"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "clap",
  "parking_lot",
- "pi-uutils-ctx",
  "tempfile",
  "thiserror 2.0.19",
  "uucore 0.8.0",
@@ -7823,11 +7823,11 @@ dependencies = [
 name = "uu_tac"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "clap",
  "memchr",
  "memmap2",
  "parking_lot",
- "pi-uutils-ctx",
  "regex",
  "tempfile",
  "thiserror 2.0.19",
@@ -7838,12 +7838,12 @@ dependencies = [
 name = "uu_tail"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "clap",
  "libc",
  "memchr",
  "notify",
  "parking_lot",
- "pi-uutils-ctx",
  "rstest",
  "rustix 1.1.4",
  "tempfile",
@@ -7856,8 +7856,8 @@ dependencies = [
 name = "uu_tee"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "clap",
- "pi-uutils-ctx",
  "uucore 0.8.0",
 ]
 
@@ -7865,13 +7865,13 @@ dependencies = [
 name = "uu_touch"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "clap",
  "filetime",
  "jiff",
  "libc",
  "parking_lot",
  "parse_datetime",
- "pi-uutils-ctx",
  "rustix 1.1.4",
  "tempfile",
  "thiserror 2.0.19",
@@ -7883,10 +7883,10 @@ dependencies = [
 name = "uu_tr"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "bytecount",
  "clap",
  "nom 8.0.0",
- "pi-uutils-ctx",
  "uucore 0.8.0",
 ]
 
@@ -7894,9 +7894,9 @@ dependencies = [
 name = "uu_truncate"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "clap",
  "parking_lot",
- "pi-uutils-ctx",
  "tempfile",
  "uucore 0.8.0",
 ]
@@ -7905,9 +7905,9 @@ dependencies = [
 name = "uu_uname"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "clap",
  "parking_lot",
- "pi-uutils-ctx",
  "platform-info",
  "uucore 0.8.0",
 ]
@@ -7916,8 +7916,8 @@ dependencies = [
 name = "uu_uniq"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "clap",
- "pi-uutils-ctx",
  "uucore 0.8.0",
 ]
 
@@ -7925,10 +7925,10 @@ dependencies = [
 name = "uu_wc"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "bytecount",
  "clap",
  "libc",
- "pi-uutils-ctx",
  "rustix 1.1.4",
  "thiserror 2.0.19",
  "unicode-width 0.2.2",
@@ -7939,9 +7939,9 @@ dependencies = [
 name = "uu_whoami"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "clap",
  "parking_lot",
- "pi-uutils-ctx",
  "uucore 0.8.0",
  "windows-sys 0.61.2",
 ]
@@ -7950,10 +7950,10 @@ dependencies = [
 name = "uu_xargs"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "clap",
  "libc",
  "parking_lot",
- "pi-uutils-ctx",
  "tempfile",
 ]
 
@@ -7961,10 +7961,10 @@ dependencies = [
 name = "uu_yes"
 version = "0.8.0"
 dependencies = [
+ "airis-uutils-ctx",
  "clap",
  "itertools 0.14.0",
  "parking_lot",
- "pi-uutils-ctx",
  "uucore 0.8.0",
 ]
 

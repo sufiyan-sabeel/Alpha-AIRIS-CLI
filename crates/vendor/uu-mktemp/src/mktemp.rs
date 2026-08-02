@@ -5,12 +5,12 @@
 
 // spell-checker:ignore (paths) GPGHome findxs
 
-// pi-uutils: vendored from uutils/coreutils 0.8.0 and patched to run in-process
+// airis-uutils: vendored from uutils/coreutils 0.8.0 and patched to run in-process
 // as a shell builtin. The temp-file parent directory (from `-p`/`--tmpdir` or a
 // relative TEMPLATE prefix) is resolved against the shell working directory via
-// `pi_uutils_ctx::resolve` at the creation sites, so the printed path is the
+// `airis_uutils_ctx::resolve` at the creation sites, so the printed path is the
 // path actually created. TMPDIR/POSIXLY_CORRECT are read from the scope
-// environment, all stdio goes through `pi_uutils_ctx`, `translate!` strings are
+// environment, all stdio goes through `airis_uutils_ctx`, `translate!` strings are
 // literalized, and the entry point no longer calls `std::process::exit`.
 
 #[cfg(unix)]
@@ -29,7 +29,7 @@ use clap::{
 	Arg, ArgAction, ArgMatches, Command,
 	builder::{TypedValueParser, ValueParserFactory},
 };
-use pi_uutils_ctx::format_usage;
+use airis_uutils_ctx::format_usage;
 use rand::{
 	RngExt as _, SeedableRng as _,
 	rngs::{self, SmallRng},
@@ -60,7 +60,7 @@ const TMPDIR_ENV_VAR: &str = "TMP";
 
 const FALLBACK_TMPDIR: &str = "/tmp";
 
-// pi-uutils: `translate!` error strings literalized from locales/en-US.ftl.
+// airis-uutils: `translate!` error strings literalized from locales/en-US.ftl.
 #[derive(Error, Debug)]
 enum MkTempError {
 	#[error("could not persist file {}", .0.quote())]
@@ -146,9 +146,9 @@ impl Options {
 				(tmpdir, OsString::from(template))
 			},
 			Some(template) => {
-				// pi-uutils: TMPDIR comes from the scope environment, not the
+				// airis-uutils: TMPDIR comes from the scope environment, not the
 				// host process environment.
-				let tmpdir = if let Some(tmpdir) = pi_uutils_ctx::var(TMPDIR_ENV_VAR)
+				let tmpdir = if let Some(tmpdir) = airis_uutils_ctx::var(TMPDIR_ENV_VAR)
 					&& matches.get_flag(OPT_T)
 				{
 					Some(PathBuf::from(tmpdir))
@@ -258,7 +258,7 @@ impl Params {
 		// For example, if the template is "abcXXXXyz", then `i` is 3 and `j` is 7.
 		let (i, j) = match find_last_contiguous_block_of_xs(&template_str) {
 			Some(indices) => indices,
-			// pi-uutils: BSD `mktemp -t PREFIX` treats PREFIX as a name prefix,
+			// airis-uutils: BSD `mktemp -t PREFIX` treats PREFIX as a name prefix,
 			// unlike GNU `-t`, which requires Xs and would otherwise fail here.
 			None if options.treat_as_template => {
 				template_str.push('.');
@@ -392,35 +392,35 @@ pub fn run(argv: Vec<OsString>) -> i32 {
 	let matches = match uu_app().try_get_matches_from(&argv) {
 		Ok(matches) => matches,
 		Err(err) => {
-			// pi-uutils: upstream maps a too-many-values clap error on the
+			// airis-uutils: upstream maps a too-many-values clap error on the
 			// TEMPLATE argument to the GNU "too many templates" usage error.
 			if err.kind() == clap::error::ErrorKind::TooManyValues
 				&& err.context().any(|(kind, val)| {
 					kind == clap::error::ContextKind::InvalidArg
 						&& val == &clap::error::ContextValue::String("[template]".into())
 				}) {
-				let _ = writeln!(pi_uutils_ctx::stderr(), "mktemp: too many templates");
+				let _ = writeln!(airis_uutils_ctx::stderr(), "mktemp: too many templates");
 				return 1;
 			}
 			let rendered = err.to_string();
 			if err.use_stderr() {
-				let _ = write!(pi_uutils_ctx::stderr(), "{rendered}");
+				let _ = write!(airis_uutils_ctx::stderr(), "{rendered}");
 				return 1;
 			}
-			let _ = write!(pi_uutils_ctx::stdout(), "{rendered}");
+			let _ = write!(airis_uutils_ctx::stdout(), "{rendered}");
 			return 0;
 		},
 	};
 	match mktemp_main(&argv, &matches) {
-		Ok(()) => pi_uutils_ctx::exit_code(),
+		Ok(()) => airis_uutils_ctx::exit_code(),
 		Err(err) => {
 			let code = err.code();
-			// pi-uutils: --quiet failures surface as bare exit-code errors
+			// airis-uutils: --quiet failures surface as bare exit-code errors
 			// that render to an empty message; don't emit a dangling
 			// "mktemp: " prefix.
 			let msg = err.to_string();
 			if !msg.is_empty() {
-				let _ = writeln!(pi_uutils_ctx::stderr(), "mktemp: {msg}");
+				let _ = writeln!(airis_uutils_ctx::stderr(), "mktemp: {msg}");
 			}
 			if code == 0 { 1 } else { code }
 		},
@@ -432,8 +432,8 @@ fn mktemp_main(args: &[OsString], matches: &ArgMatches) -> UResult<()> {
 	// application logic.
 	let options = Options::from(matches);
 
-	// pi-uutils: POSIXLY_CORRECT comes from the scope environment.
-	if pi_uutils_ctx::var("POSIXLY_CORRECT").is_some() {
+	// airis-uutils: POSIXLY_CORRECT comes from the scope environment.
+	if airis_uutils_ctx::var("POSIXLY_CORRECT").is_some() {
 		// If POSIXLY_CORRECT was set, template MUST be the last argument.
 		if matches.contains_id(ARG_TEMPLATE) {
 			// Template argument was provided, check if was the last one.
@@ -464,12 +464,12 @@ fn mktemp_main(args: &[OsString], matches: &ArgMatches) -> UResult<()> {
 		res
 	};
 
-	// pi-uutils: replacement for upstream's `println_verbatim` — writes the
+	// airis-uutils: replacement for upstream's `println_verbatim` — writes the
 	// created path's bytes verbatim to the context stdout instead of the
 	// process stdout.
 	let path = res?;
 	let print = || -> std::io::Result<()> {
-		let mut out = pi_uutils_ctx::stdout();
+		let mut out = airis_uutils_ctx::stdout();
 		out.write_all(uucore::os_str_as_bytes(path.as_os_str()).map_err(std::io::Error::other)?)?;
 		out.write_all(b"\n")?;
 		out.flush()
@@ -560,9 +560,9 @@ pub fn uu_app() -> Command {
 }
 
 fn dry_exec(tmpdir: &Path, prefix: &str, rand: usize, suffix: &str) -> PathBuf {
-	// pi-uutils: resolve the parent directory against the shell working
+	// airis-uutils: resolve the parent directory against the shell working
 	// directory so the printed candidate matches where creation would occur.
-	let tmpdir = pi_uutils_ctx::resolve(tmpdir);
+	let tmpdir = airis_uutils_ctx::resolve(tmpdir);
 	let len = prefix.len() + suffix.len() + rand;
 	let mut buf = Vec::with_capacity(len);
 	buf.extend(prefix.as_bytes());
@@ -657,10 +657,10 @@ fn make_temp_file(dir: &Path, prefix: &str, rand: usize, suffix: &str) -> UResul
 }
 
 fn exec(dir: &Path, prefix: &str, rand: usize, suffix: &str, make_dir: bool) -> UResult<PathBuf> {
-	// pi-uutils: resolve the parent directory against the shell working
+	// airis-uutils: resolve the parent directory against the shell working
 	// directory at the creation site; the resolved form is also what gets
 	// printed, so the printed path is the path actually created.
-	let dir = pi_uutils_ctx::resolve(dir);
+	let dir = airis_uutils_ctx::resolve(dir);
 	let path = if make_dir {
 		make_temp_dir(&dir, prefix, rand, suffix)?
 	} else {
@@ -673,7 +673,7 @@ fn exec(dir: &Path, prefix: &str, rand: usize, suffix: &str, make_dir: bool) -> 
 	let filename = filename.unwrap().to_str().unwrap();
 
 	// Join the directory to the path to get the path to print.
-	// pi-uutils: unlike upstream (which re-joins the operand as typed), join
+	// airis-uutils: unlike upstream (which re-joins the operand as typed), join
 	// the resolved directory so the printed path names the created entry even
 	// when the shell cwd differs from the process cwd.
 	let path = dir.join(filename);
@@ -684,9 +684,9 @@ fn exec(dir: &Path, prefix: &str, rand: usize, suffix: &str, make_dir: bool) -> 
 /// Reads from `TMPDIR_ENV_VAR` but defaults to /tmp if value is set to empty
 /// string.
 fn get_tmpdir_env_or_default() -> PathBuf {
-	// pi-uutils: read TMPDIR from the scope environment; when it is unset
+	// airis-uutils: read TMPDIR from the scope environment; when it is unset
 	// there, fall back to the host default temp dir as upstream does.
-	match pi_uutils_ctx::var(TMPDIR_ENV_VAR) {
+	match airis_uutils_ctx::var(TMPDIR_ENV_VAR) {
 		Some(val) if val.is_empty() => PathBuf::from(FALLBACK_TMPDIR),
 		Some(val) => PathBuf::from(val),
 		None => env::temp_dir(),
@@ -715,7 +715,7 @@ mod tests {
 	use std::{collections::HashMap, io::Write, path::PathBuf, sync::Arc};
 
 	use parking_lot::Mutex;
-	use pi_uutils_ctx::ScopeIo;
+	use airis_uutils_ctx::ScopeIo;
 
 	use super::*;
 
@@ -753,7 +753,7 @@ mod tests {
 			.map(OsString::from)
 			.collect();
 
-		let code = pi_uutils_ctx::scope(io, || run(argv));
+		let code = airis_uutils_ctx::scope(io, || run(argv));
 
 		let out_str = String::from_utf8(stdout_buf.lock().clone()).unwrap();
 		let err_str = String::from_utf8(stderr_buf.lock().clone()).unwrap();
@@ -812,7 +812,7 @@ mod tests {
 		std::fs::create_dir(root.join("sub")).unwrap();
 
 		// Relative -p operand + scope cwd differing from the process cwd: only
-		// the creation-site `pi_uutils_ctx::resolve` patch makes this land in
+		// the creation-site `airis_uutils_ctx::resolve` patch makes this land in
 		// the scope cwd's subdir.
 		let (code, stdout, stderr) =
 			run_in(root.clone(), HashMap::new(), vec!["-p", "sub", "foo.XXXX"]);

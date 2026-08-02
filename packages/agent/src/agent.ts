@@ -21,12 +21,12 @@ import {
 	type ThinkingBudgets,
 	type ToolChoice,
 	type ToolResultMessage,
-} from "@oh-my-pi/pi-ai";
-import type { Dialect } from "@oh-my-pi/pi-ai/dialect";
-import type { HarmonyAuditEvent } from "@oh-my-pi/pi-ai/utils/harmony-leak";
-import { preferredDialect } from "@oh-my-pi/pi-catalog/identity";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { logger } from "@oh-my-pi/pi-utils";
+} from "@airis/airis-ai";
+import type { Dialect } from "@airis/airis-ai/dialect";
+import type { HarmonyAuditEvent } from "@airis/airis-ai/utils/harmony-leak";
+import { preferredDialect } from "@airis/airis-catalog/identity";
+import { getBundledModel } from "@airis/airis-catalog/models";
+import { logger } from "@airis/airis-utils";
 import {
 	abortReasonText,
 	agentLoop,
@@ -767,7 +767,7 @@ export class Agent {
 	): Promise<Context> {
 		const model = this.#state.model;
 		if (!model) throw new Error("No active model on agent");
-		const ownedDialect = this.#dialect ?? resolveOwnedDialectFromEnv(Bun.env.PI_DIALECT);
+		const ownedDialect = this.#dialect ?? resolveOwnedDialectFromEnv(Bun.env.AIRIS_DIALECT);
 		const messages = normalizeMessagesForProvider(llmMessages, model);
 		const tools = ownedDialect
 			? []

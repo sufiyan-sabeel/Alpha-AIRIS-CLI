@@ -2,18 +2,18 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { AuthStorage, type completeSimple, type ImageContent, type Model } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { getThemeByName } from "@oh-my-pi/pi-coding-agent/modes/theme/theme";
-import { createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { InspectImageTool } from "@oh-my-pi/pi-coding-agent/tools/inspect-image";
-import { inspectImageToolRenderer } from "@oh-my-pi/pi-coding-agent/tools/inspect-image-renderer";
-import { toolRenderers } from "@oh-my-pi/pi-coding-agent/tools/renderers";
-import { removeSyncWithRetries, sanitizeText } from "@oh-my-pi/pi-utils";
+import { AuthStorage, type completeSimple, type ImageContent, type Model } from "@airis/airis-ai";
+import { buildModel } from "@airis/airis-catalog/build";
+import { ModelRegistry } from "@airis/airis-coding-agent/config/model-registry";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import { getThemeByName } from "@airis/airis-coding-agent/modes/theme/theme";
+import { createAgentSession } from "@airis/airis-coding-agent/sdk";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import type { ToolSession } from "@airis/airis-coding-agent/tools";
+import { InspectImageTool } from "@airis/airis-coding-agent/tools/inspect-image";
+import { inspectImageToolRenderer } from "@airis/airis-coding-agent/tools/inspect-image-renderer";
+import { toolRenderers } from "@airis/airis-coding-agent/tools/renderers";
+import { removeSyncWithRetries, sanitizeText } from "@airis/airis-utils";
 import { type } from "arktype";
 
 const TINY_PNG_BASE64 =
@@ -158,7 +158,7 @@ describe("InspectImageTool", () => {
 	let testDir: string;
 
 	beforeEach(() => {
-		testDir = fs.mkdtempSync(path.join(os.tmpdir(), "omp-inspect-image-"));
+		testDir = fs.mkdtempSync(path.join(os.tmpdir(), "airis-inspect-image-"));
 	});
 
 	afterEach(() => {

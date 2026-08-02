@@ -7,14 +7,14 @@
 // strtime timelike utime DATETIME UTIME futimens spell-checker:ignore (FORMATS)
 // MMDDhhmm YYYYMMDDHHMM YYMMDDHHMM YYYYMMDDHHMMS
 
-// pi-uutils: vendored from uutils/coreutils 0.8.0 and patched to run in-process
+// airis-uutils: vendored from uutils/coreutils 0.8.0 and patched to run in-process
 // as a shell builtin. Every filesystem syscall resolves its path operand
-// against the shell working directory via `pi_uutils_ctx::resolve` AT THE CALL
+// against the shell working directory via `airis_uutils_ctx::resolve` AT THE CALL
 // SITE, while the original operands are kept for display/error messages (GNU
 // prints operands as typed). All process-global stdio is routed through
-// `pi_uutils_ctx`, `translate!` strings are literalized, `_POSIX2_VERSION` is
+// `airis_uutils_ctx`, `translate!` strings are literalized, `_POSIX2_VERSION` is
 // read from the scope environment, `show!` accumulation goes through
-// `pi_uutils_ctx::set_exit_code`, and the entry point no longer calls
+// `airis_uutils_ctx::set_exit_code`, and the entry point no longer calls
 // `std::process::exit`. Upstream's `src/error.rs` is inlined below as
 // `pub mod error`. jiff's `TimeZone::system()` (and thus `TZ`) intentionally
 // stays process-global.
@@ -40,7 +40,7 @@ use filetime::{FileTime, set_file_times, set_symlink_file_times};
 use jiff::{Timestamp, ToSpan, Zoned, civil::Time, fmt::strtime, tz::TimeZone};
 #[cfg(unix)]
 use libc::O_NONBLOCK;
-use pi_uutils_ctx::format_usage;
+use airis_uutils_ctx::format_usage;
 #[cfg(unix)]
 use rustix::fs::Timestamps;
 #[cfg(unix)]
@@ -55,7 +55,7 @@ use uucore::{
 
 use crate::error::TouchError;
 
-// pi-uutils: upstream `src/error.rs`, inlined so the vendored crate is a
+// airis-uutils: upstream `src/error.rs`, inlined so the vendored crate is a
 // single source file. `translate!` message templates are literalized with the
 // en-US strings.
 pub mod error {
@@ -236,10 +236,10 @@ fn is_first_filename_timestamp(
 		&& reference.is_none()
 		&& date.is_none()
 		&& files.len() >= 2
-		// pi-uutils: `_POSIX2_VERSION` comes from the scope environment (the
+		// airis-uutils: `_POSIX2_VERSION` comes from the scope environment (the
 		// shell's exported variables), not the host process environment.
 		// env check is last as the slowest op
-		&& pi_uutils_ctx::var("_POSIX2_VERSION").as_deref() == Some("199209")
+		&& airis_uutils_ctx::var("_POSIX2_VERSION").as_deref() == Some("199209")
 		&& files[0].to_str().is_some_and(is_timestamp)
 }
 
@@ -272,20 +272,20 @@ pub fn run(argv: Vec<OsString>) -> i32 {
 		Err(err) => {
 			let rendered = err.to_string();
 			if err.use_stderr() {
-				let _ = write!(pi_uutils_ctx::stderr(), "{rendered}");
+				let _ = write!(airis_uutils_ctx::stderr(), "{rendered}");
 				return 1;
 			}
-			let _ = write!(pi_uutils_ctx::stdout(), "{rendered}");
+			let _ = write!(airis_uutils_ctx::stdout(), "{rendered}");
 			return 0;
 		},
 	};
 	match touch_main(&matches) {
-		Ok(()) => pi_uutils_ctx::exit_code(),
+		Ok(()) => airis_uutils_ctx::exit_code(),
 		Err(err) => {
 			let code = err.code();
 			let msg = err.to_string();
 			if !msg.is_empty() {
-				let _ = writeln!(pi_uutils_ctx::stderr(), "touch: {msg}");
+				let _ = writeln!(airis_uutils_ctx::stderr(), "touch: {msg}");
 			}
 			if code == 0 { 1 } else { code }
 		},
@@ -296,7 +296,7 @@ fn touch_main(matches: &ArgMatches) -> UResult<()> {
 	let mut filenames: Vec<&OsString> = matches
 		.get_many::<OsString>(ARG_FILES)
 		.ok_or_else(|| {
-			// pi-uutils: literalized; `uucore::execution_phrase()` is "touch"
+			// airis-uutils: literalized; `uucore::execution_phrase()` is "touch"
 			// when running as a builtin.
 			USimpleError::new(1, "missing file operand\nTry 'touch --help' for more information.")
 		})?
@@ -480,10 +480,10 @@ pub fn uu_app() -> Command {
 pub fn touch(files: &[InputFile], opts: &Options) -> Result<(), TouchError> {
 	let (atime, mtime) = match &opts.source {
 		Source::Reference(reference) => {
-			// pi-uutils: resolve the reference operand against the shell
+			// airis-uutils: resolve the reference operand against the shell
 			// working directory at the syscall site; the original operand is
 			// kept for the error message.
-			let (atime, mtime) = stat(&pi_uutils_ctx::resolve(reference), !opts.no_deref)
+			let (atime, mtime) = stat(&airis_uutils_ctx::resolve(reference), !opts.no_deref)
 				.map_err(|e| TouchError::ReferenceFileInaccessible(reference.to_owned(), e))?;
 
 			(atime, mtime)
@@ -559,10 +559,10 @@ fn touch_file(
 		path.as_os_str()
 	};
 
-	// pi-uutils: resolve the operand against the shell working directory for
+	// airis-uutils: resolve the operand against the shell working directory for
 	// every syscall below; `path`/`filename` keep the operand as typed for
 	// error messages.
-	let resolved = pi_uutils_ctx::resolve(path);
+	let resolved = airis_uutils_ctx::resolve(path);
 
 	let metadata_result = if opts.no_deref {
 		resolved.symlink_metadata()
@@ -587,10 +587,10 @@ fn touch_file(
 			if opts.strict {
 				return Err(e);
 			}
-			// pi-uutils: upstream `show!` — print the error and accumulate the
+			// airis-uutils: upstream `show!` — print the error and accumulate the
 			// exit code in the scope instead of process-global state.
-			let _ = writeln!(pi_uutils_ctx::stderr(), "touch: {e}");
-			pi_uutils_ctx::set_exit_code(e.code());
+			let _ = writeln!(airis_uutils_ctx::stderr(), "touch: {e}");
+			airis_uutils_ctx::set_exit_code(e.code());
 			return Ok(());
 		}
 
@@ -615,9 +615,9 @@ fn touch_file(
 			if opts.strict {
 				return Err(e);
 			}
-			// pi-uutils: upstream `show!` — see above.
-			let _ = writeln!(pi_uutils_ctx::stderr(), "touch: {e}");
-			pi_uutils_ctx::set_exit_code(e.code());
+			// airis-uutils: upstream `show!` — see above.
+			let _ = writeln!(airis_uutils_ctx::stderr(), "touch: {e}");
+			airis_uutils_ctx::set_exit_code(e.code());
 			return Ok(());
 		}
 
@@ -672,10 +672,10 @@ fn update_times(
 	atime: FileTime,
 	mtime: FileTime,
 ) -> UResult<()> {
-	// pi-uutils: resolve the operand against the shell working directory for
+	// airis-uutils: resolve the operand against the shell working directory for
 	// every syscall below; `path` keeps the operand as typed for error
 	// messages.
-	let resolved = pi_uutils_ctx::resolve(path);
+	let resolved = airis_uutils_ctx::resolve(path);
 
 	// If changing "only" atime or mtime, grab the existing value of the other.
 	let (atime, mtime) = match opts.change_times {
@@ -807,7 +807,7 @@ fn parse_date(ref_zoned: Zoned, s: &str) -> Result<FileTime, TouchError> {
 
 	// "Equivalent to %Y-%m-%d (the ISO 8601 date format). (C99)"
 	// ("%F", ISO_8601_FORMAT),
-	// pi-uutils: `TimeZone::system()` (and the `TZ` variable it consults)
+	// airis-uutils: `TimeZone::system()` (and the `TZ` variable it consults)
 	// intentionally stays process-global; jiff reads it internally.
 	if let Ok(filetime) = strtime::parse(format::ISO_8601, s)
 		.and_then(|tm| tm.to_date())
@@ -860,7 +860,7 @@ fn prepend_century(s: &str) -> UResult<String> {
 fn parse_timestamp(s: &str) -> UResult<FileTime> {
 	use format::{YYYYMMDDHHMM, YYYYMMDDHHMM_DOT_SS};
 
-	// pi-uutils: `TimeZone::system()` intentionally stays process-global.
+	// airis-uutils: `TimeZone::system()` intentionally stays process-global.
 	let current_year = || Timestamp::now().to_zoned(TimeZone::system()).year();
 
 	let (format, ts) = match s.chars().count() {
@@ -946,7 +946,7 @@ fn pathbuf_from_stdout() -> Result<PathBuf, TouchError> {
 			)
 		};
 
-		// pi-uutils: literalized error strings; the variant's Display supplies
+		// airis-uutils: literalized error strings; the variant's Display supplies
 		// the "GetFinalPathNameByHandleW failed with code" prefix, so only the
 		// code payload is stored.
 		let buffer_size = match ret {
@@ -979,7 +979,7 @@ mod tests {
 	use std::{collections::HashMap, io::Write, path::PathBuf, sync::Arc};
 
 	use parking_lot::Mutex;
-	use pi_uutils_ctx::ScopeIo;
+	use airis_uutils_ctx::ScopeIo;
 
 	use super::*;
 
@@ -1017,7 +1017,7 @@ mod tests {
 			.map(OsString::from)
 			.collect();
 
-		let code = pi_uutils_ctx::scope(io, || run(argv));
+		let code = airis_uutils_ctx::scope(io, || run(argv));
 
 		let out_str = String::from_utf8(stdout_buf.lock().clone()).unwrap();
 		let err_str = String::from_utf8(stderr_buf.lock().clone()).unwrap();
@@ -1042,7 +1042,7 @@ mod tests {
 		let (_dir, root) = canonical_tempdir();
 
 		// Relative operand + scope cwd differing from the process cwd: only
-		// the call-site `pi_uutils_ctx::resolve` patch makes the file land in
+		// the call-site `airis_uutils_ctx::resolve` patch makes the file land in
 		// the scope cwd instead of the process cwd.
 		let (code, stdout, stderr) = run_in(root.clone(), vec!["created.txt"]);
 		assert_eq!(code, 0);

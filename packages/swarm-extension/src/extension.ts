@@ -6,23 +6,23 @@
  * - /swarm status             — Show current pipeline status
  *
  * Usage: Add this extension's directory to your extensions config,
- * then use /swarm in any oh-my-pi session.
+ * then use /swarm in any alpha-airis-cli session.
  */
 
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import type { ExtensionAPI, ExtensionCommandContext } from "@oh-my-pi/pi-coding-agent";
-import { formatDuration } from "@oh-my-pi/pi-utils";
+import type { ExtensionAPI, ExtensionCommandContext } from "@airis/airis-coding-agent";
+import { formatDuration } from "@airis/airis-utils";
 import { buildDependencyGraph, buildExecutionWaves, detectCycles } from "./swarm/dag";
 import { PipelineController } from "./swarm/pipeline";
 import { renderSwarmProgress } from "./swarm/render";
 import { parseSwarmYaml, type SwarmDefinition, validateSwarmDefinition } from "./swarm/schema";
 import { StateTracker } from "./swarm/state";
 
-export default function swarmExtension(pi: ExtensionAPI): void {
-	pi.setLabel("Swarm Orchestrator");
+export default function swarmExtension(airs: ExtensionAPI): void {
+	airs.setLabel("Swarm Orchestrator");
 
-	pi.registerCommand("swarm", {
+	airs.registerCommand("swarm", {
 		description: "Run a multi-agent swarm pipeline from YAML",
 		getArgumentCompletions: prefix => {
 			const subcommands = ["run", "status", "help"];
@@ -40,7 +40,7 @@ export default function swarmExtension(pi: ExtensionAPI): void {
 						ctx.ui.notify("Usage: /swarm run <path/to/pipeline.yaml>", "error");
 						return;
 					}
-					await handleRun(yamlPath, ctx, pi);
+					await handleRun(yamlPath, ctx, airs);
 					return;
 				}
 				case "status": {
@@ -68,7 +68,7 @@ export default function swarmExtension(pi: ExtensionAPI): void {
 // /swarm run
 // ============================================================================
 
-async function handleRun(yamlPath: string, ctx: ExtensionCommandContext, pi: ExtensionAPI): Promise<void> {
+async function handleRun(yamlPath: string, ctx: ExtensionCommandContext, airs: ExtensionAPI): Promise<void> {
 	// 1. Resolve and read YAML
 	const resolvedPath = path.isAbsolute(yamlPath) ? yamlPath : path.resolve(ctx.cwd, yamlPath);
 
@@ -120,7 +120,7 @@ async function handleRun(yamlPath: string, ctx: ExtensionCommandContext, pi: Ext
 	// 7. Log start
 	const agentList = [...def.agents.keys()].join(", ");
 	const waveDesc = waves.map((w, i) => `wave ${i + 1}: [${w.join(", ")}]`).join("; ");
-	pi.logger.debug("Swarm starting", {
+	airs.logger.debug("Swarm starting", {
 		name: def.name,
 		mode: def.mode,
 		agents: agentList,
@@ -148,7 +148,7 @@ async function handleRun(yamlPath: string, ctx: ExtensionCommandContext, pi: Ext
 		workspace,
 		onProgress: () => updateWidget(),
 		modelRegistry: ctx.modelRegistry,
-		settings: pi.pi.settings,
+		settings: airs.airs.settings,
 	});
 
 	// 10. Clear widget and show summary
@@ -173,12 +173,12 @@ async function handleRun(yamlPath: string, ctx: ExtensionCommandContext, pi: Ext
 
 	// Log errors
 	if (result.errors.length > 0) {
-		pi.logger.warn("Swarm completed with errors", { errors: result.errors });
+		airs.logger.warn("Swarm completed with errors", { errors: result.errors });
 	}
 
 	// 11. Send summary to the conversation so the LLM knows what happened
 	const summaryMessage = buildSummaryMessage(def, result, stateTracker, workspace);
-	pi.sendMessage(
+	airs.sendMessage(
 		{
 			customType: "swarm-result",
 			content: [{ type: "text", text: summaryMessage }],

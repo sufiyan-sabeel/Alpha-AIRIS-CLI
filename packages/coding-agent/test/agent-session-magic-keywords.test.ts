@@ -2,17 +2,17 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Agent, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import { Effort } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import * as autoThinkingClassifier from "@oh-my-pi/pi-coding-agent/auto-thinking/classifier";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { AUTO_THINKING } from "@oh-my-pi/pi-coding-agent/thinking";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import { Agent, type AgentTool } from "@airis/airis-agent-core";
+import { Effort } from "@airis/airis-ai";
+import { getBundledModel } from "@airis/airis-catalog/models";
+import * as autoThinkingClassifier from "@airis/airis-coding-agent/auto-thinking/classifier";
+import { ModelRegistry } from "@airis/airis-coding-agent/config/model-registry";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import { AgentSession } from "@airis/airis-coding-agent/session/agent-session";
+import { AuthStorage } from "@airis/airis-coding-agent/session/auth-storage";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import { AUTO_THINKING } from "@airis/airis-coding-agent/thinking";
+import { removeWithRetries } from "@airis/airis-utils";
 import { type } from "arktype";
 
 const mockTaskTool: AgentTool = {
@@ -69,7 +69,7 @@ describe("AgentSession magic keyword settings", () => {
 	let authStorage: AuthStorage | undefined;
 
 	beforeEach(async () => {
-		root = await fs.mkdtemp(path.join(os.tmpdir(), "omp-magic-keywords-"));
+		root = await fs.mkdtemp(path.join(os.tmpdir(), "airis-magic-keywords-"));
 	});
 
 	afterEach(async () => {

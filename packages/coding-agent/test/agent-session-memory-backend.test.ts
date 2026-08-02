@@ -1,16 +1,16 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { Agent, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { getMnemopiSessionState } from "@oh-my-pi/pi-coding-agent/mnemopi/state";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { resetMemoryForTests } from "@oh-my-pi/pi-mnemopi";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent, type AgentTool } from "@airis/airis-agent-core";
+import { createMockModel } from "@airis/airis-ai/providers/mock";
+import { buildModel } from "@airis/airis-catalog/build";
+import { ModelRegistry } from "@airis/airis-coding-agent/config/model-registry";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import { getMnemosyneSessionState } from "@airis/airis-coding-agent/mnemosyne/state";
+import { AgentSession } from "@airis/airis-coding-agent/session/agent-session";
+import { AuthStorage } from "@airis/airis-coding-agent/session/auth-storage";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import { resetMemoryForTests } from "@airis/airis-mnemosyne";
+import { TempDir } from "@airis/airis-utils";
 import { type } from "arktype";
 
 function createTool(name: string): AgentTool {
@@ -38,8 +38,8 @@ describe("AgentSession memory backend lifecycle", () => {
 		settings = Settings.isolated({
 			"compaction.enabled": false,
 			"memory.backend": "off",
-			"mnemopi.noEmbeddings": true,
-			"mnemopi.llmMode": "none",
+			"mnemosyne.noEmbeddings": true,
+			"mnemosyne.llmMode": "none",
 		});
 	});
 
@@ -90,20 +90,20 @@ describe("AgentSession memory backend lifecycle", () => {
 
 	it("switches runtime state, memory tools, and prompt in one apply", async () => {
 		const current = createSession(async () =>
-			settings.get("memory.backend") === "mnemopi" ? [createTool("retain"), createTool("memory_edit")] : [],
+			settings.get("memory.backend") === "mnemosyne" ? [createTool("retain"), createTool("memory_edit")] : [],
 		);
 
-		settings.override("memory.backend", "mnemopi");
+		settings.override("memory.backend", "mnemosyne");
 		await current.applyMemoryBackend();
 
-		expect(getMnemopiSessionState(current)).toBeDefined();
+		expect(getMnemosyneSessionState(current)).toBeDefined();
 		expect(current.getActiveToolNames()).toEqual(expect.arrayContaining(["read", "retain", "memory_edit"]));
-		expect(current.systemPrompt).toEqual(["backend:mnemopi;tools:memory_edit,read,retain"]);
+		expect(current.systemPrompt).toEqual(["backend:mnemosyne;tools:memory_edit,read,retain"]);
 
 		settings.override("memory.backend", "off");
 		await current.applyMemoryBackend();
 
-		expect(getMnemopiSessionState(current)).toBeUndefined();
+		expect(getMnemosyneSessionState(current)).toBeUndefined();
 		expect(current.getActiveToolNames()).toEqual(["read"]);
 		expect(current.getAllToolNames()).toEqual(["read"]);
 		expect(current.systemPrompt).toEqual(["backend:off;tools:read"]);

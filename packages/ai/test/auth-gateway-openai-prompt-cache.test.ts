@@ -2,13 +2,13 @@ import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { clearCustomApis } from "@oh-my-pi/pi-ai/api-registry";
-import { startAuthGateway } from "@oh-my-pi/pi-ai/auth-gateway";
-import { AuthStorage } from "@oh-my-pi/pi-ai/auth-storage";
-import { createMockModel, registerMockApi } from "@oh-my-pi/pi-ai/providers/mock";
+import { clearCustomApis } from "@airis/airis-ai/api-registry";
+import { startAuthGateway } from "@airis/airis-ai/auth-gateway";
+import { AuthStorage } from "@airis/airis-ai/auth-storage";
+import { createMockModel, registerMockApi } from "@airis/airis-ai/providers/mock";
 
 describe("auth-gateway explicit OpenAI prompt cache controls", () => {
-	it("rejects raw controls clearly and forwards the pi-native policy", async () => {
+	it("rejects raw controls clearly and forwards the airis-native policy", async () => {
 		registerMockApi();
 		const dir = await fs.mkdtemp(path.join(os.tmpdir(), "gw-openai-prompt-cache-"));
 		const storage = await AuthStorage.create(path.join(dir, "auth.db"));
@@ -41,7 +41,7 @@ describe("auth-gateway explicit OpenAI prompt cache controls", () => {
 			expect(chatBody.error).toEqual({
 				type: "invalid_request_error",
 				message:
-					"openai-chat: prompt_cache_options and prompt_cache_breakpoint are unsupported by this auth-gateway route; use /v1/pi/stream with options.promptCache instead",
+					"openai-chat: prompt_cache_options and prompt_cache_breakpoint are unsupported by this auth-gateway route; use /v1/airis/stream with options.promptCache instead",
 			});
 
 			const responsesResponse = await fetch(`${handle.url}/v1/responses`, {
@@ -62,10 +62,10 @@ describe("auth-gateway explicit OpenAI prompt cache controls", () => {
 			expect(responsesBody.error).toEqual({
 				type: "invalid_request_error",
 				message:
-					"openai-responses: prompt_cache_options and prompt_cache_breakpoint are unsupported by this auth-gateway route; use /v1/pi/stream with options.promptCache instead",
+					"openai-responses: prompt_cache_options and prompt_cache_breakpoint are unsupported by this auth-gateway route; use /v1/airis/stream with options.promptCache instead",
 			});
 
-			const piResponse = await fetch(`${handle.url}/v1/pi/stream`, {
+			const piResponse = await fetch(`${handle.url}/v1/airis/stream`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json", Authorization: "Bearer t" },
 				body: JSON.stringify({

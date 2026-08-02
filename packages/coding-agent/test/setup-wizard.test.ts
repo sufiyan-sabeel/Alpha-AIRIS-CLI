@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it, mock, vi } from "bun:test";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { runOnboardingSetup } from "@oh-my-pi/pi-coding-agent/commands/setup";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import type { Model } from "@airis/airis-ai";
+import { buildModel } from "@airis/airis-catalog/build";
+import { runOnboardingSetup } from "@airis/airis-coding-agent/commands/setup";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
 import {
 	ALL_SCENES,
 	CURRENT_SETUP_VERSION,
@@ -11,14 +11,14 @@ import {
 	type SetupScene,
 	type SetupSceneHost,
 	selectSetupScenes,
-} from "@oh-my-pi/pi-coding-agent/modes/setup-wizard";
-import { providersSetupScene } from "@oh-my-pi/pi-coding-agent/modes/setup-wizard/scenes/providers";
-import { themeSetupScene } from "@oh-my-pi/pi-coding-agent/modes/setup-wizard/scenes/theme";
-import { WebSearchTab } from "@oh-my-pi/pi-coding-agent/modes/setup-wizard/scenes/web-search";
-import { SetupWizardComponent } from "@oh-my-pi/pi-coding-agent/modes/setup-wizard/wizard-overlay";
-import { initTheme, theme } from "@oh-my-pi/pi-coding-agent/modes/theme/theme";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { SEARCH_PROVIDER_OPTIONS, SEARCH_PROVIDER_ORDER } from "@oh-my-pi/pi-coding-agent/web/search/types";
+} from "@airis/airis-coding-agent/modes/setup-wizard";
+import { providersSetupScene } from "@airis/airis-coding-agent/modes/setup-wizard/scenes/providers";
+import { themeSetupScene } from "@airis/airis-coding-agent/modes/setup-wizard/scenes/theme";
+import { WebSearchTab } from "@airis/airis-coding-agent/modes/setup-wizard/scenes/web-search";
+import { SetupWizardComponent } from "@airis/airis-coding-agent/modes/setup-wizard/wizard-overlay";
+import { initTheme, theme } from "@airis/airis-coding-agent/modes/theme/theme";
+import type { InteractiveModeContext } from "@airis/airis-coding-agent/modes/types";
+import { SEARCH_PROVIDER_OPTIONS, SEARCH_PROVIDER_ORDER } from "@airis/airis-coding-agent/web/search/types";
 
 function fakeContextWithConfiguredModel(): InteractiveModeContext {
 	return {
@@ -547,7 +547,7 @@ describe("setup wizard web search tab", () => {
 	});
 });
 
-describe("omp setup onboarding trigger", () => {
+describe("airis setup onboarding trigger", () => {
 	it("starts the normal interactive command with forced setup wizard", async () => {
 		let forceSetupWizard: boolean | undefined;
 		await runOnboardingSetup({

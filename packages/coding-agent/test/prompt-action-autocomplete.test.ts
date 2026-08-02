@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import { KeybindingsManager as AppKeybindingsManager } from "@oh-my-pi/pi-coding-agent/config/keybindings";
-import { createPromptActionAutocompleteProvider } from "@oh-my-pi/pi-coding-agent/modes/prompt-action-autocomplete";
-import { KeybindingsManager, setKeybindings, TUI_KEYBINDINGS } from "@oh-my-pi/pi-tui";
+import { KeybindingsManager as AppKeybindingsManager } from "@airis/airis-coding-agent/config/keybindings";
+import { createPromptActionAutocompleteProvider } from "@airis/airis-coding-agent/modes/prompt-action-autocomplete";
+import { KeybindingsManager, setKeybindings, TUI_KEYBINDINGS } from "@airis/airis-tui";
 
 describe("prompt action autocomplete", () => {
 	beforeEach(() => {
@@ -199,11 +199,11 @@ describe("prompt action autocomplete", () => {
 			moveCursorToLineEnd: () => {},
 		});
 
-		const line = "/btw omp://";
+		const line = "/btw airis://";
 		const suggestions = await provider.getSuggestions([line], 0, line.length);
 
 		expect(suggestions).not.toBeNull();
-		expect(suggestions?.prefix).toBe("omp://");
+		expect(suggestions?.prefix).toBe("airis://");
 		expect(suggestions?.items.length).toBeGreaterThan(0);
 	});
 
@@ -228,11 +228,11 @@ describe("prompt action autocomplete", () => {
 			moveCursorToLineEnd: () => {},
 		});
 
-		const line = "/mcp omp://";
+		const line = "/mcp airis://";
 		const suggestions = await provider.getSuggestions([line], 0, line.length);
 
 		expect(suggestions).not.toBeNull();
-		expect(suggestions?.prefix).toBe("omp://");
+		expect(suggestions?.prefix).toBe("airis://");
 		expect(suggestions?.items.length).toBeGreaterThan(0);
 	});
 

@@ -1,7 +1,7 @@
-// @ts-nocheck — example file; install @oh-my-pi/pi-coding-agent before running
-import type { ExtensionAPI } from "@oh-my-pi/pi-coding-agent";
+// @ts-nocheck — example file; install @airis/airis-coding-agent before running
+import type { ExtensionAPI } from "@airis/airis-coding-agent";
 
-export default function helloExtension(pi: ExtensionAPI) {
+export default function helloExtension(airs: ExtensionAPI) {
   // Show a greeting whenever a session starts.
   pi.on("session_start", async (_event, ctx) => {
     ctx.ui.notify("Hello from hello-extension!", "info");

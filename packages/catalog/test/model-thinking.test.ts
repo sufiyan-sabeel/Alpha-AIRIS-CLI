@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
+import { buildModel } from "@airis/airis-catalog/build";
+import { Effort } from "@airis/airis-catalog/effort";
 import {
 	clampThinkingLevelForModel,
 	getSupportedEfforts,
@@ -8,8 +8,8 @@ import {
 	mapEffortToGoogleThinkingLevel,
 	minimumSupportedEffort,
 	requireSupportedEffort,
-} from "@oh-my-pi/pi-catalog/model-thinking";
-import type { Api, Model, ModelSpec, Provider } from "@oh-my-pi/pi-catalog/types";
+} from "@airis/airis-catalog/model-thinking";
+import type { Api, Model, ModelSpec, Provider } from "@airis/airis-catalog/types";
 
 function createModel<TApi extends Api>(overrides: {
 	id: string;

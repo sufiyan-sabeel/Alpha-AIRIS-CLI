@@ -78,7 +78,7 @@ pub(crate) fn count_bytes_fast<T: WordCountable>(handle: &mut T) -> (usize, Opti
 
 	#[cfg(unix)]
 	{
-		// pi-uutils: only a real file exposes a usable fd; the context's stdin
+		// airis-uutils: only a real file exposes a usable fd; the context's stdin
 		// is a plain streaming reader with no fd, so we obtain the fd from the
 		// inner file (when present) and otherwise fall straight through to the
 		// read loop below.

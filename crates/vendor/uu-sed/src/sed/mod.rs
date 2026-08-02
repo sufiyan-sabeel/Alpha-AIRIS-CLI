@@ -23,7 +23,7 @@ pub mod script_line_provider;
 use std::{collections::HashMap, ffi::OsString, path::PathBuf};
 
 use clap::{Arg, ArgMatches, Command, arg, crate_version};
-use pi_uutils_ctx::format_usage;
+use airis_uutils_ctx::format_usage;
 use uucore::error::{UResult, UUsageError};
 
 use crate::sed::{
@@ -36,7 +36,7 @@ use crate::sed::{
 const ABOUT: &str = "Stream editor for filtering and transforming text";
 const USAGE: &str = "sed [OPTION]... [script] [file]...";
 
-// Patched for pi-uutils-ctx embedding: upstream's `#[uucore::main] uumain`
+// Patched for airis-uutils-ctx embedding: upstream's `#[uucore::main] uumain`
 // (which printed help to the process stdout and called `std::process::exit`)
 // is replaced by this plain function; argument parsing, the no-args help
 // path, and exit-code mapping live in the crate-level `run` wrapper.
@@ -49,7 +49,7 @@ pub fn sed_main(matches: &ArgMatches) -> UResult<()> {
 	Ok(())
 }
 
-// pi-uutils: normalize the BSD/macOS `sed -i ''` idiom before clap parsing,
+// airis-uutils: normalize the BSD/macOS `sed -i ''` idiom before clap parsing,
 // following uu-stat's `rewrite_bsd_invocation` precedent.
 /// Normalize GNU's attached `-i` backup suffixes and BSD's empty backup
 /// suffix. GNU sed's `-i` takes its optional suffix only when directly

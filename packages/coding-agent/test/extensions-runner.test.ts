@@ -5,26 +5,26 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, expectTypeOf, it, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import type { AgentMessage, AgentTool } from "@oh-my-pi/pi-agent-core";
-import type { ImageContent, TextContent } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { discoverAndLoadExtensions, ExtensionRuntime } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
+import type { AgentMessage, AgentTool } from "@airis/airis-agent-core";
+import type { ImageContent, TextContent } from "@airis/airis-ai";
+import { getBundledModel } from "@airis/airis-catalog/models";
+import { ModelRegistry } from "@airis/airis-coding-agent/config/model-registry";
+import { discoverAndLoadExtensions, ExtensionRuntime } from "@airis/airis-coding-agent/extensibility/extensions/loader";
 import {
 	EXTENSION_HANDLER_TIMEOUT_MS,
 	ExtensionRunner,
 	testSetExtensionHandlerTimeoutMs,
-} from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
+} from "@airis/airis-coding-agent/extensibility/extensions/runner";
 import type {
 	ExtensionError,
 	ExtensionServiceTier,
 	ExtensionUIContext,
-} from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
-import { ExtensionToolWrapper } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/wrapper";
-import { Type } from "@oh-my-pi/pi-coding-agent/extensibility/typebox";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { getProjectAgentDir, logger, TempDir } from "@oh-my-pi/pi-utils";
+} from "@airis/airis-coding-agent/extensibility/extensions/types";
+import { ExtensionToolWrapper } from "@airis/airis-coding-agent/extensibility/extensions/wrapper";
+import { Type } from "@airis/airis-coding-agent/extensibility/typebox";
+import { AuthStorage } from "@airis/airis-coding-agent/session/auth-storage";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import { getProjectAgentDir, logger, TempDir } from "@airis/airis-utils";
 
 describe("ExtensionRunner", () => {
 	let tempDir: TempDir;
@@ -39,7 +39,7 @@ describe("ExtensionRunner", () => {
 	let authStorage: AuthStorage;
 
 	beforeAll(async () => {
-		sharedTempDir = TempDir.createSync("@pi-runner-shared-");
+		sharedTempDir = TempDir.createSync("@airs-runner-shared-");
 		authStorage = await AuthStorage.create(path.join(sharedTempDir.path(), "testauth.db"));
 		modelRegistry = new ModelRegistry(authStorage);
 	});
@@ -50,7 +50,7 @@ describe("ExtensionRunner", () => {
 	});
 
 	beforeEach(() => {
-		tempDir = TempDir.createSync("@pi-runner-test-");
+		tempDir = TempDir.createSync("@airs-runner-test-");
 		extensionsDir = path.join(getProjectAgentDir(tempDir.path()), "extensions");
 		fs.mkdirSync(extensionsDir, { recursive: true });
 		sessionManager = SessionManager.inMemory();
@@ -1411,14 +1411,14 @@ describe("ExtensionRunner", () => {
 			const extCode = `
 				export default function(pi) {
 					pi.on("session_start", async (_event, ctx) => {
-						globalThis.__ompMemoryStatus = await ctx.memory.status();
+						globalThis.__airisMemoryStatus = await ctx.memory.status();
 					});
 				}
 			`;
 			const explicitExtensionPath = path.join(tempDir.path(), "memory-context.ts");
 			fs.writeFileSync(explicitExtensionPath, extCode);
-			const globalState = globalThis as typeof globalThis & { __ompMemoryStatus?: unknown };
-			delete globalState.__ompMemoryStatus;
+			const globalState = globalThis as typeof globalThis & { __airisMemoryStatus?: unknown };
+			delete globalState.__airisMemoryStatus;
 
 			const result = await loadTestExtensions([explicitExtensionPath]);
 			const runner = new ExtensionRunner(
@@ -1429,13 +1429,13 @@ describe("ExtensionRunner", () => {
 				modelRegistry,
 				() => ({
 					status: async () => ({
-						backend: "mnemopi",
+						backend: "mnemosyne",
 						active: true,
 						writable: true,
 						searchable: true,
 					}),
-					search: async query => ({ backend: "mnemopi", query, count: 0, items: [] }),
-					save: async () => ({ backend: "mnemopi", stored: 1 }),
+					search: async query => ({ backend: "mnemosyne", query, count: 0, items: [] }),
+					save: async () => ({ backend: "mnemosyne", stored: 1 }),
 				}),
 			);
 			runner.initialize(
@@ -1468,12 +1468,12 @@ describe("ExtensionRunner", () => {
 
 			await runner.emit({ type: "session_start" });
 
-			expect(globalState.__ompMemoryStatus).toMatchObject({
-				backend: "mnemopi",
+			expect(globalState.__airisMemoryStatus).toMatchObject({
+				backend: "mnemosyne",
 				active: true,
 				searchable: true,
 			});
-			delete globalState.__ompMemoryStatus;
+			delete globalState.__airisMemoryStatus;
 		});
 	});
 

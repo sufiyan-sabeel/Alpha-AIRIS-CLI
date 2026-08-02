@@ -1,5 +1,5 @@
-import type { AgentTool, AgentToolContext, AgentToolResult, AgentToolUpdateCallback } from "@oh-my-pi/pi-agent-core";
-import { instrumentedCompleteSimple, resolveTelemetry } from "@oh-my-pi/pi-agent-core";
+import type { AgentTool, AgentToolContext, AgentToolResult, AgentToolUpdateCallback } from "@airis/airis-agent-core";
+import { instrumentedCompleteSimple, resolveTelemetry } from "@airis/airis-agent-core";
 import {
 	type Api,
 	type AssistantMessage,
@@ -7,8 +7,8 @@ import {
 	type ImageContent,
 	type Model,
 	type ToolExample,
-} from "@oh-my-pi/pi-ai";
-import { prompt } from "@oh-my-pi/pi-utils";
+} from "@airis/airis-ai";
+import { prompt } from "@airis/airis-utils";
 import { type } from "arktype";
 import { extractTextContent } from "../commit/utils";
 

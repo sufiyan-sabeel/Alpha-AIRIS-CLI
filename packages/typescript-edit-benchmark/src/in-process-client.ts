@@ -5,9 +5,9 @@
  * Eliminates ~2-3s CLI startup overhead per task by creating sessions
  * in-process and sharing auth/model infrastructure across tasks.
  */
-import type { AgentEvent, AgentMessage, ResolvedThinkingLevel, ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { Model, ToolExample } from "@oh-my-pi/pi-ai";
-import type { AgentSession, AgentSessionEvent, AuthStorage, SessionStats } from "@oh-my-pi/pi-coding-agent";
+import type { AgentEvent, AgentMessage, ResolvedThinkingLevel, ThinkingLevel } from "@airis/airis-agent-core";
+import type { Model, ToolExample } from "@airis/airis-ai";
+import type { AgentSession, AgentSessionEvent, AuthStorage, SessionStats } from "@airis/airis-coding-agent";
 import {
 	AgentRegistry,
 	type CreateAgentSessionResult,
@@ -16,7 +16,7 @@ import {
 	ModelRegistry,
 	SessionManager,
 	Settings,
-} from "@oh-my-pi/pi-coding-agent";
+} from "@airis/airis-coding-agent";
 
 export type InProcessEventListener = (event: AgentEvent) => void;
 

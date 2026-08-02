@@ -1,6 +1,6 @@
 # Natives Build, Release, and Debugging Runbook
 
-This runbook describes how `@oh-my-pi/pi-natives` produces `.node` addons, generated declarations, and compiled-binary embedded payloads, and how to debug loader/build failures.
+This runbook describes how `@airis/airis-natives` produces `.node` addons, generated declarations, and compiled-binary embedded payloads, and how to debug loader/build failures.
 
 Addon **artifacts are built by Bazel** (`rules_rust` + `crate_universe` + hermetic cc toolchains); the cargo workspace stays authoritative for local Rust iteration (rust-analyzer, `cargo nextest`) and for napi typedef regeneration. Runtime loading and embedding are unchanged.
 
@@ -22,7 +22,7 @@ Build side:
 - `bazel/clippy.bazelrc` — generated from `[workspace.lints]` in `Cargo.toml`
 - `MODULE.bazel`, `MODULE.bazel.lock`, `.bazelrc`, `.bazelversion` (Bazel 9.2.0)
 - `scripts/bazel-natives.ts` — the canonical driver (build + locate + install)
-- `crates/pi-natives/BUILD.bazel`, `crates/pi-natives/Cargo.toml`
+- `crates/airis-natives/BUILD.bazel`, `crates/airis-natives/Cargo.toml`
 
 Package side (unchanged runtime/packaging):
 
@@ -39,14 +39,14 @@ Root `BUILD.bazel` instantiates one `native_addon` per shipped `(platform, arch,
 
 | Target                            | Platform                                | Canonical output                     |
 | --------------------------------- | --------------------------------------- | ------------------------------------ |
-| `//:natives-linux-x64-baseline`   | `//bazel/platforms:linux-x64-baseline`  | `pi_natives.linux-x64-baseline.node` |
-| `//:natives-linux-x64-modern`     | `//bazel/platforms:linux-x64-modern`    | `pi_natives.linux-x64-modern.node`   |
-| `//:natives-linux-arm64`          | `//bazel/platforms:linux-arm64`         | `pi_natives.linux-arm64.node`        |
-| `//:natives-linux-musl-x64-baseline` | `//bazel/platforms:linux-musl-x64-baseline` | `pi_natives.linux-x64-baseline.node` |
-| `//:natives-linux-musl-arm64`     | `//bazel/platforms:linux-musl-arm64`    | `pi_natives.linux-arm64.node`        |
-| `//:natives-darwin-x64-baseline`  | `//bazel/platforms:darwin-x64-baseline` | `pi_natives.darwin-x64-baseline.node` |
-| `//:natives-darwin-arm64`         | `//bazel/platforms:darwin-arm64`        | `pi_natives.darwin-arm64.node`       |
-| `//:natives-win32-x64-baseline`   | `//bazel/platforms:win32-x64-baseline`  | `pi_natives.win32-x64-baseline.node` |
+| `//:natives-linux-x64-baseline`   | `//bazel/platforms:linux-x64-baseline`  | `airis_natives.linux-x64-baseline.node` |
+| `//:natives-linux-x64-modern`     | `//bazel/platforms:linux-x64-modern`    | `airis_natives.linux-x64-modern.node`   |
+| `//:natives-linux-arm64`          | `//bazel/platforms:linux-arm64`         | `airis_natives.linux-arm64.node`        |
+| `//:natives-linux-musl-x64-baseline` | `//bazel/platforms:linux-musl-x64-baseline` | `airis_natives.linux-x64-baseline.node` |
+| `//:natives-linux-musl-arm64`     | `//bazel/platforms:linux-musl-arm64`    | `airis_natives.linux-arm64.node`        |
+| `//:natives-darwin-x64-baseline`  | `//bazel/platforms:darwin-x64-baseline` | `airis_natives.darwin-x64-baseline.node` |
+| `//:natives-darwin-arm64`         | `//bazel/platforms:darwin-arm64`        | `airis_natives.darwin-arm64.node`       |
+| `//:natives-win32-x64-baseline`   | `//bazel/platforms:win32-x64-baseline`  | `airis_natives.win32-x64-baseline.node` |
 
 Notes:
 
@@ -55,16 +55,16 @@ Notes:
 
 ### 2) `native_addon` rule (`bazel/defs.bzl`)
 
-`native_addon` wraps `//crates/pi-natives:pi_natives` (a `rust_shared_library`) in a configuration transition that pins, per target:
+`native_addon` wraps `//crates/airis-natives:airis_natives` (a `rust_shared_library`) in a configuration transition that pins, per target:
 
 - `--platforms=<the addon's platform>`
 - `--compilation_mode=opt`
 - `@rules_rust//rust/settings:lto=thin`
 - extra rustc flags `-Ccodegen-units=16 -Cstrip=symbols`
 
-This mirrors the old cargo `ci` profile. Because the profile lives **in the transition**, a bare `bazel build //:natives-<t>` is always release-grade regardless of `-c`, and every addon shares one cache entry per (platform, source) pair. The rule then symlinks the produced shared library to the loader's canonical `pi_natives.<platform>-<arch>[-<variant>].node` name, scoped under the rule name (`bazel-bin/natives-<t>/…`) so gnu/musl outputs with identical basenames cannot collide at the package level.
+This mirrors the old cargo `ci` profile. Because the profile lives **in the transition**, a bare `bazel build //:natives-<t>` is always release-grade regardless of `-c`, and every addon shares one cache entry per (platform, source) pair. The rule then symlinks the produced shared library to the loader's canonical `airis_natives.<platform>-<arch>[-<variant>].node` name, scoped under the rule name (`bazel-bin/natives-<t>/…`) so gnu/musl outputs with identical basenames cannot collide at the package level.
 
-Per-target codegen that is not part of the transition lives in `crates/pi-natives/BUILD.bazel` `rustc_flags` selects: `-Ctarget-cpu=x86-64-v2` (baseline) / `x86-64-v3` (modern) via `//bazel/variants`, the napi link args (`-Wl,-undefined,dynamic_lookup` on macOS, `-Wl,-z,nodelete` on linux — `build.rs`/`napi_build::setup()` is deliberately not wired in), and `-Ctarget-feature=-crt-static` for musl.
+Per-target codegen that is not part of the transition lives in `crates/airis-natives/BUILD.bazel` `rustc_flags` selects: `-Ctarget-cpu=x86-64-v2` (baseline) / `x86-64-v3` (modern) via `//bazel/variants`, the napi link args (`-Wl,-undefined,dynamic_lookup` on macOS, `-Wl,-z,nodelete` on linux — `build.rs`/`napi_build::setup()` is deliberately not wired in), and `-Ctarget-feature=-crt-static` for musl.
 
 ### 3) Platforms and toolchains
 
@@ -105,7 +105,7 @@ bazelisk build //:natives-darwin-arm64
 bazelisk build //:natives-linux-all
 ```
 
-The driver runs one `bazel build` for all requested targets, locates outputs via `bazel cquery --output=files` (falling back to the `bazel-bin/natives-<t>/<canonical>.node` path convention), and copies them dereferenced into `--dest` (default `packages/natives/native`). Extra args after `--` go to bazel verbatim. It resolves `bazelisk` (or `bazel`) from `PATH` and honors an `OMP_BAZEL_RC` env var as a `--bazelrc=` startup option (that's how CI injects cache wiring).
+The driver runs one `bazel build` for all requested targets, locates outputs via `bazel cquery --output=files` (falling back to the `bazel-bin/natives-<t>/<canonical>.node` path convention), and copies them dereferenced into `--dest` (default `packages/natives/native`). Extra args after `--` go to bazel verbatim. It resolves `bazelisk` (or `bazel`) from `PATH` and honors an `AIRIS_BAZEL_RC` env var as a `--bazelrc=` startup option (that's how CI injects cache wiring).
 
 Building `linux-all` into one dest would clobber gnu addons with musl ones (shared basenames) — the driver refuses; use separate invocations with separate `--dest` dirs.
 
@@ -117,7 +117,7 @@ Building `linux-all` into one dest would clobber gnu addons with musl ones (shar
 bun --cwd=packages/natives run build:bindings   # = bun scripts/build-bindings.ts
 ```
 
-This runs the napi CLI (host-only, local cargo profile) against `crates/pi-natives`, installs the regenerated `index.d.ts`, normalizes the addon filename, and re-renders the explicit ESM exports + runtime enum objects via `gen-enums.ts`. Commit the resulting `index.js`/`index.d.ts` changes.
+This runs the napi CLI (host-only, local cargo profile) against `crates/airis-natives`, installs the regenerated `index.d.ts`, normalizes the addon filename, and re-renders the explicit ESM exports + runtime enum objects via `gen-enums.ts`. Commit the resulting `index.js`/`index.d.ts` changes.
 
 ### Opt-in remote cache (`.bazelrc.user`)
 
@@ -138,15 +138,15 @@ build --tls_certificate=infra/bazel-remote/ca.crt
 
 `.github/workflows/ci.yml` separates `rust_validate` from `native_addons`; TypeScript jobs depend only on `native_addons`.
 
-**Pull requests never build or validate Rust.** Native-affecting PRs are rare enough that they don't warrant a PR-side bazel build: `rust_validate` is skipped entirely (`if: github.event_name != 'pull_request'`), and `native_addons` fetches the latest release's Linux x64 addon pair from the `@oh-my-pi/pi-natives-linux-x64` npm leaf, smoke-loads both, and uploads them as the `native-addons` workflow artifact. The loader skips its version sentinel for workspace loads, so release-versioned addons load fine under a newer checkout. A PR whose TypeScript tests depend on changed native behavior fails visibly (and CI emits a notice on any native-touching PR); the Rust side is validated post-merge on main and again at release.
+**Pull requests never build or validate Rust.** Native-affecting PRs are rare enough that they don't warrant a PR-side bazel build: `rust_validate` is skipped entirely (`if: github.event_name != 'pull_request'`), and `native_addons` fetches the latest release's Linux x64 addon pair from the `@airis/airis-natives-linux-x64` npm leaf, smoke-loads both, and uploads them as the `native-addons` workflow artifact. The loader skips its version sentinel for workspace loads, so release-versioned addons load fine under a newer checkout. A PR whose TypeScript tests depend on changed native behavior fails visibly (and CI emits a notice on any native-touching PR); the Rust side is validated post-merge on main and again at release.
 
-On non-PR events both jobs run on `omp-kata` pods against the cluster remote cache. `rust_validate` runs:
+On non-PR events both jobs run on `airis-kata` pods against the cluster remote cache. `rust_validate` runs:
 
 ```bash
 bazelisk --bazelrc="$rc" test //crates/...                 # full Rust suite
 # clippy scope mirrors `cargo clippy --workspace` (libraries only), split by
 # lint policy via a query kind filter:
-bazelisk query "kind('rust_library|rust_shared_library', //crates/pi-ast/... + //crates/pi-iso/... + //crates/pi-natives/... + //crates/pi-shell/... + //crates/pi-voice/... + //crates/pi-walker/...)" \
+bazelisk query "kind('rust_library|rust_shared_library', //crates/airis-ast/... + //crates/airis-iso/... + //crates/airis-natives/... + //crates/airis-shell/... + //crates/airis-voice/... + //crates/airis-walker/...)" \
   | xargs bazelisk --bazelrc="$rc" build --config=clippy-strict --
 bazelisk query "kind('rust_library|rust_shared_library', //crates/... - (…strict set…) - //crates/vendor/brush-core/... - //crates/vendor/brush-builtins/...)" \
   | xargs bazelisk --bazelrc="$rc" build --config=clippy --
@@ -166,34 +166,34 @@ No toolchain setup steps are required for native jobs: bazelisk is on the GitHub
 
 ### `bazel-cache` action (`.github/actions/bazel-cache`)
 
-Single source of truth for cache wiring, emitted as a bazelrc fragment (its `rc` output) that consumers pass via `bazelisk --bazelrc=...` or `OMP_BAZEL_RC`. Two modes are selected via `BAZEL_REMOTE_USER`/`BAZEL_REMOTE_PASSWORD`:
+Single source of truth for cache wiring, emitted as a bazelrc fragment (its `rc` output) that consumers pass via `bazelisk --bazelrc=...` or `AIRIS_BAZEL_RC`. Two modes are selected via `BAZEL_REMOTE_USER`/`BAZEL_REMOTE_PASSWORD`:
 
 | Runner | Fragment contents |
 | --- | --- |
-| omp-kata pod | `--config=ci --config=cache-rw --remote_cache=grpcs://bazel-remote.bazel-cache.svc.cluster.local:9092 --tls_certificate=infra/bazel-remote/ca.crt --remote_header='authorization=Basic <b64 ci creds>'` |
-| GitHub-hosted | `--config=ci --disk_cache=~/.cache/omp-bazel-disk --repository_cache=~/.cache/omp-bazel-repo` |
+| airis-kata pod | `--config=ci --config=cache-rw --remote_cache=grpcs://bazel-remote.bazel-cache.svc.cluster.local:9092 --tls_certificate=infra/bazel-remote/ca.crt --remote_header='authorization=Basic <b64 ci creds>'` |
+| GitHub-hosted | `--config=ci --disk_cache=~/.cache/airis-bazel-disk --repository_cache=~/.cache/airis-bazel-repo` |
 
 Hosted disk caches use `bazel-disk-v3-<scope>-<os>-<arch>-<config-hash>-<source-hash>`. The config hash covers Cargo/Bazel/toolchain settings; the source hash covers `crates/**` and root `BUILD.bazel`. Restores fall back from the exact key to the config-scoped prefix, then to a bare `<scope>-<os>-<arch>` prefix — the bare fallback is what keeps release version bumps (which rewrite `Cargo.toml`/`Cargo.lock` and thus the config hash) from rebuilding cold; bazel's content-addressed action keys make a stale archive a partial hit, never a wrong output. An inexact restore permits one refreshed exact-key save, and restored entries untouched for 14 days are pruned so archives don't grow without bound. The remote endpoint resolves only inside the cluster.
 
 ### Native artifact actions
 
-`.github/actions/bazel-natives` is the direct builder: `bazel-cache` → `OMP_BAZEL_RC=<rc> bun scripts/bazel-natives.ts <targets> --dest <dest>`, followed by a disk-cache save after a hosted miss. `.github/actions/native-artifacts` is the no-build consumer: download `native-addons` → run the same driver with `--source`.
+`.github/actions/bazel-natives` is the direct builder: `bazel-cache` → `AIRIS_BAZEL_RC=<rc> bun scripts/bazel-natives.ts <targets> --dest <dest>`, followed by a disk-cache save after a hosted miss. `.github/actions/native-artifacts` is the no-build consumer: download `native-addons` → run the same driver with `--source`.
 
 ### Release binary builds and publishing
 
-Binary builds are build-only and run in parallel with the test fan-out. `release_binary` (Linux + Windows matrices) needs only `native_addons`, whose workflow artifact supplies their addons. `release_binary_darwin` needs only `release_metadata` and starts the moment a release run is detected: darwin artifacts cannot be cross-built on Linux, so each macOS leg builds its own architecture through `bazel-natives` with scope `release-<target_id>` (seeded near HEAD by the warm workflow — normally just the version-bump delta), then `bun run ci:release:build-binaries` embeds and compiles the executable. Publishing is held behind `release_gate` (the aggregate of every validation job): `release_native_leaves` downloads all built addons and publishes the five `@oh-my-pi/pi-natives-<tag>` leaves from one linux runner, and the GitHub release / verify / core npm chain runs beside it.
+Binary builds are build-only and run in parallel with the test fan-out. `release_binary` (Linux + Windows matrices) needs only `native_addons`, whose workflow artifact supplies their addons. `release_binary_darwin` needs only `release_metadata` and starts the moment a release run is detected: darwin artifacts cannot be cross-built on Linux, so each macOS leg builds its own architecture through `bazel-natives` with scope `release-<target_id>` (seeded near HEAD by the warm workflow — normally just the version-bump delta), then `bun run ci:release:build-binaries` embeds and compiles the executable. Publishing is held behind `release_gate` (the aggregate of every validation job): `release_native_leaves` downloads all built addons and publishes the five `@airis/airis-natives-<tag>` leaves from one linux runner, and the GitHub release / verify / core npm chain runs beside it.
 
 ## Debugging playbook
 
 ### Where things land / how to inspect
 
 ```bash
-# Outputs (workspace-relative): bazel-bin/natives-<target>/pi_natives.<...>.node
+# Outputs (workspace-relative): bazel-bin/natives-<target>/airis_natives.<...>.node
 bazelisk cquery --output=files //:natives-linux-x64-baseline
 
 # What actions/flags a target produces (add the same --config flags as the build):
 bazelisk aquery 'outputs(".*\.node", deps(//:natives-linux-arm64))'
-bazelisk aquery 'mnemonic("Rustc", deps(//crates/pi-natives:pi_natives))'
+bazelisk aquery 'mnemonic("Rustc", deps(//crates/airis-natives:airis_natives))'
 
 # Which toolchain resolved (e.g. confirm @msvc_cc, not host cc, for win32):
 bazelisk cquery 'deps(//:natives-win32-x64-baseline)' | grep msvc_cc
@@ -211,7 +211,7 @@ bazelisk build --nobuild //:natives-win32-x64-baseline
 
 | Symptom | Cause | Fix (in tree) |
 | --- | --- | --- |
-| musl build "succeeds" but emits no `.node` | musl defaults to `+crt-static`; rustc silently emits no cdylib | `-Ctarget-feature=-crt-static` select in `crates/pi-natives/BUILD.bazel` |
+| musl build "succeeds" but emits no `.node` | musl defaults to `+crt-static`; rustc silently emits no cdylib | `-Ctarget-feature=-crt-static` select in `crates/airis-natives/BUILD.bazel` |
 | opus/cmake `try_compile` fails linking UBSan runtime | zig cc enables UBSan by default; cmake's test exe links with the raw wrapper (no toolchain features) | `CFLAGS=-fno-sanitize=undefined` in the `audiopus_sys` annotation (`MODULE.bazel`) |
 | `tree-sitter-just` scanner.c `#error` under opt | scanner hard-errors when `NDEBUG` is set (opt-mode cc default) | `CFLAGS=-UNDEBUG` annotation (cc-rs appends env CFLAGS last, so `-U` wins) |
 | rstest macro: "Cargo.toml not found" in a vendored test | rstest verifies `Cargo.toml` exists in the manifest dir | `compile_data = ["Cargo.toml"]` on the `rust_test` (see `crates/vendor/uu-tail/BUILD.bazel`) |
@@ -224,7 +224,7 @@ bazelisk build --nobuild //:natives-win32-x64-baseline
 
 ### Cache behavior
 
-- **omp-kata:** read-write gRPC to the in-cluster bazel-remote (`grpcs://bazel-remote.bazel-cache.svc.cluster.local:9092`, TLS via the committed `infra/bazel-remote/ca.crt`, htpasswd user `ci`). `--remote_local_fallback` plus retries make an outage degrade to local execution rather than fail the build.
+- **airis-kata:** read-write gRPC to the in-cluster bazel-remote (`grpcs://bazel-remote.bazel-cache.svc.cluster.local:9092`, TLS via the committed `infra/bazel-remote/ca.crt`, htpasswd user `ci`). `--remote_local_fallback` plus retries make an outage degrade to local execution rather than fail the build.
 - **GitHub-hosted:** no cluster access; only the darwin release/warm jobs build with bazel here. The v3 `actions/cache` disk key separates config and source generations with prefix + bare fallbacks (see the `bazel-cache` action section above); `.github/workflows/bazel-cache-warm.yml` publishes the `release-darwin-*` archives from the same macOS images as the release consumers.
 - **msvc repos:** the ~2 GiB LLVM download is sha256-pinned and repository-cache backed; the ~1 GiB xwin CRT/SDK splat is fetched from the Microsoft CDN inside the repo rule and is **not** repo-cache backed — a cold output base re-downloads it. Microsoft advances the VS channel payload over time, so remote-cache hit rates for win32 actions degrade gracefully after an MS bump (same property the previous cross toolchain had). Win32 link actions also don't share cache entries across host OSes (linux vs mac clang binaries).
 - Server-side operations (deploy, TLS/auth, egress, poisoning boundary): `infra/docs/04-arc-and-caching.md` §5.
@@ -248,8 +248,8 @@ Non-x64 uses a single default artifact with no variant suffix. There is no build
 
 ### Output filenames
 
-- x64: `pi_natives.<platform>-<arch>-modern.node` or `...-baseline.node`
-- non-x64: `pi_natives.<platform>-<arch>.node`
+- x64: `airis_natives.<platform>-<arch>-modern.node` or `...-baseline.node`
+- non-x64: `airis_natives.<platform>-<arch>.node`
 
 Runtime x64 candidate order also includes the unsuffixed default filename after the selected variant candidates.
 
@@ -277,7 +277,7 @@ Runtime x64 candidate order also includes the unsuffixed default filename after 
 Typical local loop:
 
 1. Build addon: `bun --cwd=packages/natives run build`.
-2. Loader resolves platform npm leaf-package candidates (`@oh-my-pi/pi-natives-<platform>-<arch>`, when resolvable), then package-local `native/` and executable-dir fallback candidates.
+2. Loader resolves platform npm leaf-package candidates (`@airis/airis-natives-<platform>-<arch>`, when resolvable), then package-local `native/` and executable-dir fallback candidates.
 3. Generated declarations in `native/index.d.ts` describe the public TS API (regenerate with `build:bindings` only when the Rust API surface changes).
 
 ## Shipped/compiled binary workflow
@@ -289,7 +289,7 @@ In compiled mode (`PI_COMPILED`, Bun embedded URL markers, or populated embedded
 3. Runtime candidate order includes:
    - extracted versioned cache path, if available,
    - versioned cache dir,
-   - legacy compiled-binary dir (`%LOCALAPPDATA%/omp` on Windows, `~/.local/bin` elsewhere),
+   - legacy compiled-binary dir (`%LOCALAPPDATA%/airis` on Windows, `~/.local/bin` elsewhere),
    - package/executable directories.
 4. First successfully loaded addon with the expected version sentinel is returned.
 
@@ -344,7 +344,7 @@ bun --cwd=packages/natives run build
 # Explicit targets (x64 variants are separate targets, not env switches)
 bun scripts/bazel-natives.ts linux-x64-modern linux-x64-baseline --dest packages/natives/native
 
-# Raw bazel (output: bazel-bin/natives-<t>/pi_natives.<...>.node)
+# Raw bazel (output: bazel-bin/natives-<t>/airis_natives.<...>.node)
 bazelisk build //:natives-darwin-arm64
 
 # Regenerate TS typedefs + enum exports (napi CLI, only on Rust API changes)
@@ -358,15 +358,15 @@ bun run gen:native
 bun run gen:native:reset
 ```
 
-## Orchestrator-side content-addressed build cache (robomp)
+## Orchestrator-side content-addressed build cache (roboairis)
 
-When `pi-natives` is built inside the robomp orchestrator (`python/robomp/`), workspaces share built artifacts through a content-addressed cache instead of rebuilding from scratch in every per-issue worktree. The cache is **orchestrator-side only** — `bun --cwd=packages/natives run build` itself is unchanged; the cache lives outside the build pipeline and is populated/captured around `ensure_workspace` and post-task success in `python/robomp/src/natives_cache.py`.
+When `airis-natives` is built inside the roboairis orchestrator (`python/roboairis/`), workspaces share built artifacts through a content-addressed cache instead of rebuilding from scratch in every per-issue worktree. The cache is **orchestrator-side only** — `bun --cwd=packages/natives run build` itself is unchanged; the cache lives outside the build pipeline and is populated/captured around `ensure_workspace` and post-task success in `python/roboairis/src/natives_cache.py`.
 
 ### What is cached
 
 The complete set of files in `packages/natives/native/` that are pure functions of the cache-key inputs:
 
-- `pi_natives.<platform>-<arch>[-variant].node` (glob `pi_natives.*.node`)
+- `airis_natives.<platform>-<arch>[-variant].node` (glob `airis_natives.*.node`)
 - `index.d.ts`
 - `index.js`
 - `embedded-addon.js`
@@ -378,7 +378,7 @@ An entry is only considered a hit when the `.node` glob matches AND every compan
 
 The key is `sha256` over `(path \t git-tree-hash \n)` pairs for the following inputs, in this order (order is significant), followed by the target triple:
 
-1. `crates` (whole subtree — pi-natives transitively depends on other workspace crates)
+1. `crates` (whole subtree — airis-natives transitively depends on other workspace crates)
 2. `Cargo.lock`
 3. `Cargo.toml`
 4. `rust-toolchain.toml`
@@ -390,7 +390,7 @@ Anything outside this input set (Bazel definition files such as `MODULE.bazel`/`
 
 ### Layout and ownership
 
-- Root: `/data/cache/pi-natives` (provisioned by `entrypoint.sh` alongside the cargo caches, owned `root:omp`, mode `02770` setgid so cached files inherit `gid=omp` and stay readable by every slot user).
+- Root: `/data/cache/airis-natives` (provisioned by `entrypoint.sh` alongside the cargo caches, owned `root:airis`, mode `02770` setgid so cached files inherit `gid=airis` and stay readable by every slot user).
 - Per-repo subdirectory: `<root>/<repo-slug>/` where the slug is `owner__repo` (mirrors `SandboxManager.pool_path`).
 - Per-entry directory: `<root>/<repo-slug>/<sha256-key>/` containing the cached files plus `manifest.json`.
 - Per-repo lockfile: `<root>/<repo-slug>/.lock` (advisory `fcntl.flock`, exclusive on capture and GC).
@@ -399,7 +399,7 @@ Anything outside this input set (Bazel definition files such as `MODULE.bazel`/`
 ### Populate and capture semantics
 
 - **Populate** (workspace ← cache) runs inside `ensure_workspace`. On a key hit the `.node` is **hardlinked** into the workspace (zero-copy, shared inode); the companion `index.d.ts` / `index.js` / `embedded-addon.js` are **copied** (independent inodes) because the bindings regeneration flow (`build-bindings.ts`'s `installGeneratedBindings` and `gen-enums.ts`) rewrites those files via `open(..., 'w')` — an in-place truncate that would otherwise propagate through a hardlink and corrupt the cache. Cross-device hardlink failures (`EXDEV`) fall back to copy.
-- **Capture** (cache ← workspace) runs from the post-task success path when the build produced a complete artifact set. Capture uses **copy**, not hardlink: hardlinking a slot-owned workspace file would preserve slot UID ownership on the cached inode and defeat the shared-group model. Copying creates a fresh root-owned, `gid=omp` inode via the setgid cache root. Capture is idempotent under the per-repo flock: a concurrent capture for the same key returns the existing entry.
+- **Capture** (cache ← workspace) runs from the post-task success path when the build produced a complete artifact set. Capture uses **copy**, not hardlink: hardlinking a slot-owned workspace file would preserve slot UID ownership on the cached inode and defeat the shared-group model. Copying creates a fresh root-owned, `gid=airis` inode via the setgid cache root. Capture is idempotent under the per-repo flock: a concurrent capture for the same key returns the existing entry.
 
 ### Garbage collection
 
@@ -410,21 +410,21 @@ A periodic GC loop runs in `WorkerPool` with two caps per repo. When either cap 
 
 Workspaces that hardlinked a `.node` before GC retain access via the kernel inode refcount — `rmtree` of the cache entry does not delete the file from the workspace.
 
-### Configuration (settings on `robomp.config.Settings`)
+### Configuration (settings on `roboairis.config.Settings`)
 
 | Env var                                     | Default                  | Effect                                                                                              |
 | ------------------------------------------- | ------------------------ | --------------------------------------------------------------------------------------------------- |
-| `ROBOMP_NATIVES_CACHE_ENABLED`              | `true`                   | Master switch. When false the populate/capture hooks no-op and every workspace builds from scratch. |
-| `ROBOMP_NATIVES_CACHE_ROOT`                 | `/data/cache/pi-natives` | Cache root directory. Must be `root:omp 02770` for cross-slot reads.                                |
-| `ROBOMP_NATIVES_CACHE_MAX_ENTRIES_PER_REPO` | `8`                      | LRU entry-count cap, per repo slug.                                                                 |
-| `ROBOMP_NATIVES_CACHE_MAX_BYTES`            | `4294967296` (4 GiB)     | LRU byte cap, per repo slug.                                                                        |
-| `ROBOMP_NATIVES_CACHE_GC_INTERVAL_SECONDS`  | `3600`                   | Period of the background GC loop in `WorkerPool`.                                                   |
+| `ROBAIRIS_NATIVES_CACHE_ENABLED`              | `true`                   | Master switch. When false the populate/capture hooks no-op and every workspace builds from scratch. |
+| `ROBAIRIS_NATIVES_CACHE_ROOT`                 | `/data/cache/airis-natives` | Cache root directory. Must be `root:airis 02770` for cross-slot reads.                                |
+| `ROBAIRIS_NATIVES_CACHE_MAX_ENTRIES_PER_REPO` | `8`                      | LRU entry-count cap, per repo slug.                                                                 |
+| `ROBAIRIS_NATIVES_CACHE_MAX_BYTES`            | `4294967296` (4 GiB)     | LRU byte cap, per repo slug.                                                                        |
+| `ROBAIRIS_NATIVES_CACHE_GC_INTERVAL_SECONDS`  | `3600`                   | Period of the background GC loop in `WorkerPool`.                                                   |
 
 ### Manual invalidation
 
-- One key: `rm -rf /data/cache/pi-natives/<repo-slug>/<sha256>`.
-- One repo: `rm -rf /data/cache/pi-natives/<repo-slug>`.
-- Everything: `rm -rf /data/cache/pi-natives/*` (preserve the root so its setgid mode survives).
-- Stuck lock: `rm /data/cache/pi-natives/<repo-slug>/.lock` (only when no orchestrator process is touching the repo).
+- One key: `rm -rf /data/cache/airis-natives/<repo-slug>/<sha256>`.
+- One repo: `rm -rf /data/cache/airis-natives/<repo-slug>`.
+- Everything: `rm -rf /data/cache/airis-natives/*` (preserve the root so its setgid mode survives).
+- Stuck lock: `rm /data/cache/airis-natives/<repo-slug>/.lock` (only when no orchestrator process is touching the repo).
 
 Trigger an automatic miss by editing any path in the key set: a single touched byte under `crates/`, `Cargo.lock`, `Cargo.toml`, `rust-toolchain.toml`, or `packages/natives/` shifts the tree hash and forces a fresh build at the next populate.

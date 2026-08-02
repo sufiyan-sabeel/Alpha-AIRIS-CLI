@@ -10,13 +10,13 @@ import {
 	resolveExecHandler,
 	streamCursor,
 	type ToolCallState,
-} from "@oh-my-pi/pi-ai/providers/cursor";
-import { streamCursor as lazyStreamCursor, setCursorProviderModule } from "@oh-my-pi/pi-ai/providers/register-builtins";
-import type { AssistantMessage, Context, CursorExecHandlers, Model, ToolResultMessage } from "@oh-my-pi/pi-ai/types";
-import { kCursorExecResolved } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import type { McpResult, ReadResult } from "@oh-my-pi/pi-catalog/discovery/cursor-gen/agent_pb";
+} from "@airis/airis-ai/providers/cursor";
+import { streamCursor as lazyStreamCursor, setCursorProviderModule } from "@airis/airis-ai/providers/register-builtins";
+import type { AssistantMessage, Context, CursorExecHandlers, Model, ToolResultMessage } from "@airis/airis-ai/types";
+import { kCursorExecResolved } from "@airis/airis-ai/utils/block-symbols";
+import { AssistantMessageEventStream } from "@airis/airis-ai/utils/event-stream";
+import { buildModel } from "@airis/airis-catalog/build";
+import type { McpResult, ReadResult } from "@airis/airis-catalog/discovery/cursor-gen/agent_pb";
 import {
 	type AgentRunRequest,
 	AgentServerMessageSchema,
@@ -31,7 +31,7 @@ import {
 	ReadRejectedSchema,
 	ReadResultSchema,
 	ReadSuccessSchema,
-} from "@oh-my-pi/pi-catalog/discovery/cursor-gen/agent_pb";
+} from "@airis/airis-catalog/discovery/cursor-gen/agent_pb";
 
 const cursorModel: Model<"cursor-agent"> = buildModel({
 	id: "cursor-composer-2.5",
@@ -788,7 +788,7 @@ describe("Cursor exec local-work tracking (issue #4593)", () => {
 							name: "mcp__fixture_report",
 							toolName: "mcp__fixture_report",
 							toolCallId: "call-mcp-1",
-							providerIdentifier: "pi-agent",
+							providerIdentifier: "airis-agent",
 							args: { query: new TextEncoder().encode(JSON.stringify("latest chess news")) },
 						}),
 					},
@@ -864,7 +864,7 @@ describe("Cursor exec local-work tracking (issue #4593)", () => {
 							name: "mcp__fixture_report",
 							toolName: "mcp__fixture_report",
 							toolCallId: "call-mcp-unhandled",
-							providerIdentifier: "pi-agent",
+							providerIdentifier: "airis-agent",
 						}),
 					},
 				}),

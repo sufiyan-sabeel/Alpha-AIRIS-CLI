@@ -3,7 +3,7 @@ import * as fs from "node:fs/promises";
 import http2 from "node:http2";
 import { create, fromBinary, fromJson, type JsonValue, toBinary, toJson } from "@bufbuild/protobuf";
 import { ValueSchema } from "@bufbuild/protobuf/wkt";
-import type { McpToolDefinition } from "@oh-my-pi/pi-catalog/discovery/cursor-gen/agent_pb";
+import type { McpToolDefinition } from "@airis/airis-catalog/discovery/cursor-gen/agent_pb";
 import {
 	AgentClientMessageSchema,
 	AgentConversationTurnStructureSchema,
@@ -133,15 +133,15 @@ import {
 	WriteShellStdinErrorSchema,
 	WriteShellStdinResultSchema,
 	WriteSuccessSchema,
-} from "@oh-my-pi/pi-catalog/discovery/cursor-gen/agent_pb";
-import { calculateCost } from "@oh-my-pi/pi-catalog/models";
+} from "@airis/airis-catalog/discovery/cursor-gen/agent_pb";
+import { calculateCost } from "@airis/airis-catalog/models";
 import {
 	$env,
 	parseJsonWithRepair,
 	parseStreamingJson,
 	parseStreamingJsonThrottled,
 	sanitizeText,
-} from "@oh-my-pi/pi-utils";
+} from "@airis/airis-utils";
 import * as AIError from "../error";
 import type {
 	Api,
@@ -1326,7 +1326,7 @@ async function handleExecServerMessage(
 			const args = execMsg.message.value;
 			if (!args.toolCallId) args.toolCallId = crypto.randomUUID();
 			// Bridge maps `ls` onto the coding-agent `read` tool (see
-			// `CursorExecHandlers.ls` in `pi-coding-agent/src/cursor.ts`); mirror
+			// `CursorExecHandlers.ls` in `airis-coding-agent/src/cursor.ts`); mirror
 			// that here so the synthesized block matches the toolResult's `toolName`.
 			synthesizeCursorExecToolCall(output, stream, state, args.toolCallId, "read", { path: args.path });
 			const { execResult } = await resolveExecHandler(
@@ -3964,7 +3964,7 @@ export function buildMcpToolDefinitions(tools: Tool[] | undefined): McpToolDefin
 	// The `write` tool doubles as the xd:// transport: forwarded devices such as
 	// `ast_edit` stage previews finalized only by writing a reason to xd://resolve
 	// or xd://reject. Cursor's native catalog may expose no write path, so
-	// re-include the built-in `write` (dropped as native above) whenever pi-agent
+	// re-include the built-in `write` (dropped as native above) whenever airis-agent
 	// devices are advertised — otherwise a staged preview can never be resolved
 	// and the SoftToolRequirement('write') escalation aborts the turn.
 	const writeTool = tools.find(tool => tool.name === "write");
@@ -3980,7 +3980,7 @@ export function buildMcpToolDefinitions(tools: Tool[] | undefined): McpToolDefin
 		return create(McpToolDefinitionSchema, {
 			name: tool.name,
 			description: tool.description || "",
-			providerIdentifier: "pi-agent",
+			providerIdentifier: "airis-agent",
 			toolName: tool.name,
 			inputSchema,
 		});

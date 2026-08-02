@@ -2,16 +2,16 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { KeybindingsManager } from "@oh-my-pi/pi-coding-agent/config/keybindings";
-import { matchesAppFollowUp } from "@oh-my-pi/pi-coding-agent/modes/utils/keybinding-matchers";
-import { type KeybindingsConfig, setKeybindings } from "@oh-my-pi/pi-tui";
+import { KeybindingsManager } from "@airis/airis-coding-agent/config/keybindings";
+import { matchesAppFollowUp } from "@airis/airis-coding-agent/modes/utils/keybinding-matchers";
+import { type KeybindingsConfig, setKeybindings } from "@airis/airis-tui";
 import {
 	__resetDirsFromEnvForTests,
 	getAgentDir,
 	getProfileRootDir,
 	removeWithRetries,
 	setProfile,
-} from "@oh-my-pi/pi-utils";
+} from "@airis/airis-utils";
 import { YAML } from "bun";
 
 function ctrl(key: string): string {
@@ -237,16 +237,16 @@ describe("KeybindingsManager.create", () => {
 	});
 
 	it("merges default user keybindings when create uses the active profile with no arguments (#4867)", async () => {
-		const originalConfigDir = process.env.PI_CONFIG_DIR;
+		const originalConfigDir = process.env.AIRIS_CONFIG_DIR;
 		const originalAgentDirEnv = process.env.PI_CODING_AGENT_DIR;
-		const originalOmpProfile = process.env.OMP_PROFILE;
+		const originalOmpProfile = process.env.AIRIS_PROFILE;
 		const originalPiProfile = process.env.PI_PROFILE;
 		const configRootDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-keybindings-active-profile-"));
 
 		try {
-			process.env.PI_CONFIG_DIR = path.relative(os.homedir(), configRootDir);
+			process.env.AIRIS_CONFIG_DIR = path.relative(os.homedir(), configRootDir);
 			restoreEnvValue("PI_CODING_AGENT_DIR", originalAgentDirEnv);
-			restoreEnvValue("OMP_PROFILE", originalOmpProfile);
+			restoreEnvValue("AIRIS_PROFILE", originalOmpProfile);
 			restoreEnvValue("PI_PROFILE", originalPiProfile);
 			__resetDirsFromEnvForTests();
 
@@ -270,9 +270,9 @@ describe("KeybindingsManager.create", () => {
 			expect(manager.getKeys("app.session.fork")).toEqual(["alt+f"]);
 			expect(manager.getKeys("app.clipboard.copyLine")).toEqual(["alt+l"]);
 		} finally {
-			restoreEnvValue("PI_CONFIG_DIR", originalConfigDir);
+			restoreEnvValue("AIRIS_CONFIG_DIR", originalConfigDir);
 			restoreEnvValue("PI_CODING_AGENT_DIR", originalAgentDirEnv);
-			restoreEnvValue("OMP_PROFILE", originalOmpProfile);
+			restoreEnvValue("AIRIS_PROFILE", originalOmpProfile);
 			restoreEnvValue("PI_PROFILE", originalPiProfile);
 			__resetDirsFromEnvForTests();
 			await removeWithRetries(configRootDir);

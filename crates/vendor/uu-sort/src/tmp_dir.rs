@@ -16,7 +16,7 @@ use crate::SortError;
 /// The directory is only created once the first file is requested. Cleanup
 /// happens automatically when the [`TempDir`] is dropped.
 ///
-/// pi-uutils: upstream installs a process-global `SIGINT` handler (via `ctrlc`)
+/// airis-uutils: upstream installs a process-global `SIGINT` handler (via `ctrlc`)
 /// that deletes the temp directory and then calls `std::process::exit`. Both
 /// are unsafe inside the long-lived host shell process, so the signal handler
 /// has been removed: the host shell owns signal handling, and `TempDir`'s
@@ -57,7 +57,7 @@ impl TmpDirWrapper {
 		Ok((File::create(&path).map_err(|error| SortError::OpenTmpFileFailed { error })?, path))
 	}
 
-	/// pi-uutils: no-op retained for call-site compatibility. Upstream blocked
+	/// airis-uutils: no-op retained for call-site compatibility. Upstream blocked
 	/// here until the `SIGINT` handler finished deleting the temp dir; with the
 	/// handler removed there is nothing to wait for.
 	pub fn wait_if_signal(&self) {}

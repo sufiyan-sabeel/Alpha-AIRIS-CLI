@@ -1,17 +1,17 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import type { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { LoadExtensionsResult } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
-import { IrcBus } from "@oh-my-pi/pi-coding-agent/irc/bus";
-import { AgentLifecycleManager } from "@oh-my-pi/pi-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { CreateAgentSessionResult } from "@oh-my-pi/pi-coding-agent/sdk";
-import * as sdkModule from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession, AgentSessionEvent, PromptOptions } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { resolveSoftRequestBudget, runSubprocess } from "@oh-my-pi/pi-coding-agent/task/executor";
-import type { AgentDefinition } from "@oh-my-pi/pi-coding-agent/task/types";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import type { ModelRegistry } from "@airis/airis-coding-agent/config/model-registry";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import type { LoadExtensionsResult } from "@airis/airis-coding-agent/extensibility/extensions/types";
+import { IrcBus } from "@airis/airis-coding-agent/irc/bus";
+import { AgentLifecycleManager } from "@airis/airis-coding-agent/registry/agent-lifecycle";
+import { AgentRegistry } from "@airis/airis-coding-agent/registry/agent-registry";
+import type { CreateAgentSessionResult } from "@airis/airis-coding-agent/sdk";
+import * as sdkModule from "@airis/airis-coding-agent/sdk";
+import type { AgentSession, AgentSessionEvent, PromptOptions } from "@airis/airis-coding-agent/session/agent-session";
+import { resolveSoftRequestBudget, runSubprocess } from "@airis/airis-coding-agent/task/executor";
+import type { AgentDefinition } from "@airis/airis-coding-agent/task/types";
+import { EventBus } from "@airis/airis-coding-agent/utils/event-bus";
+import { TempDir } from "@airis/airis-utils";
 
 /**
  * Contracts under test — the soft request budget must degrade gracefully
@@ -120,7 +120,7 @@ describe("runSubprocess soft request budget", () => {
 	beforeEach(() => {
 		AgentRegistry.resetGlobalForTests();
 		AgentLifecycleManager.resetGlobalForTests();
-		tempDir = TempDir.createSync("@pi-soft-budget-");
+		tempDir = TempDir.createSync("@airs-soft-budget-");
 	});
 	afterEach(() => {
 		vi.restoreAllMocks();

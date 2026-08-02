@@ -5,7 +5,7 @@
 
 // spell-checker:ignore hashset Addrs addrs
 
-// pi-uutils: vendored from uutils/coreutils 0.8.0 and patched to run in-process
+// airis-uutils: vendored from uutils/coreutils 0.8.0 and patched to run in-process
 // as a shell builtin. The set-hostname path is removed entirely (a NAME operand
 // is rejected with an "unsupported" error instead of calling `hostname::set`,
 // so the `hostname` crate's "set" feature is dropped), all output is routed
@@ -19,7 +19,7 @@ use std::{collections::hash_set::HashSet, ffi::OsString, io::Write, str};
 use clap::{Arg, ArgAction, ArgMatches, Command, builder::ValueParser};
 #[cfg(any(target_os = "freebsd", target_os = "openbsd"))]
 use dns_lookup::lookup_host;
-use pi_uutils_ctx::format_usage;
+use airis_uutils_ctx::format_usage;
 use uucore::error::{FromIo, UResult, USimpleError};
 
 static OPT_DOMAIN: &str = "domain";
@@ -65,20 +65,20 @@ pub fn run(argv: Vec<OsString>) -> i32 {
 		Err(err) => {
 			let rendered = err.to_string();
 			if err.use_stderr() {
-				let _ = write!(pi_uutils_ctx::stderr(), "{rendered}");
+				let _ = write!(airis_uutils_ctx::stderr(), "{rendered}");
 				return 1;
 			}
-			let _ = write!(pi_uutils_ctx::stdout(), "{rendered}");
+			let _ = write!(airis_uutils_ctx::stdout(), "{rendered}");
 			return 0;
 		},
 	};
 	match hostname_main(&matches) {
-		Ok(()) => pi_uutils_ctx::exit_code(),
+		Ok(()) => airis_uutils_ctx::exit_code(),
 		Err(err) => {
 			let code = err.code();
 			let msg = err.to_string();
 			if !msg.is_empty() {
-				let _ = writeln!(pi_uutils_ctx::stderr(), "hostname: {msg}");
+				let _ = writeln!(airis_uutils_ctx::stderr(), "hostname: {msg}");
 			}
 			if code == 0 { 1 } else { code }
 		},
@@ -91,7 +91,7 @@ fn hostname_main(matches: &ArgMatches) -> UResult<()> {
 
 	match matches.get_one::<OsString>(OPT_HOST) {
 		None => display_hostname(matches),
-		// pi-uutils: setting the process-global hostname from inside a shell
+		// airis-uutils: setting the process-global hostname from inside a shell
 		// builtin is refused (upstream calls `hostname::set` here).
 		Some(_host) => Err(USimpleError::new(
 			1,
@@ -151,9 +151,9 @@ fn display_hostname(matches: &ArgMatches) -> UResult<()> {
 		.to_string_lossy()
 		.into_owned();
 
-	// pi-uutils: all output below goes to the context stdout instead of the
+	// airis-uutils: all output below goes to the context stdout instead of the
 	// process stdout.
-	let mut out = pi_uutils_ctx::stdout();
+	let mut out = airis_uutils_ctx::stdout();
 
 	if matches.get_flag(OPT_IP_ADDRESS) {
 		let addresses;
@@ -224,7 +224,7 @@ mod tests {
 	use std::{collections::HashMap, io::Write, path::PathBuf, sync::Arc};
 
 	use parking_lot::Mutex;
-	use pi_uutils_ctx::ScopeIo;
+	use airis_uutils_ctx::ScopeIo;
 
 	use super::*;
 
@@ -262,7 +262,7 @@ mod tests {
 			.map(OsString::from)
 			.collect();
 
-		let code = pi_uutils_ctx::scope(io, || run(argv));
+		let code = airis_uutils_ctx::scope(io, || run(argv));
 
 		let out_str = String::from_utf8(stdout_buf.lock().clone()).unwrap();
 		let err_str = String::from_utf8(stderr_buf.lock().clone()).unwrap();

@@ -17,7 +17,7 @@
  * like a small validator at runtime.
  */
 
-import { areJsonValuesEqual, upgradeJsonSchemaTo202012, validateJsonSchemaValue } from "@oh-my-pi/pi-ai/utils/schema";
+import { areJsonValuesEqual, upgradeJsonSchemaTo202012, validateJsonSchemaValue } from "@airis/airis-ai/utils/schema";
 
 // ---------------------------------------------------------------------------
 // Type aliases — exported so `import type { Static, TSchema } from "..."`
@@ -48,7 +48,7 @@ export type TUnsafe<_T = unknown> = ArkSchema;
 // ArkSchema wrapper — JSON Schema object with hidden validator metadata
 // ---------------------------------------------------------------------------
 
-const VALIDATION_FAILURE = Symbol("pi.typebox.validationFailure");
+const VALIDATION_FAILURE = Symbol("airs.typebox.validationFailure");
 
 interface ValidationFailure {
 	message: string;

@@ -22,16 +22,16 @@ import {
 	type TSchema,
 	toolWireSchema,
 	validateToolArguments,
-} from "@oh-my-pi/pi-ai";
+} from "@airis/airis-ai";
 import {
 	type Dialect,
 	encodeInbandToolHistory,
 	renderInbandToolPrompt,
 	renderToolExamples,
 	wrapInbandToolStream,
-} from "@oh-my-pi/pi-ai/dialect";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { type CursorExecResolvedCarrier, kCursorExecResolved } from "@oh-my-pi/pi-ai/utils/block-symbols";
+} from "@airis/airis-ai/dialect";
+import * as AIError from "@airis/airis-ai/error";
+import { type CursorExecResolvedCarrier, kCursorExecResolved } from "@airis/airis-ai/utils/block-symbols";
 import {
 	createHarmonyAuditEvent,
 	detectHarmonyLeakInAssistantMessage,
@@ -41,10 +41,10 @@ import {
 	isHarmonyLeakMitigationTarget,
 	recoverHarmonyToolCall,
 	signalListLabel,
-} from "@oh-my-pi/pi-ai/utils/harmony-leak";
-import { preferredDialect } from "@oh-my-pi/pi-catalog/identity";
-import { logger, sanitizeText, structuredCloneJSON } from "@oh-my-pi/pi-utils";
-import { INTENT_FIELD } from "@oh-my-pi/pi-wire";
+} from "@airis/airis-ai/utils/harmony-leak";
+import { preferredDialect } from "@airis/airis-catalog/identity";
+import { logger, sanitizeText, structuredCloneJSON } from "@airis/airis-utils";
+import { INTENT_FIELD } from "@airis/airis-wire";
 import { agentPauseGate } from "./pause";
 import { type AgentRunCoverage, type AgentRunSummary, ToolCallBlockedError } from "./run-collector";
 import {
@@ -150,7 +150,7 @@ export function createToolScopedAbortReason(
  * current run. External/user aborts still synthesize an aborted assistant
  * boundary; this reason stops after persisting the completed tool batch.
  */
-export const TERMINAL_TOOL_RESULT_ABORT_REASON = Symbol.for("pi-agent-core.terminal-tool-result");
+export const TERMINAL_TOOL_RESULT_ABORT_REASON = Symbol.for("airis-agent-core.terminal-tool-result");
 
 const STEERING_INTERRUPT_POLL_MS = 250;
 
@@ -835,7 +835,7 @@ export function normalizeTools(
 	exampleDialect?: Dialect,
 	pruneDescriptions = false,
 ): Context["tools"] {
-	injectIntent = injectIntent && Bun.env.PI_NO_INTENT !== "1";
+	injectIntent = injectIntent && Bun.env.AIRIS_NO_INTENT !== "1";
 	return tools?.map(t => {
 		const intentMode = resolveIntentMode(t.intent);
 		const doInjectIntent = injectIntent && intentMode !== "omit";
@@ -1497,7 +1497,7 @@ async function prepareProviderCall(
 
 	const llmMessages = await config.convertToLlm(messages);
 	const normalizedMessages = normalizeMessagesForProvider(llmMessages, model);
-	const ownedDialect: Dialect | undefined = config.dialect ?? resolveOwnedDialectFromEnv(Bun.env.PI_DIALECT);
+	const ownedDialect: Dialect | undefined = config.dialect ?? resolveOwnedDialectFromEnv(Bun.env.AIRIS_DIALECT);
 	const exampleDialect = ownedDialect ?? preferredDialect(model.id);
 	const pruneToolDescriptions = !!config.pruneToolDescriptions && !ownedDialect;
 	let llmContext: Context;

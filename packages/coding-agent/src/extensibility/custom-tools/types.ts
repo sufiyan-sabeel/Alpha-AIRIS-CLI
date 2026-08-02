@@ -11,11 +11,11 @@ import type {
 	ToolApprovalDecision,
 	ToolLoadMode,
 	ToolTier,
-} from "@oh-my-pi/pi-agent-core";
-import type { CompactionResult } from "@oh-my-pi/pi-agent-core/compaction";
-import type { FetchImpl, Model, Static, TSchema } from "@oh-my-pi/pi-ai";
-import type { Component } from "@oh-my-pi/pi-tui";
-import type { logger as PiLogger } from "@oh-my-pi/pi-utils";
+} from "@airis/airis-agent-core";
+import type { CompactionResult } from "@airis/airis-agent-core/compaction";
+import type { FetchImpl, Model, Static, TSchema } from "@airis/airis-ai";
+import type { Component } from "@airis/airis-tui";
+import type { logger as PiLogger } from "@airis/airis-utils";
 import type { type as ArkType } from "arktype";
 import type * as zod from "zod/v4";
 import type { Rule } from "../../capability/rule";
@@ -23,7 +23,7 @@ import type { ModelRegistry } from "../../config/model-registry";
 import type { Settings } from "../../config/settings";
 import type { ExecOptions, ExecResult } from "../../exec/exec";
 import type { HookUIContext } from "../../extensibility/hooks/types";
-import type * as PiCodingAgent from "../../index";
+import type * as AirisCodingAgent from "../../index";
 import type { LocalProtocolOptions } from "../../internal-urls/local-protocol";
 import type { Theme } from "../../modes/theme/theme";
 import type { ReadonlySessionManager } from "../../session/session-manager";
@@ -72,7 +72,7 @@ export interface CustomToolAPI {
 	/** Injected zod/v4 module for canonical parameter schemas. */
 	zod: typeof zod;
 	/** Injected pi-coding-agent exports */
-	pi: typeof PiCodingAgent;
+	airs: typeof AirisCodingAgent;
 	/** Push a preview action that can later be resolved with the hidden resolve tool */
 	pushPendingAction(action: CustomToolPendingAction): void;
 }
@@ -98,7 +98,7 @@ export interface CustomToolContext {
 	settings?: Settings;
 	/** Fetch implementation for outbound HTTP; defaults to global fetch when omitted. */
 	fetch?: FetchImpl;
-	/** Calling session's `local://` root mapping for tools that bridge out of the OMP process. */
+	/** Calling session's `local://` root mapping for tools that bridge out of the AIRIS process. */
 	localProtocolOptions?: LocalProtocolOptions;
 	/** Whether to auto-approve all destructive tool operations (--auto-approve CLI flag) */
 	autoApprove?: boolean;
@@ -255,7 +255,7 @@ export interface CustomTool<TParams extends TSchema = TSchema, TDetails = any> {
 
 /** Factory function that creates a custom tool or array of tools */
 export type CustomToolFactory = (
-	pi: CustomToolAPI,
+	airs: CustomToolAPI,
 ) => CustomTool<any, any> | CustomTool<any, any>[] | Promise<CustomTool<any, any> | CustomTool<any, any>[]>;
 
 /** Loaded custom tool with metadata and wrapped AgentTool */

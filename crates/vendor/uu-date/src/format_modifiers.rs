@@ -4,7 +4,7 @@
 // file that was distributed with this source code.
 // spell-checker:ignore strtime
 
-// pi-uutils: vendored from uutils/coreutils 0.8.0 and patched to run in-process
+// airis-uutils: vendored from uutils/coreutils 0.8.0 and patched to run in-process
 // as a shell builtin: the `translate!` error string is literalized with the
 // en-US locale text and the regex cache uses `LazyLock` instead of `OnceLock`.
 // No behavior changes.
@@ -59,7 +59,7 @@ impl fmt::Display for FormatError {
 	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
 		match self {
 			Self::JiffError(e) => write!(f, "{e}"),
-			// pi-uutils: literalized en-US translation of
+			// airis-uutils: literalized en-US translation of
 			// `date-error-format-modifier-width-too-large`.
 			Self::FieldWidthTooLarge { width, specifier } => {
 				write!(f, "format modifier width '{width}' is too large for specifier '%{specifier}'")
@@ -79,7 +79,7 @@ impl From<jiff::Error> for FormatError {
 /// Flags: -, _, 0, ^, #, +
 /// Width: one or more digits
 /// Specifier: any letter or special sequence like :z, ::z, :::z
-// pi-uutils: `LazyLock` instead of upstream's function-local `OnceLock`.
+// airis-uutils: `LazyLock` instead of upstream's function-local `OnceLock`.
 static FORMAT_SPEC_REGEX: LazyLock<Regex> =
 	LazyLock::new(|| Regex::new(r"%([_0^#+-]*)(\d*)(:*[a-zA-Z])").unwrap());
 

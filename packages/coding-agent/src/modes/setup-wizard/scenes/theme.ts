@@ -6,7 +6,7 @@ import {
 	type SgrMouseEvent,
 	truncateToWidth,
 	visibleWidth,
-} from "@oh-my-pi/pi-tui";
+} from "@airis/airis-tui";
 import {
 	enableAutoTheme,
 	getAvailableThemes,

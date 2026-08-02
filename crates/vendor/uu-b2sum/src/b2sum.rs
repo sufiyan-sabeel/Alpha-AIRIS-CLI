@@ -5,9 +5,9 @@
 
 // spell-checker:ignore (ToDO) algo
 
-// pi-uutils: Patched for in-process embedding via the shared
+// airis-uutils: Patched for in-process embedding via the shared
 // `uu-checksum-common` crate, which redirects all standard stream I/O and file
-// resolution through `pi-uutils-ctx`.
+// resolution through `airis-uutils-ctx`.
 
 use std::ffi::OsString;
 

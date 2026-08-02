@@ -149,10 +149,10 @@ function arkJsonAstToWire(value: unknown): unknown {
 }
 
 /** Symbol-stamped caches keyed by schema object identity. */
-const kZodWireSchema = Symbol("pi.schema.zod.wire");
-const kJsonWireSchema = Symbol("pi.schema.json.wire");
-const kArkWireSchema = Symbol("pi.schema.ark.wire");
-const kStrippedSchema = Symbol("pi.schema.descriptions.stripped");
+const kZodWireSchema = Symbol("airs.schema.zod.wire");
+const kJsonWireSchema = Symbol("airs.schema.json.wire");
+const kArkWireSchema = Symbol("airs.schema.ark.wire");
+const kStrippedSchema = Symbol("airs.schema.descriptions.stripped");
 
 /**
  * Post-process Zod-emitted JSON Schema so it matches the wire shape providers

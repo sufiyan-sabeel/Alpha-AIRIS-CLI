@@ -12,7 +12,7 @@ afterEach(async () => {
 });
 
 async function makeProbe(logsDir: string): Promise<string> {
-	const root = await fs.mkdtemp(path.join(os.tmpdir(), "omp-logger-probe-"));
+	const root = await fs.mkdtemp(path.join(os.tmpdir(), "airis-logger-probe-"));
 	roots.push(root);
 	const probePath = path.join(root, "probe.ts");
 	await Bun.write(
@@ -29,7 +29,7 @@ async function makeProbe(logsDir: string): Promise<string> {
 
 describe("multiprocess file logging", () => {
 	it("gives concurrent processes independent rotation files and audit state", async () => {
-		const logsDir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-logger-output-"));
+		const logsDir = await fs.mkdtemp(path.join(os.tmpdir(), "airis-logger-output-"));
 		roots.push(logsDir);
 		const probePath = await makeProbe(logsDir);
 		const processes = [
@@ -54,14 +54,14 @@ describe("multiprocess file logging", () => {
 		// (toISOString is UTC and diverges around local midnight) — the invariant
 		// is one dated rotation file per pid.
 		for (const proc of processes) {
-			const perPid = new RegExp(`^omp\\.\\d{4}-\\d{2}-\\d{2}\\.${proc.pid}\\.log$`);
+			const perPid = new RegExp(`^airis\\.\\d{4}-\\d{2}-\\d{2}\\.${proc.pid}\\.log$`);
 			expect(entries.some(name => perPid.test(name))).toBe(true);
 		}
 		expect(entries.filter(name => name.endsWith("-audit.json"))).toHaveLength(2);
 	});
 
 	it("prunes completed PID namespaces across short-lived invocations", async () => {
-		const logsDir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-logger-retention-"));
+		const logsDir = await fs.mkdtemp(path.join(os.tmpdir(), "airis-logger-retention-"));
 		roots.push(logsDir);
 		const exited = Array.from({ length: 7 }, () =>
 			Bun.spawn([process.execPath, "--version"], { stdout: "ignore", stderr: "ignore" }),
@@ -70,10 +70,10 @@ describe("multiprocess file logging", () => {
 
 		const date = "2026-07-01";
 		for (const [index, proc] of exited.entries()) {
-			const logPath = path.join(logsDir, `omp.${date}.${proc.pid}.log`);
+			const logPath = path.join(logsDir, `airis.${date}.${proc.pid}.log`);
 			await Bun.write(logPath, `completed process ${proc.pid}`);
 			await fs.utimes(logPath, index + 1, index + 1);
-			await Bun.write(path.join(logsDir, `.omp.${proc.pid}-audit.json`), "{}");
+			await Bun.write(path.join(logsDir, `.airis.${proc.pid}-audit.json`), "{}");
 		}
 
 		const probePath = await makeProbe(logsDir);
@@ -81,8 +81,8 @@ describe("multiprocess file logging", () => {
 		expect(await current.exited).toBe(0);
 
 		const entries = await fs.readdir(logsDir);
-		const completedLogs = entries.filter(name => name.startsWith(`omp.${date}.`));
+		const completedLogs = entries.filter(name => name.startsWith(`airis.${date}.`));
 		expect(completedLogs).toHaveLength(5);
-		expect(entries.filter(name => name.endsWith("-audit.json"))).toEqual([`.omp.${current.pid}-audit.json`]);
+		expect(entries.filter(name => name.endsWith("-audit.json"))).toEqual([`.airis.${current.pid}-audit.json`]);
 	});
 });

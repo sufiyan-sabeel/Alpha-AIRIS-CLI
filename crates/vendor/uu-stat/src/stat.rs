@@ -6,12 +6,12 @@
 
 #![cfg_attr(windows, feature(windows_by_handle))]
 
-// pi-uutils: vendored from uutils/coreutils 0.8.0 and patched to run in-process
+// airis-uutils: vendored from uutils/coreutils 0.8.0 and patched to run in-process
 // as a shell builtin. Every filesystem syscall (stat/lstat/statfs/readlink)
 // resolves its path operand against the shell working directory via
-// `pi_uutils_ctx::resolve` AT THE CALL SITE, while the original operands are
+// `airis_uutils_ctx::resolve` AT THE CALL SITE, while the original operands are
 // kept for display/error messages and `%n` output (GNU prints operands as
-// typed). All process-global stdio is routed through `pi_uutils_ctx`,
+// typed). All process-global stdio is routed through `airis_uutils_ctx`,
 // `translate!` strings are literalized from locales/en-US.ftl, QUOTING_STYLE is
 // read from the scope environment, SELinux support is dropped, and the entry
 // point no longer calls `std::process::exit`. The upstream file-status code is
@@ -26,22 +26,22 @@
 #[cfg(any(unix, windows))]
 pub use imp::{run, uu_app};
 
-/// pi-uutils: stub for exotic targets (wasm, etc.) that are neither Unix nor
+/// airis-uutils: stub for exotic targets (wasm, etc.) that are neither Unix nor
 /// Windows — upstream stat cannot be built there.
 #[cfg(not(any(unix, windows)))]
 pub fn run(_argv: Vec<std::ffi::OsString>) -> i32 {
 	use std::io::Write;
-	let _ = writeln!(pi_uutils_ctx::stderr(), "stat: unsupported on this platform");
+	let _ = writeln!(airis_uutils_ctx::stderr(), "stat: unsupported on this platform");
 	1
 }
 
-/// pi-uutils: minimal counterpart of the real `uu_app` for exotic targets.
+/// airis-uutils: minimal counterpart of the real `uu_app` for exotic targets.
 #[cfg(not(any(unix, windows)))]
 pub fn uu_app() -> clap::Command {
 	clap::Command::new("stat")
 		.version(uucore::crate_version!())
 		.about("Display file or file system status.")
-		.override_usage(pi_uutils_ctx::format_usage("stat [OPTION]... FILE..."))
+		.override_usage(airis_uutils_ctx::format_usage("stat [OPTION]... FILE..."))
 }
 
 #[cfg(any(unix, windows))]
@@ -60,7 +60,7 @@ mod imp {
 	};
 
 	use clap::{Arg, ArgAction, ArgMatches, Command, builder::ValueParser};
-	use pi_uutils_ctx::format_usage;
+	use airis_uutils_ctx::format_usage;
 	use thiserror::Error;
 	#[cfg(windows)]
 	use uucore::time::{FormatSystemTimeFallback, format_system_time, system_time_to_sec};
@@ -82,7 +82,7 @@ mod imp {
 
 	const ABOUT: &str = "Display file or file system status.";
 	const USAGE: &str = "stat [OPTION]... FILE...";
-	// pi-uutils: literalized from locales/en-US.ftl (`stat-after-help`).
+	// airis-uutils: literalized from locales/en-US.ftl (`stat-after-help`).
 	const AFTER_HELP: &str = "Valid format sequences for files (without `--file-system`):
 
 -`%a`: access rights in octal (note '#' and '0' printf flags)
@@ -136,7 +136,7 @@ NOTE: your shell may have its own version of stat, which usually supersedes
 the version described here.  Please refer to your shell's documentation
 for details about the options it supports.";
 
-	// pi-uutils: `translate!` error strings literalized from locales/en-US.ftl.
+	// airis-uutils: `translate!` error strings literalized from locales/en-US.ftl.
 	#[derive(Debug, Error)]
 	enum StatError {
 		#[error("Invalid quoting style: {style}")]
@@ -214,8 +214,8 @@ for details about the options it supports.";
 	/// because the format specification of print! does not support general
 	/// fill characters.
 	fn pad_and_print(result: &str, left: bool, width: usize, padding: Padding) {
-		// pi-uutils: write to the context stdout instead of `print!`.
-		let mut out = pi_uutils_ctx::stdout();
+		// airis-uutils: write to the context stdout instead of `print!`.
+		let mut out = airis_uutils_ctx::stdout();
 		let _ = match (left, padding) {
 			(false, Padding::Zero) => write!(out, "{result:0>width$}"),
 			(false, Padding::Space) => write!(out, "{result:>width$}"),
@@ -229,7 +229,7 @@ for details about the options it supports.";
 	///
 	/// On Unix systems, this preserves non-UTF8 data by printing raw bytes
 	/// On other platforms, falls back to lossy string conversion
-	// pi-uutils: raw-byte output is only reachable via `%m` (OsStr) on Unix.
+	// airis-uutils: raw-byte output is only reachable via `%m` (OsStr) on Unix.
 	#[cfg(unix)]
 	fn pad_and_print_bytes<W: Write>(
 		mut writer: W,
@@ -492,9 +492,9 @@ for details about the options it supports.";
 			OutputType::Float(num) => {
 				print_float(*num, flags, width, precision, padding_char);
 			},
-			// pi-uutils: context stdout instead of `print!`.
+			// airis-uutils: context stdout instead of `print!`.
 			OutputType::Unknown => {
-				let _ = write!(pi_uutils_ctx::stdout(), "?");
+				let _ = write!(airis_uutils_ctx::stdout(), "?");
 			},
 		}
 	}
@@ -545,7 +545,7 @@ for details about the options it supports.";
 	/// * `width` - The width of the field for the printed string.
 	/// * `precision` - How many digits of precision, if any.
 	fn print_os_str(s: &OsString, flags: Flags, width: usize, precision: Precision) {
-		// pi-uutils: on Unix, preserve non-UTF8 operands by printing raw bytes
+		// airis-uutils: on Unix, preserve non-UTF8 operands by printing raw bytes
 		// (upstream behavior); the `OsStr` output type is only produced by the
 		// `%m` mount-point directive, which is Unix-only. Elsewhere fall back to
 		// a lossy string so the code compiles and behaves sensibly.
@@ -555,7 +555,7 @@ for details about the options it supports.";
 
 			let bytes = s.as_bytes();
 
-			if pad_and_print_bytes(pi_uutils_ctx::stdout(), bytes, flags.left, width, precision)
+			if pad_and_print_bytes(airis_uutils_ctx::stdout(), bytes, flags.left, width, precision)
 				.is_err()
 			{
 				// if an error occurred while trying to print bytes fall back to normal lossy
@@ -586,15 +586,15 @@ for details about the options it supports.";
 
 	fn get_quoted_file_name(
 		display_name: &str,
-		// pi-uutils: takes the operand resolved against the shell working
+		// airis-uutils: takes the operand resolved against the shell working
 		// directory for the `readlink` syscall; `display_name` stays as typed.
 		resolved: &Path,
 		file_type: FileType,
 		from_user: bool,
 	) -> Result<String, i32> {
-		// pi-uutils: QUOTING_STYLE comes from the scope environment (the
+		// airis-uutils: QUOTING_STYLE comes from the scope environment (the
 		// shell's exported variables), not the host process environment.
-		let quoting_style = pi_uutils_ctx::var("QUOTING_STYLE")
+		let quoting_style = airis_uutils_ctx::var("QUOTING_STYLE")
 			.and_then(|style| style.parse().ok())
 			.unwrap_or_default();
 
@@ -606,8 +606,8 @@ for details about the options it supports.";
 					Ok(format!("{quoted_display_name} -> {quoted_dst}"))
 				},
 				Err(e) => {
-					// pi-uutils: `show_error!` replaced with a context-stderr write.
-					let _ = writeln!(pi_uutils_ctx::stderr(), "stat: {e}");
+					// airis-uutils: `show_error!` replaced with a context-stderr write.
+					let _ = writeln!(airis_uutils_ctx::stderr(), "stat: {e}");
 					Err(1)
 				},
 			}
@@ -625,9 +625,9 @@ for details about the options it supports.";
 	fn process_token_filesystem(t: &Token, meta: &StatFs, display_name: &str) {
 		match *t {
 			Token::Byte(byte) => write_raw_byte(byte),
-			// pi-uutils: context stdout instead of `print!`.
+			// airis-uutils: context stdout instead of `print!`.
 			Token::Char(c) => {
-				let _ = write!(pi_uutils_ctx::stdout(), "{c}");
+				let _ = write!(airis_uutils_ctx::stdout(), "{c}");
 			},
 			Token::Directive { flag, width, precision, format } => {
 				let output = match format {
@@ -849,9 +849,9 @@ for details about the options it supports.";
 	}
 
 	fn write_raw_byte(byte: u8) {
-		// pi-uutils: context stdout instead of the process stdout, and no
+		// airis-uutils: context stdout instead of the process stdout, and no
 		// `unwrap` — an in-process builtin must not panic on a broken pipe.
-		let _ = pi_uutils_ctx::stdout().write_all(&[byte]);
+		let _ = airis_uutils_ctx::stdout().write_all(&[byte]);
 	}
 
 	impl Stater {
@@ -968,9 +968,9 @@ for details about the options it supports.";
 		) -> Token {
 			*i += 1;
 			if *i >= bound {
-				// pi-uutils: `show_warning!` replaced with a context-stderr
+				// airis-uutils: `show_warning!` replaced with a context-stderr
 				// write; message literalized from locales/en-US.ftl.
-				let _ = writeln!(pi_uutils_ctx::stderr(), "stat: warning: backslash at end of format");
+				let _ = writeln!(airis_uutils_ctx::stderr(), "stat: warning: backslash at end of format");
 				return Token::Char('\\');
 			}
 			match chars[*i] {
@@ -1008,29 +1008,29 @@ for details about the options it supports.";
 							*i += offset;
 							Token::Byte(c as u8)
 						} else {
-							// pi-uutils: `show_warning!` replaced with a
+							// airis-uutils: `show_warning!` replaced with a
 							// context-stderr write.
 							let _ = writeln!(
-								pi_uutils_ctx::stderr(),
+								airis_uutils_ctx::stderr(),
 								"stat: warning: unrecognized escape '\\x'"
 							);
 							Token::Byte(b'x')
 						}
 					} else {
-						// pi-uutils: `show_warning!` replaced with a
+						// airis-uutils: `show_warning!` replaced with a
 						// context-stderr write.
 						let _ = writeln!(
-							pi_uutils_ctx::stderr(),
+							airis_uutils_ctx::stderr(),
 							"stat: warning: incomplete hex escape '\\x'"
 						);
 						Token::Byte(b'x')
 					}
 				},
 				other => {
-					// pi-uutils: `show_warning!` replaced with a context-stderr
+					// airis-uutils: `show_warning!` replaced with a context-stderr
 					// write.
 					let _ = writeln!(
-						pi_uutils_ctx::stderr(),
+						airis_uutils_ctx::stderr(),
 						"stat: warning: unrecognized escape '\\{other}'"
 					);
 					Token::Byte(other as u8)
@@ -1146,10 +1146,10 @@ for details about the options it supports.";
 					Ok(list) => Some(list),
 					Err(e) => {
 						// Show warning like GNU does when mount information cannot be read
-						// pi-uutils: `show_warning!` replaced with a
+						// airis-uutils: `show_warning!` replaced with a
 						// context-stderr write.
 						let _ = writeln!(
-							pi_uutils_ctx::stderr(),
+							airis_uutils_ctx::stderr(),
 							"stat: warning: cannot read table of mounted file systems: {e}"
 						);
 						None
@@ -1184,7 +1184,7 @@ for details about the options it supports.";
 			t: &Token,
 			meta: &Metadata,
 			display_name: &str,
-			// pi-uutils: takes the operand resolved against the shell working
+			// airis-uutils: takes the operand resolved against the shell working
 			// directory for the `%m`/`%N` syscalls (upstream passed the raw
 			// operand); display output keeps `display_name` as typed. The
 			// SELinux `follow_symbolic_links` parameter is dropped along with
@@ -1195,9 +1195,9 @@ for details about the options it supports.";
 		) -> Result<(), i32> {
 			match *t {
 				Token::Byte(byte) => write_raw_byte(byte),
-				// pi-uutils: context stdout instead of `print!`.
+				// airis-uutils: context stdout instead of `print!`.
 				Token::Char(c) => {
-					let _ = write!(pi_uutils_ctx::stdout(), "{c}");
+					let _ = write!(airis_uutils_ctx::stdout(), "{c}");
 				},
 
 				Token::Directive { flag, width, precision, format } => {
@@ -1215,7 +1215,7 @@ for details about the options it supports.";
 						// spell-checker:disable-line
 						'B' => OutputType::Unsigned(512),
 						// SELinux security context string
-						// pi-uutils: SELinux support is dropped; this is
+						// airis-uutils: SELinux support is dropped; this is
 						// upstream's non-SELinux fallback string.
 						'C' => OutputType::Str("unsupported for this operating system".to_string()),
 						// device number in decimal
@@ -1322,10 +1322,10 @@ for details about the options it supports.";
 			let display_name = file.to_string_lossy();
 			let file = if display_name == "-" {
 				if self.show_fs {
-					// pi-uutils: `show_error!` replaced with a context-stderr
+					// airis-uutils: `show_error!` replaced with a context-stderr
 					// write.
 					let _ =
-						writeln!(pi_uutils_ctx::stderr(), "stat: {}", StatError::StdinFilesystemMode);
+						writeln!(airis_uutils_ctx::stderr(), "stat: {}", StatError::StdinFilesystemMode);
 					return 1;
 				}
 				if let Ok(p) = Path::new("/dev/stdin").canonicalize() {
@@ -1336,10 +1336,10 @@ for details about the options it supports.";
 			} else {
 				OsString::from(file)
 			};
-			// pi-uutils: resolve the operand against the shell working
+			// airis-uutils: resolve the operand against the shell working
 			// directory for every syscall below; `display_name` keeps the
 			// operand as typed for `%n` and error messages.
-			let resolved = pi_uutils_ctx::resolve(&file);
+			let resolved = airis_uutils_ctx::resolve(&file);
 			if self.show_fs {
 				match statfs(resolved.as_os_str()) {
 					Ok(meta) => {
@@ -1351,10 +1351,10 @@ for details about the options it supports.";
 						}
 					},
 					Err(error) => {
-						// pi-uutils: `show_error!` replaced with a
+						// airis-uutils: `show_error!` replaced with a
 						// context-stderr write.
 						let _ = writeln!(
-							pi_uutils_ctx::stderr(),
+							airis_uutils_ctx::stderr(),
 							"stat: {}",
 							StatError::CannotReadFilesystemInfo {
 								file: display_name.quote().to_string(),
@@ -1396,9 +1396,9 @@ for details about the options it supports.";
 						}
 					},
 					Err(e) => {
-						// pi-uutils: `show_error!` replaced with a
+						// airis-uutils: `show_error!` replaced with a
 						// context-stderr write.
-						let _ = writeln!(pi_uutils_ctx::stderr(), "stat: {}", StatError::CannotStat {
+						let _ = writeln!(airis_uutils_ctx::stderr(), "stat: {}", StatError::CannotStat {
 							file:  display_name.quote().to_string(),
 							error: e.to_string(),
 						});
@@ -1411,7 +1411,7 @@ for details about the options it supports.";
 
 		fn default_format(show_fs: bool, terse: bool, show_dev_type: bool) -> String {
 			// SELinux related format is *ignored*
-			// pi-uutils: `translate!` word lookups literalized from
+			// airis-uutils: `translate!` word lookups literalized from
 			// locales/en-US.ftl.
 
 			if show_fs {
@@ -1441,7 +1441,7 @@ for details about the options it supports.";
 		}
 	}
 
-	/// pi-uutils: BSD `stat -f FORMAT` compatibility (macOS muscle memory).
+	/// airis-uutils: BSD `stat -f FORMAT` compatibility (macOS muscle memory).
 	///
 	/// BSD stat's `-f` takes a format string (`stat -f "%Sm %N" file`), while
 	/// GNU's `-f` is `--file-system`; parsed as GNU, a BSD invocation prints
@@ -1562,7 +1562,7 @@ for details about the options it supports.";
 		};
 		if timefmt_ignored {
 			let _ = writeln!(
-				pi_uutils_ctx::stderr(),
+				airis_uutils_ctx::stderr(),
 				"stat: warning: BSD '-t' time format is ignored; human-readable times use the GNU \
 				 default format"
 			);
@@ -1754,13 +1754,13 @@ for details about the options it supports.";
 	/// context streams, and maps the `UResult` to an exit code, so it is safe
 	/// to run inside the host shell process.
 	pub fn run(argv: Vec<OsString>) -> i32 {
-		// pi-uutils: translate BSD-style `stat -f FORMAT` invocations into GNU
+		// airis-uutils: translate BSD-style `stat -f FORMAT` invocations into GNU
 		// form before parsing; see `rewrite_bsd_invocation`.
 		let argv = match rewrite_bsd_invocation(&argv) {
 			None => argv,
 			Some(Ok(rewritten)) => rewritten,
 			Some(Err(msg)) => {
-				let _ = writeln!(pi_uutils_ctx::stderr(), "stat: {msg}");
+				let _ = writeln!(airis_uutils_ctx::stderr(), "stat: {msg}");
 				return 1;
 			},
 		};
@@ -1769,24 +1769,24 @@ for details about the options it supports.";
 			Err(err) => {
 				let rendered = err.to_string();
 				if err.use_stderr() {
-					let _ = write!(pi_uutils_ctx::stderr(), "{rendered}");
+					let _ = write!(airis_uutils_ctx::stderr(), "{rendered}");
 					return 1;
 				}
-				let _ = write!(pi_uutils_ctx::stdout(), "{rendered}");
+				let _ = write!(airis_uutils_ctx::stdout(), "{rendered}");
 				return 0;
 			},
 		};
 		match stat_main(&matches) {
-			Ok(()) => pi_uutils_ctx::exit_code(),
+			Ok(()) => airis_uutils_ctx::exit_code(),
 			Err(err) => {
 				let code = err.code();
-				// pi-uutils: `do_stat` already reports its errors to the
+				// airis-uutils: `do_stat` already reports its errors to the
 				// context stderr and surfaces a bare exit-code error that
 				// renders to an empty message; don't emit a dangling
 				// "stat: " prefix for it.
 				let msg = err.to_string();
 				if !msg.is_empty() {
-					let _ = writeln!(pi_uutils_ctx::stderr(), "stat: {msg}");
+					let _ = writeln!(airis_uutils_ctx::stderr(), "stat: {msg}");
 				}
 				if code == 0 { 1 } else { code }
 			},
@@ -1973,7 +1973,7 @@ for details about the options it supports.";
 			assert_eq!(precision_trunc(123.456, Precision::Number(5)), "123.45600");
 		}
 	}
-	/// pi-uutils: Windows-native metadata helpers for `stat`. Upstream's
+	/// airis-uutils: Windows-native metadata helpers for `stat`. Upstream's
 	/// file-status path is Unix-only (`std::os::unix`); this reimplements the
 	/// GNU directives on top of `std::fs::Metadata`, the `windows_by_handle`
 	/// metadata extensions (inode / link count / device via
@@ -2184,7 +2184,7 @@ for details about the options it supports.";
 		}
 	}
 
-	/// pi-uutils: Windows counterpart of `pretty_time`, formatting a
+	/// airis-uutils: Windows counterpart of `pretty_time`, formatting a
 	/// `std::fs::Metadata` timestamp through the shared datetime format.
 	#[cfg(windows)]
 	fn pretty_time(meta: &Metadata, field: win::TimeField) -> String {
@@ -2204,13 +2204,13 @@ for details about the options it supports.";
 		"-".to_string()
 	}
 
-	/// pi-uutils: Windows counterpart of `process_token_filesystem`.
+	/// airis-uutils: Windows counterpart of `process_token_filesystem`.
 	#[cfg(windows)]
 	fn process_token_filesystem(t: &Token, meta: &win::StatFs, display_name: &str) {
 		match *t {
 			Token::Byte(byte) => write_raw_byte(byte),
 			Token::Char(c) => {
-				let _ = write!(pi_uutils_ctx::stdout(), "{c}");
+				let _ = write!(airis_uutils_ctx::stdout(), "{c}");
 			},
 			Token::Directive { flag, width, precision, format } => {
 				let output = match format {
@@ -2265,7 +2265,7 @@ for details about the options it supports.";
 			match *t {
 				Token::Byte(byte) => write_raw_byte(byte),
 				Token::Char(c) => {
-					let _ = write!(pi_uutils_ctx::stdout(), "{c}");
+					let _ = write!(airis_uutils_ctx::stdout(), "{c}");
 				},
 				Token::Directive { flag, width, precision, format } => {
 					let mode = win::synth_mode(meta);
@@ -2364,10 +2364,10 @@ for details about the options it supports.";
 
 		fn do_stat(&self, file: &OsStr) -> i32 {
 			let display_name = file.to_string_lossy();
-			// pi-uutils: resolve the operand against the shell working
+			// airis-uutils: resolve the operand against the shell working
 			// directory; `display_name` keeps the operand as typed for `%n`
 			// and error messages.
-			let resolved = pi_uutils_ctx::resolve(file);
+			let resolved = airis_uutils_ctx::resolve(file);
 			if self.show_fs {
 				let result = fs::metadata(&resolved)
 					.map_err(|error| error.to_string())
@@ -2380,7 +2380,7 @@ for details about the options it supports.";
 					},
 					Err(error) => {
 						let _ = writeln!(
-							pi_uutils_ctx::stderr(),
+							airis_uutils_ctx::stderr(),
 							"stat: {}",
 							StatError::CannotReadFilesystemInfo {
 								file: display_name.quote().to_string(),
@@ -2415,7 +2415,7 @@ for details about the options it supports.";
 						}
 					},
 					Err(e) => {
-						let _ = writeln!(pi_uutils_ctx::stderr(), "stat: {}", StatError::CannotStat {
+						let _ = writeln!(airis_uutils_ctx::stderr(), "stat: {}", StatError::CannotStat {
 							file:  display_name.quote().to_string(),
 							error: e.to_string(),
 						});
@@ -2433,7 +2433,7 @@ mod tests {
 	use std::{collections::HashMap, ffi::OsString, fs, io::Write, path::PathBuf, sync::Arc};
 
 	use parking_lot::Mutex;
-	use pi_uutils_ctx::ScopeIo;
+	use airis_uutils_ctx::ScopeIo;
 
 	use super::run;
 
@@ -2471,7 +2471,7 @@ mod tests {
 			.map(OsString::from)
 			.collect();
 
-		let code = pi_uutils_ctx::scope(io, || run(argv));
+		let code = airis_uutils_ctx::scope(io, || run(argv));
 
 		let out_str = String::from_utf8(stdout_buf.lock().clone()).unwrap();
 		let err_str = String::from_utf8(stderr_buf.lock().clone()).unwrap();
@@ -2494,7 +2494,7 @@ mod tests {
 		fs::write(root.join("data.bin"), b"hello world!").unwrap();
 
 		// Relative operand + scope cwd differing from the process cwd: only the
-		// call-site `pi_uutils_ctx::resolve` patch makes this find the file.
+		// call-site `airis_uutils_ctx::resolve` patch makes this find the file.
 		let (code, stdout, stderr) = run_in(root, vec!["-c", "%s", "data.bin"]);
 		assert_eq!(code, 0);
 		assert_eq!(stdout, "12\n");
@@ -2671,7 +2671,7 @@ mod win_tests {
 	use std::{collections::HashMap, ffi::OsString, fs, io::Write, path::PathBuf, sync::Arc};
 
 	use parking_lot::Mutex;
-	use pi_uutils_ctx::ScopeIo;
+	use airis_uutils_ctx::ScopeIo;
 
 	use super::run;
 
@@ -2709,7 +2709,7 @@ mod win_tests {
 			.map(OsString::from)
 			.collect();
 
-		let code = pi_uutils_ctx::scope(io, || run(argv));
+		let code = airis_uutils_ctx::scope(io, || run(argv));
 		let out_str = String::from_utf8(stdout_buf.lock().clone()).unwrap();
 		let err_str = String::from_utf8(stderr_buf.lock().clone()).unwrap();
 		(code, out_str, err_str)

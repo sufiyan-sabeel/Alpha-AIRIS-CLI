@@ -1,15 +1,15 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import * as PiCodingAgent from "@oh-my-pi/pi-coding-agent";
-import { loadCustomCommands } from "@oh-my-pi/pi-coding-agent/extensibility/custom-commands/loader";
-import { loadCustomTools } from "@oh-my-pi/pi-coding-agent/extensibility/custom-tools/loader";
-import { loadExtensions } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { loadHooks } from "@oh-my-pi/pi-coding-agent/extensibility/hooks/loader";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import * as AirisCodingAgent from "@airis/airis-coding-agent";
+import { loadCustomCommands } from "@airis/airis-coding-agent/extensibility/custom-commands/loader";
+import { loadCustomTools } from "@airis/airis-coding-agent/extensibility/custom-tools/loader";
+import { loadExtensions } from "@airis/airis-coding-agent/extensibility/extensions/loader";
+import { loadHooks } from "@airis/airis-coding-agent/extensibility/hooks/loader";
+import { TempDir } from "@airis/airis-utils";
 
 declare global {
-	var __ompHostPiForLoaderIdentityTest: typeof PiCodingAgent | undefined;
+	var __airisHostAirisForLoaderIdentityTest: typeof AirisCodingAgent | undefined;
 }
 
 describe("extension loader host runtime binding", () => {
@@ -17,13 +17,13 @@ describe("extension loader host runtime binding", () => {
 
 	beforeEach(() => {
 		projectDir = TempDir.createSync("@loader-host-runtime-");
-		globalThis.__ompHostPiForLoaderIdentityTest = PiCodingAgent;
+		globalThis.__airisHostAirisForLoaderIdentityTest = AirisCodingAgent;
 	});
 
 	afterEach(() => {
 		projectDir?.removeSync();
 		projectDir = undefined;
-		globalThis.__ompHostPiForLoaderIdentityTest = undefined;
+		globalThis.__airisHostAirisForLoaderIdentityTest = undefined;
 	});
 
 	function writeModule(relativePath: string, source: string): string {
@@ -35,9 +35,9 @@ describe("extension loader host runtime binding", () => {
 	}
 
 	const identityGuard = `
-		const expectedPi = globalThis.__ompHostPiForLoaderIdentityTest;
-		if (!expectedPi) throw new Error("missing host pi module");
-		if (api.pi !== expectedPi) throw new Error("injected pi module did not match host module");
+		const expectedAiris = globalThis.__airisHostAirisForLoaderIdentityTest;
+		if (!expectedAiris) throw new Error("missing host airis module");
+		if (api.airs !== expectedAiris) throw new Error("injected airis module did not match host module");
 	`;
 
 	it("passes the in-process host pi module through every loader API", async () => {

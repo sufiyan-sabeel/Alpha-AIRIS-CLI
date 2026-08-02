@@ -1,4 +1,4 @@
-import type { ToolResultMessage } from "@oh-my-pi/pi-ai";
+import type { ToolResultMessage } from "@airis/airis-ai";
 import type { AgentToolCall } from "../types";
 import type { SessionEntry } from "./entries";
 

@@ -1,4 +1,4 @@
-import { isAnthropicWebSearchHistoryBlock } from "@oh-my-pi/pi-ai/providers/anthropic-wire";
+import { isAnthropicWebSearchHistoryBlock } from "@airis/airis-ai/providers/anthropic-wire";
 import {
 	type BlobStore,
 	externalizeImageDataSync,

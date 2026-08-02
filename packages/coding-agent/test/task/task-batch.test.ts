@@ -14,17 +14,17 @@
  *    runtime for internal callers.
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { toolWireSchema } from "@oh-my-pi/pi-ai/utils/schema";
-import { AsyncJobManager } from "@oh-my-pi/pi-coding-agent/async/job-manager";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentLifecycleManager } from "@oh-my-pi/pi-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import { TaskTool } from "@oh-my-pi/pi-coding-agent/task";
-import * as discoveryModule from "@oh-my-pi/pi-coding-agent/task/discovery";
-import * as executorModule from "@oh-my-pi/pi-coding-agent/task/executor";
-import type { AgentDefinition, SingleResult, TaskParams } from "@oh-my-pi/pi-coding-agent/task/types";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { isRecord } from "@oh-my-pi/pi-utils";
+import { toolWireSchema } from "@airis/airis-ai/utils/schema";
+import { AsyncJobManager } from "@airis/airis-coding-agent/async/job-manager";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import { AgentLifecycleManager } from "@airis/airis-coding-agent/registry/agent-lifecycle";
+import { AgentRegistry } from "@airis/airis-coding-agent/registry/agent-registry";
+import { TaskTool } from "@airis/airis-coding-agent/task";
+import * as discoveryModule from "@airis/airis-coding-agent/task/discovery";
+import * as executorModule from "@airis/airis-coding-agent/task/executor";
+import type { AgentDefinition, SingleResult, TaskParams } from "@airis/airis-coding-agent/task/types";
+import type { ToolSession } from "@airis/airis-coding-agent/tools";
+import { isRecord } from "@airis/airis-utils";
 
 const taskAgent: AgentDefinition = {
 	name: "task",

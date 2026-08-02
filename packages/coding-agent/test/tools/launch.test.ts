@@ -43,8 +43,8 @@ async function shutdown(client: DaemonBrokerClient): Promise<void> {
 }
 
 async function startPtyDaemonWithShell(shell: string, initialMarker: string, expectedMarker: string): Promise<void> {
-	const projectDir = await tempDir("omp-daemon-shell-project-");
-	const runtimeDir = await tempDir("omp-daemon-shell-runtime-");
+	const projectDir = await tempDir("airis-daemon-shell-project-");
+	const runtimeDir = await tempDir("airis-daemon-shell-runtime-");
 	const runner = `
 		import { createDaemonBrokerClient } from "./src/launch/client";
 
@@ -63,7 +63,7 @@ async function startPtyDaemonWithShell(shell: string, initialMarker: string, exp
 					application: process.execPath,
 					args: [
 						"-e",
-						"process.stdout.write(process.env.OMP_TEST_SHELL_MARKER); process.stdout.write(String.fromCharCode(10)); process.stdin.resume();",
+						"process.stdout.write(process.env.AIRIS_TEST_SHELL_MARKER); process.stdout.write(String.fromCharCode(10)); process.stdin.resume();",
 					],
 					env: {},
 					cwd: projectDir,
@@ -108,7 +108,7 @@ async function startPtyDaemonWithShell(shell: string, initialMarker: string, exp
 		env: {
 			...process.env,
 			SHELL: shell,
-			OMP_TEST_SHELL_MARKER: initialMarker,
+			AIRIS_TEST_SHELL_MARKER: initialMarker,
 		},
 		stdout: "pipe",
 		stderr: "pipe",
@@ -131,8 +131,8 @@ afterEach(async () => {
 
 describe("daemon broker", () => {
 	it("shares PTY output and input across project clients", async () => {
-		const projectDir = await tempDir("omp-daemon-project-");
-		const runtimeDir = await tempDir("omp-daemon-runtime-");
+		const projectDir = await tempDir("airis-daemon-project-");
+		const runtimeDir = await tempDir("airis-daemon-runtime-");
 		const scriptPath = path.join(projectDir, "service.ts");
 		await Bun.write(
 			scriptPath,
@@ -243,8 +243,8 @@ setInterval(() => {}, 1000);
 	}, 20_000);
 
 	it("omits terminal rows for non-PTY logs", async () => {
-		const projectDir = await tempDir("omp-daemon-plain-project-");
-		const runtimeDir = await tempDir("omp-daemon-plain-runtime-");
+		const projectDir = await tempDir("airis-daemon-plain-project-");
+		const runtimeDir = await tempDir("airis-daemon-plain-runtime-");
 		const client = await createDaemonBrokerClient(projectDir, { runtimeDir, idleGraceMs: 5_000 });
 		try {
 			const started = await client.request({
@@ -285,7 +285,7 @@ setInterval(() => {}, 1000);
 
 	it("uses a basic shell when the login shell cannot run POSIX commands", async () => {
 		if (process.platform === "win32") return;
-		const shellPath = path.join(await tempDir("omp-daemon-nonposix-shell-"), "csh");
+		const shellPath = path.join(await tempDir("airis-daemon-nonposix-shell-"), "csh");
 		await Bun.write(shellPath, "#!/bin/sh\nexit 1\n");
 		await fs.chmod(shellPath, 0o755);
 
@@ -294,8 +294,8 @@ setInterval(() => {}, 1000);
 
 	it("preserves compatible login shells for PTY daemons", async () => {
 		if (process.platform === "win32") return;
-		const shellPath = path.join(await tempDir("omp-daemon-posix-shell-"), "zsh");
-		await Bun.write(shellPath, '#!/bin/sh\nexport OMP_TEST_SHELL_MARKER="compatible-shell"\nexec /bin/sh "$@"\n');
+		const shellPath = path.join(await tempDir("airis-daemon-posix-shell-"), "zsh");
+		await Bun.write(shellPath, '#!/bin/sh\nexport AIRIS_TEST_SHELL_MARKER="compatible-shell"\nexec /bin/sh "$@"\n');
 		await fs.chmod(shellPath, 0o755);
 
 		await startPtyDaemonWithShell(shellPath, "basic-shell", "compatible-shell");
@@ -303,7 +303,7 @@ setInterval(() => {}, 1000);
 
 	it("returns promptly when a finite PTY child does not write the broker PID file", async () => {
 		if (process.platform === "win32") return;
-		const shellPath = path.join(await tempDir("omp-daemon-no-pid-shell-"), "zsh");
+		const shellPath = path.join(await tempDir("airis-daemon-no-pid-shell-"), "zsh");
 		await Bun.write(
 			shellPath,
 			`#!/bin/sh
@@ -319,8 +319,8 @@ esac
 `,
 		);
 		await fs.chmod(shellPath, 0o755);
-		const projectDir = await tempDir("omp-daemon-finite-project-");
-		const runtimeDir = await tempDir("omp-daemon-finite-runtime-");
+		const projectDir = await tempDir("airis-daemon-finite-project-");
+		const runtimeDir = await tempDir("airis-daemon-finite-runtime-");
 		const runner = `
 			import { createDaemonBrokerClient } from "./src/launch/client";
 
@@ -379,9 +379,9 @@ esac
 		expect(started.pid).toBeGreaterThan(0);
 	}, 20_000);
 
-	it("stops non-persistent daemons after the last project omp exits", async () => {
-		const projectDir = await tempDir("omp-daemon-exit-project-");
-		const runtimeDir = await tempDir("omp-daemon-exit-runtime-");
+	it("stops non-persistent daemons after the last project airis exits", async () => {
+		const projectDir = await tempDir("airis-daemon-exit-project-");
+		const runtimeDir = await tempDir("airis-daemon-exit-runtime-");
 		const scriptPath = path.join(projectDir, "service.ts");
 		await Bun.write(scriptPath, `process.stdout.write("READY\\n"); setInterval(() => {}, 1000);\n`);
 		const presence = await registerDaemonProjectPresence(projectDir, runtimeDir);
@@ -438,8 +438,8 @@ esac
 	}, 20_000);
 
 	it("keeps detached daemons alive through broker replacement", async () => {
-		const projectDir = await tempDir("omp-daemon-detached-project-");
-		const runtimeDir = await tempDir("omp-daemon-detached-runtime-");
+		const projectDir = await tempDir("airis-daemon-detached-project-");
+		const runtimeDir = await tempDir("airis-daemon-detached-runtime-");
 		const scriptPath = path.join(projectDir, "service.ts");
 		await Bun.write(scriptPath, `process.stdout.write("READY\\n"); setInterval(() => {}, 1000);\n`);
 		const first = await createDaemonBrokerClient(projectDir, { runtimeDir, idleGraceMs: 5_000 });
@@ -510,8 +510,8 @@ esac
 	// used to report "Ready: <match>" AND "Readiness timed out" with no hint of
 	// which condition failed. The snapshot now names the unmet condition(s).
 	it("names the unmet readiness condition when start times out", async () => {
-		const projectDir = await tempDir("omp-daemon-ready-project-");
-		const runtimeDir = await tempDir("omp-daemon-ready-runtime-");
+		const projectDir = await tempDir("airis-daemon-ready-project-");
+		const runtimeDir = await tempDir("airis-daemon-ready-runtime-");
 		const scriptPath = path.join(projectDir, "service.ts");
 		await Bun.write(scriptPath, `process.stdout.write("LISTENING\\n"); setInterval(() => {}, 1000);\n`);
 		// Reserve an ephemeral port and release it so nothing accepts connections there.
@@ -554,8 +554,8 @@ esac
 	// #waitUntil sampled the live (already "exited") state instead of the sticky
 	// readyAt marker #markReady durably recorded.
 	it("returns promptly when the process becomes ready then exits within a poll", async () => {
-		const projectDir = await tempDir("omp-daemon-fast-project-");
-		const runtimeDir = await tempDir("omp-daemon-fast-runtime-");
+		const projectDir = await tempDir("airis-daemon-fast-project-");
+		const runtimeDir = await tempDir("airis-daemon-fast-runtime-");
 		const scriptPath = path.join(projectDir, "fast.ts");
 		await Bun.write(scriptPath, `process.stdout.write("done\\n");\n`);
 		const client = await createDaemonBrokerClient(projectDir, { runtimeDir, idleGraceMs: 5_000 });
@@ -603,8 +603,8 @@ esac
 	// caller for the full timeout, and a for:"ready" wait on the settled daemon did
 	// the same. Terminal states now wake both waits immediately.
 	it('wakes start and for:"ready" waits when the process exits before readiness', async () => {
-		const projectDir = await tempDir("omp-daemon-preexit-project-");
-		const runtimeDir = await tempDir("omp-daemon-preexit-runtime-");
+		const projectDir = await tempDir("airis-daemon-preexit-project-");
+		const runtimeDir = await tempDir("airis-daemon-preexit-runtime-");
 		const scriptPath = path.join(projectDir, "preexit.ts");
 		// Exits without ever printing the ready pattern.
 		await Bun.write(scriptPath, `process.stdout.write("nope\\n"); process.exit(0);\n`);
@@ -660,8 +660,8 @@ esac
 	// clears readyAt/readyMatch when entering "restarting"; without that, start and
 	// for:"ready" waits race a dead service during the backoff.
 	it("clears stale readiness while a daemon is restarting", async () => {
-		const projectDir = await tempDir("omp-daemon-restart-project-");
-		const runtimeDir = await tempDir("omp-daemon-restart-runtime-");
+		const projectDir = await tempDir("airis-daemon-restart-project-");
+		const runtimeDir = await tempDir("airis-daemon-restart-runtime-");
 		const scriptPath = path.join(projectDir, "flap.ts");
 		// Becomes ready (prints the pattern), then crashes shortly after.
 		await Bun.write(scriptPath, `process.stdout.write("READY\\n"); setTimeout(() => process.exit(1), 50);\n`);

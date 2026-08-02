@@ -1,8 +1,8 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
-import { resetSettingsForTest, Settings, settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { SettingsSelectorComponent } from "@oh-my-pi/pi-coding-agent/modes/components/settings-selector";
-import { initTheme } from "@oh-my-pi/pi-coding-agent/modes/theme/theme";
-import { SEARCH_PROVIDER_CHOICES } from "@oh-my-pi/pi-coding-agent/web/search/types";
+import { resetSettingsForTest, Settings, settings } from "@airis/airis-coding-agent/config/settings";
+import { SettingsSelectorComponent } from "@airis/airis-coding-agent/modes/components/settings-selector";
+import { initTheme } from "@airis/airis-coding-agent/modes/theme/theme";
+import { SEARCH_PROVIDER_CHOICES } from "@airis/airis-coding-agent/web/search/types";
 
 beforeAll(async () => {
 	await initTheme();

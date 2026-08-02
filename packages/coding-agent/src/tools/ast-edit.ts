@@ -1,11 +1,11 @@
 import * as path from "node:path";
-import { formatHashlineHeader } from "@oh-my-pi/hashline";
-import type { AgentTool, AgentToolContext, AgentToolResult, AgentToolUpdateCallback } from "@oh-my-pi/pi-agent-core";
-import type { ToolExample } from "@oh-my-pi/pi-ai";
-import { type AstReplaceChange, type AstReplaceFileChange, astEdit } from "@oh-my-pi/pi-natives";
-import type { Component } from "@oh-my-pi/pi-tui";
-import { replaceTabs, Text } from "@oh-my-pi/pi-tui";
-import { $envpos, prompt, untilAborted } from "@oh-my-pi/pi-utils";
+import { formatHashlineHeader } from "@airis/airis-hashline";
+import type { AgentTool, AgentToolContext, AgentToolResult, AgentToolUpdateCallback } from "@airis/airis-agent-core";
+import type { ToolExample } from "@airis/airis-ai";
+import { type AstReplaceChange, type AstReplaceFileChange, astEdit } from "@airis/airis-natives";
+import type { Component } from "@airis/airis-tui";
+import { replaceTabs, Text } from "@airis/airis-tui";
+import { $envpos, prompt, untilAborted } from "@airis/airis-utils";
 import { type } from "arktype";
 import { canonicalSnapshotKey, getFileSnapshotStore } from "../edit/file-snapshot-store";
 import { normalizeToLF } from "../edit/normalize";

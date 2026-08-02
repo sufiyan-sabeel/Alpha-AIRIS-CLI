@@ -1,12 +1,12 @@
 import { describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { AgentRegistry, MAIN_AGENT_ID } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import { executeList } from "@oh-my-pi/pi-coding-agent/tools/hub/messaging";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { AgentRegistry, MAIN_AGENT_ID } from "@airis/airis-coding-agent/registry/agent-registry";
+import { executeList } from "@airis/airis-coding-agent/tools/hub/messaging";
+import { TempDir } from "@airis/airis-utils";
 
 describe("hub list", () => {
 	it("restores persisted peers after the process registry is lost", async () => {
-		using tempDir = TempDir.createSync("@omp-hub-list-persisted-");
+		using tempDir = TempDir.createSync("@airis-hub-list-persisted-");
 		const sessionFile = path.join(tempDir.path(), "main.jsonl");
 		const workerSessionFile = path.join(tempDir.path(), "main", "Worker.jsonl");
 		await Bun.write(sessionFile, "");

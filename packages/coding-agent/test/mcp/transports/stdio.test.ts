@@ -8,7 +8,7 @@ import { resolveStdioSpawnCommand, StdioTransport, terminateStdioProcess } from 
 describe("resolveStdioSpawnCommand", () => {
 	it("hides Windows executable MCP servers when the host has no console", async () => {
 		// Hidden so a console-app child does not allocate a visible window when
-		// OMP is launched without a terminal console (#3536).
+		// AIRIS is launched without a terminal console (#3536).
 		await expect(
 			resolveStdioSpawnCommand(
 				{ command: "server.exe", args: ["--stdio"] },
@@ -69,7 +69,7 @@ describe("StdioTransport.connect", () => {
 			args: argv.slice(1),
 			cwd,
 			env: {
-				OMP_STDIO_SPAWN_SHAPE: envValue,
+				AIRIS_STDIO_SPAWN_SHAPE: envValue,
 			},
 		});
 		const spawnSpy = spyOn(Bun, "spawn");
@@ -88,7 +88,7 @@ describe("StdioTransport.connect", () => {
 					cwd,
 					detached: !(process.platform === "darwin" || process.platform === "win32"),
 					env: expect.objectContaining({
-						OMP_STDIO_SPAWN_SHAPE: envValue,
+						AIRIS_STDIO_SPAWN_SHAPE: envValue,
 					}),
 					stderr: "pipe",
 					stdin: "pipe",
@@ -182,7 +182,7 @@ function processExists(pid: number): boolean {
 // detached process group can still be spawned directly on any POSIX host.
 describe.skipIf(process.platform === "win32")("terminateStdioProcess", () => {
 	it("escalates a detached child that traps SIGTERM to SIGKILL", async () => {
-		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-stdio-kill-solo-"));
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "airis-stdio-kill-solo-"));
 		const scriptPath = path.join(tempDir, "child.mjs");
 		const readyPath = path.join(tempDir, "ready");
 		await fs.writeFile(
@@ -233,7 +233,7 @@ describe.skipIf(process.platform === "win32")("terminateStdioProcess", () => {
 	}, 5000);
 
 	it("reaches a SIGTERM-trapping grandchild through the group SIGKILL, not just the direct child", async () => {
-		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-stdio-group-kill-"));
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "airis-stdio-group-kill-"));
 		const grandchildScriptPath = path.join(tempDir, "grandchild.mjs");
 		const parentScriptPath = path.join(tempDir, "parent.mjs");
 		const grandchildPidPath = path.join(tempDir, "grandchild.pid");
@@ -310,7 +310,7 @@ describe.skipIf(process.platform === "win32")("terminateStdioProcess", () => {
 		// the orphaned grandchild this change is meant to reap. Unlike the
 		// group-SIGKILL test above, the leader here does NOT trap SIGTERM, so
 		// it exits promptly on its own; only the grandchild ignores signals.
-		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-stdio-leader-exit-group-kill-"));
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "airis-stdio-leader-exit-group-kill-"));
 		const grandchildScriptPath = path.join(tempDir, "grandchild.mjs");
 		const parentScriptPath = path.join(tempDir, "parent.mjs");
 		const grandchildPidPath = path.join(tempDir, "grandchild.pid");

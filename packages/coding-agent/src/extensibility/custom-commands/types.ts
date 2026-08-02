@@ -8,7 +8,7 @@
 import type * as arktype from "arktype";
 import type * as zod from "zod/v4";
 import type { ExecOptions, ExecResult, HookCommandContext } from "../../extensibility/hooks/types";
-import type * as PiCodingAgent from "../../index";
+import type * as AirisCodingAgent from "../../index";
 import type * as TypeBox from "../typebox";
 
 // Re-export for custom commands to use
@@ -30,7 +30,7 @@ export interface CustomCommandAPI {
 	/** Injected zod/v4 module for canonical command validation. */
 	zod: typeof zod;
 	/** Injected pi-coding-agent exports */
-	pi: typeof PiCodingAgent;
+	airs: typeof AirisCodingAgent;
 }
 
 /**
@@ -50,7 +50,7 @@ export interface CustomCommandAPI {
  *		 const confirmed = await ctx.ui.confirm("Deploy", `Deploy to ${env}?`);
  *		 if (!confirmed) return;
  *
- *		 const result = await pi.exec("./deploy.sh", [env]);
+ *		 const result = await airs.exec("./deploy.sh", [env]);
  *		 if (result.exitCode !== 0) {
  *			ctx.ui.notify(`Deploy failed: ${result.stderr}`, "error");
  *			return;
@@ -69,7 +69,7 @@ export interface CustomCommandAPI {
  *	  name: "git:status",
  *	  description: "Show git status and suggest actions",
  *	  async execute(args, ctx) {
- *		 const result = await pi.exec("git", ["status", "--porcelain"]);
+ *		 const result = await airs.exec("git", ["status", "--porcelain"]);
  *		 return `Here's the git status:\n\`\`\`\n${result.stdout}\`\`\`\nSuggest what to do next.`;
  *	  }
  * });

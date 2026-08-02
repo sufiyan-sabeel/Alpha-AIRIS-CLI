@@ -1,9 +1,9 @@
 import { describe, expect, it } from "bun:test";
-import { SessionFocusController } from "@oh-my-pi/pi-coding-agent/modes/controllers/session-focus-controller";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { AgentLifecycleManager } from "@oh-my-pi/pi-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry, MAIN_AGENT_ID } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { AgentSession, AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
+import { SessionFocusController } from "@airis/airis-coding-agent/modes/controllers/session-focus-controller";
+import type { InteractiveModeContext } from "@airis/airis-coding-agent/modes/types";
+import { AgentLifecycleManager } from "@airis/airis-coding-agent/registry/agent-lifecycle";
+import { AgentRegistry, MAIN_AGENT_ID } from "@airis/airis-coding-agent/registry/agent-registry";
+import type { AgentSession, AgentSessionEvent } from "@airis/airis-coding-agent/session/agent-session";
 
 interface SessionStub {
 	session: AgentSession;

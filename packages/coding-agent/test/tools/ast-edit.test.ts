@@ -2,11 +2,11 @@ import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { adaptSchemaForStrict, toolWireSchema } from "@oh-my-pi/pi-ai/utils/schema";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { ToolChoiceQueue } from "@oh-my-pi/pi-coding-agent/session/tool-choice-queue";
-import { createTools, type ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import { adaptSchemaForStrict, toolWireSchema } from "@airis/airis-ai/utils/schema";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import { ToolChoiceQueue } from "@airis/airis-coding-agent/session/tool-choice-queue";
+import { createTools, type ToolSession } from "@airis/airis-coding-agent/tools";
+import { removeWithRetries } from "@airis/airis-utils";
 
 type InvokedToolResult = {
 	content: Array<{ type: string; text?: string }>;

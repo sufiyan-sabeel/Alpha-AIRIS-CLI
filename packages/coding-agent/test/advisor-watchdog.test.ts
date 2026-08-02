@@ -1,14 +1,14 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { getBundledModel } from "@airis/airis-catalog/models";
+import { ModelRegistry } from "@airis/airis-coding-agent/config/model-registry";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import { createAgentSession } from "@airis/airis-coding-agent/sdk";
+import type { AgentSession } from "@airis/airis-coding-agent/session/agent-session";
+import { AuthStorage } from "@airis/airis-coding-agent/session/auth-storage";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import { TempDir } from "@airis/airis-utils";
 
 describe("advisor watchdog prompt discovery", () => {
 	const tempDirs: TempDir[] = [];
@@ -77,7 +77,7 @@ describe("advisor watchdog prompt discovery", () => {
 	}
 
 	it("discovers and appends WATCHDOG.md to the advisor prompt", async () => {
-		const tempDir = TempDir.createSync("@pi-advisor-watchdog-");
+		const tempDir = TempDir.createSync("@airs-advisor-watchdog-");
 		tempDirs.push(tempDir);
 		const cwd = tempDir.join("project-root");
 		fs.mkdirSync(cwd, { recursive: true });
@@ -134,7 +134,7 @@ describe("advisor watchdog prompt discovery", () => {
 	});
 
 	it("adds built-in active child repo context to the advisor prompt", async () => {
-		const tempDir = TempDir.createSync("@pi-advisor-watchdog-");
+		const tempDir = TempDir.createSync("@airs-advisor-watchdog-");
 		tempDirs.push(tempDir);
 		const cwd = tempDir.join("parent-cwd");
 		fs.mkdirSync(path.join(cwd, "active-project", ".git"), { recursive: true });
@@ -154,7 +154,7 @@ describe("advisor watchdog prompt discovery", () => {
 	});
 
 	it("omits built-in active child repo context when multiple direct child repos exist", async () => {
-		const tempDir = TempDir.createSync("@pi-advisor-watchdog-");
+		const tempDir = TempDir.createSync("@airs-advisor-watchdog-");
 		tempDirs.push(tempDir);
 		const cwd = tempDir.join("parent-cwd");
 		fs.mkdirSync(path.join(cwd, "active-project", ".git"), { recursive: true });
@@ -167,7 +167,7 @@ describe("advisor watchdog prompt discovery", () => {
 	});
 
 	it("resolves nested folders and sorts by depth", async () => {
-		const tempDir = TempDir.createSync("@pi-advisor-watchdog-");
+		const tempDir = TempDir.createSync("@airs-advisor-watchdog-");
 		tempDirs.push(tempDir);
 		const parentCwd = tempDir.join("project-root");
 		const childCwd = path.join(parentCwd, "subfolder");
@@ -235,10 +235,10 @@ describe("advisor watchdog prompt discovery", () => {
 	});
 
 	it("discovers user-level and native project-level watchdog files", async () => {
-		const tempDir = TempDir.createSync("@pi-advisor-watchdog-");
+		const tempDir = TempDir.createSync("@airs-advisor-watchdog-");
 		tempDirs.push(tempDir);
 		const cwd = tempDir.join("project-root");
-		const ompDir = path.join(cwd, ".omp");
+		const ompDir = path.join(cwd, ".airis");
 		const userAgentDir = tempDir.join("user-agent");
 		fs.mkdirSync(cwd, { recursive: true });
 		fs.mkdirSync(ompDir, { recursive: true });
@@ -290,7 +290,7 @@ describe("advisor watchdog prompt discovery", () => {
 			expect(dump).toContain(nativeWatchdogContent);
 			expect(dump).toContain(standaloneWatchdogContent);
 
-			// Check ordering: user-level should appear first, then native project level (.omp/WATCHDOG.md has depth 0),
+			// Check ordering: user-level should appear first, then native project level (.airis/WATCHDOG.md has depth 0),
 			// then standalone project level (cwd/WATCHDOG.md has depth 0).
 			// Between native and standalone, they both have depth 0, so their relative order doesn't strictly matter
 			// as long as user-level comes before both of them.

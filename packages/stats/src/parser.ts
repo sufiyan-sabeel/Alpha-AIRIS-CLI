@@ -9,8 +9,8 @@ import {
 	type ToolCall,
 	type ToolResultMessage,
 	type Usage,
-} from "@oh-my-pi/pi-ai";
-import { getSessionsDir, isEnoent, readLines } from "@oh-my-pi/pi-utils";
+} from "@airis/airis-ai";
+import { getSessionsDir, isEnoent, readLines } from "@airis/airis-utils";
 import type {
 	AgentType,
 	MessageStats,

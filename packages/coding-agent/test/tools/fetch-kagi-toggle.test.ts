@@ -2,15 +2,15 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { type SettingPath, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import * as imageResize from "@oh-my-pi/pi-coding-agent/utils/image-resize";
-import * as toolsManager from "@oh-my-pi/pi-coding-agent/utils/tools-manager";
-import * as scrapers from "@oh-my-pi/pi-coding-agent/web/scrapers/types";
-import * as scraperUtils from "@oh-my-pi/pi-coding-agent/web/scrapers/utils";
-import * as natives from "@oh-my-pi/pi-natives";
-import { ptree, removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
+import { type SettingPath, Settings } from "@airis/airis-coding-agent/config/settings";
+import type { ToolSession } from "@airis/airis-coding-agent/tools";
+import { ReadTool } from "@airis/airis-coding-agent/tools/read";
+import * as imageResize from "@airis/airis-coding-agent/utils/image-resize";
+import * as toolsManager from "@airis/airis-coding-agent/utils/tools-manager";
+import * as scrapers from "@airis/airis-coding-agent/web/scrapers/types";
+import * as scraperUtils from "@airis/airis-coding-agent/web/scrapers/utils";
+import * as natives from "@airis/airis-natives";
+import { ptree, removeSyncWithRetries, Snowflake } from "@airis/airis-utils";
 import { asGlobalFetch } from "../helpers/fetch-mock";
 
 const withMissingSystemPython = () => {

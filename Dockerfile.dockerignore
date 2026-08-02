@@ -1,6 +1,6 @@
-# Build context for the pi-root `Dockerfile` (oh-my-pi/pi:dev). Shadows
-# .dockerignore for this file only. Robomp uses Dockerfile.robomp +
-# Dockerfile.robomp.dockerignore alongside.
+# Build context for the airis-root `Dockerfile` (airis/airis:dev). Shadows
+# .dockerignore for this file only. Roboairis uses Dockerfile.roboairis +
+# Dockerfile.roboairis.dockerignore alongside.
 
 # Heavy build outputs — must never reach the build context. `target/` alone is
 # >100 GB on a dev machine; `bazel-*` symlinks point at the bazel output base.
@@ -10,13 +10,13 @@ bazel-*
 dist/
 runs/
 
-# Per-host scratch the pi codebase uses for parallel agents / worktrees.
+# Per-host scratch the airis codebase uses for parallel agents / worktrees.
 .fallow/
 .worktrees/
 .wt/
 .opencode/
 .pi_config/
-.omp/plugins/
+.airis/plugins/
 
 # VCS, editors, IDEs — irrelevant to the build, churn on every IDE keystroke.
 .git/
@@ -50,20 +50,20 @@ changes/
 # Generated files (the in-image build regenerates them).
 packages/coding-agent/src/internal-urls/docs-index.generated.ts
 packages/natives/native/.build/
-packages/natives/native/pi_natives.darwin-*.node
-packages/natives/native/pi_natives.dev.node
+packages/natives/native/airis_natives.darwin-*.node
+packages/natives/native/airis_natives.dev.node
 packages/ai/test/.temp-images/
-python/omp-rpc/src/omp_rpc.egg-info/
-python/robomp/data/
-python/robomp/.cache/
-python/robomp/src/robomp/static/
-python/robomp/web/dist/
+python/airis-rpc/src/airis_rpc.egg-info/
+python/roboairis/data/
+python/roboairis/.cache/
+python/roboairis/src/roboairis/static/
+python/roboairis/web/dist/
 
 # Scratch files the repo creates ad-hoc.
 syntax.jsonl
 out.jsonl
 out.html
-pi-*.html
+airis-*.html
 
 # Secrets. Should never be in the image regardless.
 .env

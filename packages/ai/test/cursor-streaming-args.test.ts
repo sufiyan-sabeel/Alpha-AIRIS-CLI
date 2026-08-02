@@ -6,10 +6,10 @@ import {
 	synthesizeCursorExecToolCall,
 	type ToolCallState,
 	type UsageState,
-} from "@oh-my-pi/pi-ai/providers/cursor";
-import type { AssistantMessage, AssistantMessageEvent } from "@oh-my-pi/pi-ai/types";
-import { getStreamingPartialJson, kCursorExecResolved } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
+} from "@airis/airis-ai/providers/cursor";
+import type { AssistantMessage, AssistantMessageEvent } from "@airis/airis-ai/types";
+import { getStreamingPartialJson, kCursorExecResolved } from "@airis/airis-ai/utils/block-symbols";
+import { AssistantMessageEventStream } from "@airis/airis-ai/utils/event-stream";
 
 interface Harness {
 	output: AssistantMessage;

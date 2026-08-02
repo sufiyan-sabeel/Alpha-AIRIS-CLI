@@ -6,17 +6,17 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { IrcBus } from "@oh-my-pi/pi-coding-agent/irc/bus";
-import { AgentHubOverlayComponent } from "@oh-my-pi/pi-coding-agent/modes/components/agent-hub";
-import { SelectorController } from "@oh-my-pi/pi-coding-agent/modes/controllers/selector-controller";
-import { SessionObserverRegistry } from "@oh-my-pi/pi-coding-agent/modes/session-observer-registry";
-import { initTheme } from "@oh-my-pi/pi-coding-agent/modes/theme/theme";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { resetSettingsForTest, Settings } from "@airis/airis-coding-agent/config/settings";
+import { IrcBus } from "@airis/airis-coding-agent/irc/bus";
+import { AgentHubOverlayComponent } from "@airis/airis-coding-agent/modes/components/agent-hub";
+import { SelectorController } from "@airis/airis-coding-agent/modes/controllers/selector-controller";
+import { SessionObserverRegistry } from "@airis/airis-coding-agent/modes/session-observer-registry";
+import { initTheme } from "@airis/airis-coding-agent/modes/theme/theme";
+import type { InteractiveModeContext } from "@airis/airis-coding-agent/modes/types";
+import { AgentRegistry } from "@airis/airis-coding-agent/registry/agent-registry";
+import type { AgentSession } from "@airis/airis-coding-agent/session/agent-session";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import { TempDir } from "@airis/airis-utils";
 
 const AGENT_ID = "Worker";
 const TEST_CWD = path.resolve("agent-hub-cwd");
@@ -92,7 +92,7 @@ describe("Agent hub Enter activation", () => {
 	});
 
 	it("lists persisted subagent session files after restart", async () => {
-		using tempDir = TempDir.createSync("@omp-agent-hub-persisted-");
+		using tempDir = TempDir.createSync("@airis-agent-hub-persisted-");
 		const sessionFile = path.join(tempDir.path(), "main.jsonl");
 		const workerSessionFile = path.join(tempDir.path(), "main", "Worker.jsonl");
 		await Bun.write(sessionFile, "");
@@ -118,7 +118,7 @@ describe("Agent hub Enter activation", () => {
 	});
 
 	it("does not generically revive active or tombstoned Vibe children copied by a post-exit fork", async () => {
-		using tempDir = TempDir.createSync("@omp-agent-hub-vibe-fork-");
+		using tempDir = TempDir.createSync("@airis-agent-hub-vibe-fork-");
 		const manager = SessionManager.create(tempDir.path(), tempDir.path());
 		manager.appendModeChange("vibe");
 		const parentSessionId = manager.getSessionId();
@@ -330,7 +330,7 @@ describe("Agent hub double-← gating", () => {
 	});
 
 	it("requireContent opens the hub after persisted subagents load", async () => {
-		using tempDir = TempDir.createSync("@omp-agent-hub-require-content-");
+		using tempDir = TempDir.createSync("@airis-agent-hub-require-content-");
 		const sessionFile = path.join(tempDir.path(), "main.jsonl");
 		const workerSessionFile = path.join(tempDir.path(), "main", "Worker.jsonl");
 		await Bun.write(sessionFile, "");

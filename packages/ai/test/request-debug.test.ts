@@ -2,12 +2,12 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { clearCustomApis, registerCustomApi } from "@oh-my-pi/pi-ai/api-registry";
-import { stream } from "@oh-my-pi/pi-ai/stream";
-import type { AssistantMessage, FetchImpl, Model, ModelSpec } from "@oh-my-pi/pi-ai/types";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { wrapFetchForRequestDebug } from "@oh-my-pi/pi-ai/utils/request-debug";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { clearCustomApis, registerCustomApi } from "@airis/airis-ai/api-registry";
+import { stream } from "@airis/airis-ai/stream";
+import type { AssistantMessage, FetchImpl, Model, ModelSpec } from "@airis/airis-ai/types";
+import { AssistantMessageEventStream } from "@airis/airis-ai/utils/event-stream";
+import { wrapFetchForRequestDebug } from "@airis/airis-ai/utils/request-debug";
+import { buildModel } from "@airis/airis-catalog/build";
 import { removeWithRetries } from "../../utils/src/temp";
 
 const enc = new TextEncoder();
@@ -19,7 +19,7 @@ let tempDir: string | undefined;
 beforeEach(async () => {
 	previousDebugFlag = Bun.env.PI_REQ_DEBUG;
 	previousCwd = process.cwd();
-	tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-req-debug-"));
+	tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "airs-req-debug-"));
 	process.chdir(tempDir);
 });
 

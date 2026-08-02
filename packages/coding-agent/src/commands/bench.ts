@@ -1,4 +1,4 @@
-import { Args, Command, Flags } from "@oh-my-pi/pi-utils/cli";
+import { Args, Command, Flags } from "@airis/airis-utils/cli";
 import { runBenchCommand } from "../cli/bench-cli";
 import { SERVICE_TIER_OPENAI_VALUES } from "../config/service-tier";
 
@@ -36,11 +36,11 @@ export default class Bench extends Command {
 	};
 
 	static examples = [
-		"# Compare two models\n  omp bench anthropic/claude-opus-4-5 openai/gpt-5.2",
-		"# Fuzzy selectors work\n  omp bench opus sonnet",
-		"# Average over 3 runs each\n  omp bench opus gpt-5.2 --runs 3",
-		"# Force priority serving tier\n  omp bench openai-codex/gpt-5.5:low --runs 10 --service-tier priority",
-		"# Measure one cold/warm prompt-cache pair\n  omp bench openai/gpt-5.6 --cache --json",
+		"# Compare two models\n  airis bench anthropic/claude-opus-4-5 openai/gpt-5.2",
+		"# Fuzzy selectors work\n  airis bench opus sonnet",
+		"# Average over 3 runs each\n  airis bench opus gpt-5.2 --runs 3",
+		"# Force priority serving tier\n  airis bench openai-codex/gpt-5.5:low --runs 10 --service-tier priority",
+		"# Measure one cold/warm prompt-cache pair\n  airis bench openai/gpt-5.6 --cache --json",
 	];
 
 	async run(): Promise<void> {

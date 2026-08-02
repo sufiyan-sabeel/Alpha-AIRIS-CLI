@@ -1,13 +1,13 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { Agent, AppendOnlyContextManager } from "@oh-my-pi/pi-agent-core";
-import type { ProviderSessionState } from "@oh-my-pi/pi-ai";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent, AppendOnlyContextManager } from "@airis/airis-agent-core";
+import type { ProviderSessionState } from "@airis/airis-ai";
+import { ModelRegistry } from "@airis/airis-coding-agent/config/model-registry";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import { AgentSession } from "@airis/airis-coding-agent/session/agent-session";
+import { AuthStorage } from "@airis/airis-coding-agent/session/auth-storage";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import { TempDir } from "@airis/airis-utils";
 
 interface FreshHarness {
 	agent: Agent;
@@ -25,7 +25,7 @@ afterEach(async () => {
 });
 
 async function createFreshHarness(): Promise<FreshHarness> {
-	const tempDir = TempDir.createSync("@pi-agent-session-fresh-");
+	const tempDir = TempDir.createSync("@airs-agent-session-fresh-");
 	const authStorage = await AuthStorage.create(path.join(tempDir.path(), "auth.db"));
 	const modelRegistry = new ModelRegistry(authStorage, path.join(tempDir.path(), "models.yml"));
 	const sessionManager = SessionManager.create(tempDir.path(), path.join(tempDir.path(), "sessions"));

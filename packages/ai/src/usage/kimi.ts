@@ -1,4 +1,4 @@
-import { $env } from "@oh-my-pi/pi-utils";
+import { $env } from "@airis/airis-utils";
 import { getKimiCommonHeaders } from "../registry/oauth/kimi";
 import type {
 	UsageAmount,
@@ -146,7 +146,7 @@ function buildUsageStatus(amount: UsageAmount): UsageStatus {
 function toUsageLimit(row: KimiUsageRow, provider: string, index: number, accountId?: string): UsageLimit {
 	// Kimi puts `resetTime` on the limit `detail`, not on `window`, so a
 	// window built from `duration`/`timeUnit` alone carries no resetsAt.
-	// Fall back to the row-level reset so `omp usage` can render
+	// Fall back to the row-level reset so `airis usage` can render
 	// "resets in …" for the 5h window too.
 	const window: UsageWindow | undefined = row.window
 		? row.window.resetsAt !== undefined || row.resetsAt === undefined

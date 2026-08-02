@@ -7,10 +7,10 @@
  */
 
 import { beforeAll, describe, expect, it } from "bun:test";
-import { createCompactionSummaryMessage } from "@oh-my-pi/pi-agent-core/compaction";
-import type { ImageContent } from "@oh-my-pi/pi-ai";
-import { CompactionSummaryMessageComponent } from "@oh-my-pi/pi-coding-agent/modes/components/compaction-summary-message";
-import { initTheme } from "@oh-my-pi/pi-coding-agent/modes/theme/theme";
+import { createCompactionSummaryMessage } from "@airis/airis-agent-core/compaction";
+import type { ImageContent } from "@airis/airis-ai";
+import { CompactionSummaryMessageComponent } from "@airis/airis-coding-agent/modes/components/compaction-summary-message";
+import { initTheme } from "@airis/airis-coding-agent/modes/theme/theme";
 
 beforeAll(() => {
 	initTheme();

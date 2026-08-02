@@ -40,9 +40,9 @@ import {
 	type SetSessionModeResponse,
 	type Usage,
 } from "@agentclientprotocol/sdk";
-import type { AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, Model } from "@oh-my-pi/pi-ai";
-import { getBlobsDir, isEnoent, logger, type postmortem, VERSION } from "@oh-my-pi/pi-utils";
+import type { AgentToolResult } from "@airis/airis-agent-core";
+import type { AssistantMessage, Model } from "@airis/airis-ai";
+import { getBlobsDir, isEnoent, logger, type postmortem, VERSION } from "@airis/airis-utils";
 import { disableProvider, enableProvider, reset as resetCapabilities } from "../../capability";
 import { Settings } from "../../config/settings";
 import { clearPluginRootsAndCaches, resolveActiveProjectRegistryPath } from "../../discovery/helpers";
@@ -485,23 +485,23 @@ export class AcpAgent implements Agent {
 			{
 				id: "agent",
 				name: "Use existing local credentials",
-				description: "Authenticate via the provider keys/OAuth state already configured under ~/.omp.",
+				description: "Authenticate via the provider keys/OAuth state already configured under ~/.airis.",
 			},
 		];
 		if (params.clientCapabilities?.auth?.terminal === true) {
 			authMethods.push({
 				type: "terminal",
 				id: "terminal",
-				name: "Set up Oh My Pi in terminal",
-				description: "Launch the omp TUI to add provider keys and select models.",
+				name: "Set up Alpha AIRIS-CLI in terminal",
+				description: "Launch the airis TUI to add provider keys and select models.",
 				args: [ACP_TERMINAL_AUTH_FLAG],
 			});
 		}
 		return {
 			protocolVersion: PROTOCOL_VERSION,
 			agentInfo: {
-				name: "oh-my-pi",
-				title: "Oh My Pi",
+				name: "alpha-airis-cli",
+				title: "Alpha AIRIS-CLI",
 				version: VERSION,
 			},
 			authMethods,
@@ -845,7 +845,7 @@ export class AcpAgent implements Agent {
 		const extensionPromptBaseline = new Set(record.extensionUserMessageTasks);
 		const agentInvoked = await record.session.prompt(text, { images });
 		// Extension and custom-TS commands are handled locally inside session.prompt().
-		// An ACP extension command can still call pi.sendUserMessage(), which starts
+		// An ACP extension command can still call airs.sendUserMessage(), which starts
 		// an async nested prompt through the extension runtime. Keep the ACP turn
 		// subscribed until those scheduled prompts and their event handlers drain;
 		// only then is `false` proof that the slash command was purely local.

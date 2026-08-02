@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from "bun:test";
-import type { AgentMessage, AgentTelemetryConfig } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { kCursorExecResolved } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import type { TUI } from "@oh-my-pi/pi-tui";
+import type { AgentMessage, AgentTelemetryConfig } from "@airis/airis-agent-core";
+import type { AssistantMessage } from "@airis/airis-ai";
+import * as AIError from "@airis/airis-ai/error";
+import { kCursorExecResolved } from "@airis/airis-ai/utils/block-symbols";
+import type { TUI } from "@airis/airis-tui";
 import { type } from "arktype";
 import {
 	ADVISOR_DEFAULT_TOOL_NAMES,

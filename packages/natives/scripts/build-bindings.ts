@@ -21,7 +21,7 @@ process.env.PCRE2_SYS_STATIC ??= "1";
 process.env.CMAKE_POLICY_VERSION_MINIMUM ??= "3.5";
 
 const repoRoot = path.join(import.meta.dir, "../../..");
-const rustDir = path.join(repoRoot, "crates/pi-natives");
+const rustDir = path.join(repoRoot, "crates/airis-natives");
 const nativeDir = path.join(import.meta.dir, "../native");
 const packageJsonPath = path.join(import.meta.dir, "../package.json");
 
@@ -100,7 +100,7 @@ async function resolveBuiltAddonPath(outputDir: string, canonicalFilename: strin
 	}
 
 	const generatedCandidates = entries.filter(
-		entry => entry.startsWith(`pi_natives.${process.platform}-${process.arch}`) && entry.endsWith(".node"),
+		entry => entry.startsWith(`airis_natives.${process.platform}-${process.arch}`) && entry.endsWith(".node"),
 	);
 
 	if (generatedCandidates.length === 1) {
@@ -130,10 +130,10 @@ async function installGeneratedBindings(outputDir: string): Promise<void> {
 	}
 }
 
-const canonicalAddonFilename = `pi_natives.${process.platform}-${process.arch}${variantSuffix}.node`;
+const canonicalAddonFilename = `airis_natives.${process.platform}-${process.arch}${variantSuffix}.node`;
 const canonicalAddonPath = path.join(nativeDir, canonicalAddonFilename);
 
-console.log(`Building pi-natives bindings for ${process.platform}-${process.arch}${variantSuffix} (local)…`);
+console.log(`Building airis-natives bindings for ${process.platform}-${process.arch}${variantSuffix} (local)…`);
 
 await fs.mkdir(nativeDir, { recursive: true });
 await cleanupStaleTemps(nativeDir);

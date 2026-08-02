@@ -3,8 +3,8 @@ import {
 	type AuthBrokerServerHandle,
 	discoverAuthStorage,
 	startAuthBroker,
-} from "@oh-my-pi/pi-ai/auth-broker";
-import type { AuthStorage } from "@oh-my-pi/pi-ai/auth-storage";
+} from "@airis/airis-ai/auth-broker";
+import type { AuthStorage } from "@airis/airis-ai/auth-storage";
 
 declare global {
 	var __authBrokerWireConstructionCount: number;
@@ -26,9 +26,9 @@ let storage: AuthStorage | undefined;
 let handle: AuthBrokerServerHandle | undefined;
 
 try {
-	delete process.env.OMP_AUTH_BROKER_URL;
-	delete process.env.OMP_AUTH_BROKER_TOKEN;
-	delete process.env.OMP_AUTH_BROKER_ACCOUNT_POOL_FILE;
+	delete process.env.AIRIS_AUTH_BROKER_URL;
+	delete process.env.AIRIS_AUTH_BROKER_TOKEN;
+	delete process.env.AIRIS_AUTH_BROKER_ACCOUNT_POOL_FILE;
 
 	storage = await discoverAuthStorage({ agentDir });
 	counts.afterLocalDiscovery = count();

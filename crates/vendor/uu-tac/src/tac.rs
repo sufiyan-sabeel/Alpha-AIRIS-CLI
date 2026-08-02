@@ -5,12 +5,12 @@
 
 // spell-checker:ignore (ToDO) sbytes slen dlen memmem memmap Mmap mmap SIGBUS
 
-// pi-uutils: vendored from uutils/coreutils 0.8.0 and patched to run in-process
+// airis-uutils: vendored from uutils/coreutils 0.8.0 and patched to run in-process
 // as a shell builtin. FILE operands resolve against the shell working directory
-// via `pi_uutils_ctx::resolve` at the open/mmap call site (the original operand
+// via `airis_uutils_ctx::resolve` at the open/mmap call site (the original operand
 // is kept for error messages), `-`/no-operand read the context stdin, output is
 // written through the context stdout, recoverable per-file errors go to the
-// context stderr with `pi_uutils_ctx::set_exit_code` (upstream `show!`), the
+// context stderr with `airis_uutils_ctx::set_exit_code` (upstream `show!`), the
 // `translate!` strings are literalized, and the process-global signal handling
 // plus the stdin mmap/tempfile buffering (which target the process stdin fd)
 // are removed.
@@ -26,7 +26,7 @@ use std::{
 use clap::{Arg, ArgAction, ArgMatches, Command};
 use memchr::memmem;
 use memmap2::Mmap;
-use pi_uutils_ctx::format_usage;
+use airis_uutils_ctx::format_usage;
 use uucore::error::UResult;
 
 use crate::error::TacError;
@@ -49,20 +49,20 @@ pub fn run(argv: Vec<OsString>) -> i32 {
 		Err(err) => {
 			let rendered = err.to_string();
 			if err.use_stderr() {
-				let _ = write!(pi_uutils_ctx::stderr(), "{rendered}");
+				let _ = write!(airis_uutils_ctx::stderr(), "{rendered}");
 				return 1;
 			}
-			let _ = write!(pi_uutils_ctx::stdout(), "{rendered}");
+			let _ = write!(airis_uutils_ctx::stdout(), "{rendered}");
 			return 0;
 		},
 	};
 	match tac_main(&matches) {
-		Ok(()) => pi_uutils_ctx::exit_code(),
+		Ok(()) => airis_uutils_ctx::exit_code(),
 		Err(err) => {
 			let code = err.code();
 			let msg = err.to_string();
 			if !msg.is_empty() {
-				let _ = writeln!(pi_uutils_ctx::stderr(), "tac: {msg}");
+				let _ = writeln!(airis_uutils_ctx::stderr(), "tac: {msg}");
 			}
 			if code == 0 { 1 } else { code }
 		},
@@ -127,12 +127,12 @@ pub fn uu_app() -> Command {
 		)
 }
 
-/// pi-uutils: replacement for upstream's `show!` — reports a recoverable
+/// airis-uutils: replacement for upstream's `show!` — reports a recoverable
 /// per-file error to the context stderr and accumulates a non-zero exit code
 /// while processing continues with the next operand.
 fn show(err: &TacError) {
-	let _ = writeln!(pi_uutils_ctx::stderr(), "tac: {err}");
-	pi_uutils_ctx::set_exit_code(1);
+	let _ = writeln!(airis_uutils_ctx::stderr(), "tac: {err}");
+	airis_uutils_ctx::set_exit_code(1);
 }
 
 /// Print lines of a buffer in reverse, with line separator given as a regex.
@@ -158,8 +158,8 @@ fn buffer_tac_regex(
 	pattern: &regex::bytes::Regex,
 	before: bool,
 ) -> std::io::Result<()> {
-	// pi-uutils: write through the context stdout instead of the process stdout.
-	let mut out = BufWriter::new(pi_uutils_ctx::stdout());
+	// airis-uutils: write through the context stdout instead of the process stdout.
+	let mut out = BufWriter::new(airis_uutils_ctx::stdout());
 
 	// The index of the line separator for the current line.
 	//
@@ -228,8 +228,8 @@ fn buffer_tac_regex(
 /// `separator` appears at the beginning of each line, as in
 /// `"/abc/def"`.
 fn buffer_tac(data: &[u8], before: bool, separator: &OsStr) -> std::io::Result<()> {
-	// pi-uutils: write through the context stdout instead of the process stdout.
-	let mut out = BufWriter::new(pi_uutils_ctx::stdout());
+	// airis-uutils: write through the context stdout instead of the process stdout.
+	let mut out = BufWriter::new(airis_uutils_ctx::stdout());
 
 	// The number of bytes in the line separator.
 	let slen = separator.len();
@@ -382,11 +382,11 @@ fn tac(filenames: &[OsString], before: bool, regex: bool, separator: &OsStr) -> 
 		let buf;
 
 		let data: &[u8] = if filename == "-" {
-			// pi-uutils: in-process stdin is a context stream, not the process
+			// airis-uutils: in-process stdin is a context stream, not the process
 			// stdin fd; upstream's stdin mmap / tempfile buffering and the
 			// `stdin_was_closed` signal check do not apply. Read it fully.
 			let mut contents = Vec::new();
-			match pi_uutils_ctx::stdin().read_to_end(&mut contents) {
+			match airis_uutils_ctx::stdin().read_to_end(&mut contents) {
 				Ok(_) => {
 					buf = contents;
 					&buf
@@ -397,9 +397,9 @@ fn tac(filenames: &[OsString], before: bool, regex: bool, separator: &OsStr) -> 
 				},
 			}
 		} else {
-			// pi-uutils: resolve the operand against the shell working
+			// airis-uutils: resolve the operand against the shell working
 			// directory at the open site; `filename` is kept for errors.
-			let path = pi_uutils_ctx::resolve(filename);
+			let path = airis_uutils_ctx::resolve(filename);
 			let mut file = match File::open(&path) {
 				Ok(f) => f,
 				Err(e) => {
@@ -428,7 +428,7 @@ fn tac(filenames: &[OsString], before: bool, regex: bool, separator: &OsStr) -> 
 
 		// Select the appropriate `tac` algorithm based on whether the
 		// separator is given as a regular expression or a fixed string.
-		// pi-uutils: match ergonomics instead of upstream's `Some(ref pattern)`.
+		// airis-uutils: match ergonomics instead of upstream's `Some(ref pattern)`.
 		let result = match &maybe_pattern {
 			Some(pattern) => buffer_tac_regex(data, pattern, before),
 			None => buffer_tac(data, before, separator),
@@ -496,7 +496,7 @@ mod tests {
 	use std::{collections::HashMap, fs, io::Write, path::PathBuf, sync::Arc};
 
 	use parking_lot::Mutex;
-	use pi_uutils_ctx::ScopeIo;
+	use airis_uutils_ctx::ScopeIo;
 
 	use super::*;
 
@@ -534,7 +534,7 @@ mod tests {
 			.map(OsString::from)
 			.collect();
 
-		let code = pi_uutils_ctx::scope(io, || run(argv));
+		let code = airis_uutils_ctx::scope(io, || run(argv));
 
 		let out_str = String::from_utf8(stdout_buf.lock().clone()).unwrap();
 		let err_str = String::from_utf8(stderr_buf.lock().clone()).unwrap();
@@ -555,7 +555,7 @@ mod tests {
 		fs::write(root.join("input.txt"), b"a\nb\nc\n").unwrap();
 
 		// Relative operand + scope cwd differing from the process cwd: only the
-		// call-site `pi_uutils_ctx::resolve` patch makes this find the file.
+		// call-site `airis_uutils_ctx::resolve` patch makes this find the file.
 		let (code, stdout, stderr) = run_with(root, b"", vec!["input.txt"]);
 		assert_eq!(code, 0);
 		assert_eq!(stdout, "c\nb\na\n");

@@ -445,7 +445,7 @@ const SYMBOLS: Record<string, string> = {
 	nu: "ν",
 	xi: "ξ",
 	omicron: "ο",
-	pi: "π",
+	airs: "π",
 	varpi: "ϖ",
 	rho: "ρ",
 	varrho: "ϱ",

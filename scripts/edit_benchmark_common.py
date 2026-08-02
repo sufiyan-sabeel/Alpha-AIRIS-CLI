@@ -20,9 +20,9 @@ from pathlib import Path
 from typing import Any, Callable
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(REPO_ROOT / "python/omp-rpc/src"))
+sys.path.insert(0, str(REPO_ROOT / "python/airis-rpc/src"))
 
-from omp_rpc import (
+from airis_rpc import (
     MessageEndEvent,
     MessageStartEvent,
     MessageUpdateEvent,
@@ -626,23 +626,23 @@ class VerbosePrinter:
             sys.stderr.flush()
 
 
-def resolve_repo_omp_bin() -> str | None:
+def resolve_repo_airis_bin() -> str | None:
     cli_path = REPO_ROOT / "packages/coding-agent" / "src/cli.ts"
     if not cli_path.exists():
         return None
     return str(cli_path)
 
 
-def resolve_omp_bin(raw: str | None) -> str:
+def resolve_airis_bin(raw: str | None) -> str:
     if raw:
         return raw
-    repo_bin = resolve_repo_omp_bin()
+    repo_bin = resolve_repo_airis_bin()
     if repo_bin:
         return repo_bin
-    found = shutil.which("omp")
+    found = shutil.which("airis")
     if not found:
         raise SystemExit(
-            "Could not find `omp` on PATH and could not resolve the repo CLI. Set --omp-bin or OMP_BIN."
+            "Could not find `airis` on PATH and could not resolve the repo CLI. Set --airis-bin or AIRIS_BIN."
         )
     return found
 
@@ -841,7 +841,7 @@ def run_benchmark_for_model(
 async def run_all(
     spec: BenchmarkSpec, args: argparse.Namespace
 ) -> dict[str, dict[str, Any]]:
-    omp_bin = resolve_omp_bin(args.omp_bin)
+    omp_bin = resolve_airis_bin(args.omp_bin)
 
     timestamp = time.strftime("%Y%m%d-%H%M%S")
     workspace_root = (
@@ -910,9 +910,9 @@ async def run_all(
 def parse_args(description: str) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument(
-        "--omp-bin",
-        default=os.environ.get("OMP_BIN"),
-        help="Executable to launch. Defaults to the repo checkout CLI, then falls back to `omp` on PATH.",
+        "--airis-bin",
+        default=os.environ.get("AIRIS_BIN"),
+        help="Executable to launch. Defaults to the repo checkout CLI, then falls back to `airis` on PATH.",
     )
     parser.add_argument(
         "--timeout", type=float, default=60.0, help="Per-turn timeout in seconds."

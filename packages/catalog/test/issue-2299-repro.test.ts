@@ -17,11 +17,11 @@
  * so the wire body carries `chat_template_kwargs.enable_thinking` instead.
  */
 import { describe, expect, it } from "bun:test";
-import { streamOpenAICompletions } from "@oh-my-pi/pi-ai/providers/openai-completions";
-import type { Context } from "@oh-my-pi/pi-ai/types";
-import { buildOpenAICompat } from "@oh-my-pi/pi-catalog/compat/openai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import type { FetchImpl, Model, ModelSpec } from "@oh-my-pi/pi-catalog/types";
+import { streamOpenAICompletions } from "@airis/airis-ai/providers/openai-completions";
+import type { Context } from "@airis/airis-ai/types";
+import { buildOpenAICompat } from "@airis/airis-catalog/compat/openai";
+import { getBundledModel } from "@airis/airis-catalog/models";
+import type { FetchImpl, Model, ModelSpec } from "@airis/airis-catalog/types";
 
 function sseDoneResponse(): Response {
 	return new Response("data: [DONE]\n\n", {

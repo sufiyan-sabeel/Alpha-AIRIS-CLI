@@ -15,7 +15,7 @@ use std::{
 
 use clap::{Arg, ArgAction, ArgMatches, Command};
 use memchr::memchr2;
-use pi_uutils_ctx::format_usage;
+use airis_uutils_ctx::format_usage;
 use thiserror::Error;
 use uucore::{
 	display::Quotable,
@@ -152,7 +152,7 @@ struct OutputState {
 	one_blank_kept: bool,
 }
 
-// pi-uutils: the AsFd bound existed only for the splice fast path and the
+// airis-uutils: the AsFd bound existed only for the splice fast path and the
 // unsafe-overwrite (cat FILE >FILE) check, both of which need real fds the
 // context streams lack. Both are dropped, so any plain reader is accepted.
 trait FdReadable: Read {}
@@ -208,18 +208,18 @@ pub fn run(argv: Vec<OsString>) -> i32 {
 		Err(err) => {
 			let rendered = err.to_string();
 			if err.use_stderr() {
-				let _ = write!(pi_uutils_ctx::stderr(), "{rendered}");
+				let _ = write!(airis_uutils_ctx::stderr(), "{rendered}");
 				return 1;
 			}
-			let _ = write!(pi_uutils_ctx::stdout(), "{rendered}");
+			let _ = write!(airis_uutils_ctx::stdout(), "{rendered}");
 			return 0;
 		},
 	};
 	match cat_main(&matches) {
-		Ok(()) => pi_uutils_ctx::exit_code(),
+		Ok(()) => airis_uutils_ctx::exit_code(),
 		Err(err) => {
 			let code = err.code();
-			let _ = writeln!(pi_uutils_ctx::stderr(), "cat: {err}");
+			let _ = writeln!(airis_uutils_ctx::stderr(), "cat: {err}");
 			if code == 0 { 1 } else { code }
 		},
 	}
@@ -365,21 +365,21 @@ fn cat_handle<R: FdReadable>(
 fn cat_path(path: &OsString, options: &OutputOptions, state: &mut OutputState) -> CatResult<()> {
 	match get_input_type(path)? {
 		InputType::StdIn => {
-			// pi-uutils: stdin is a context reader with no backing fd, so the
+			// airis-uutils: stdin is a context reader with no backing fd, so the
 			// unsafe-overwrite (cat FILE >FILE) detection is unavailable and the
 			// splice fast path is dropped; it always streams. It is never an
 			// interactive terminal in the embedded shell.
 			let mut handle =
-				InputHandle { reader: pi_uutils_ctx::stdin(), is_interactive: false };
+				InputHandle { reader: airis_uutils_ctx::stdin(), is_interactive: false };
 			cat_handle(&mut handle, options, state)
 		},
 		InputType::Directory => Err(CatError::IsDirectory),
 		#[cfg(unix)]
 		InputType::Socket => Err(CatError::NoSuchDeviceOrAddress),
 		_ => {
-			// pi-uutils: resolve the operand against the shell working directory
+			// airis-uutils: resolve the operand against the shell working directory
 			// at the fs boundary; keep `path` for display/errors.
-			let file = File::open(pi_uutils_ctx::resolve(path))?;
+			let file = File::open(airis_uutils_ctx::resolve(path))?;
 			let mut handle = InputHandle { reader: file, is_interactive: false };
 			cat_handle(&mut handle, options, state)
 		},
@@ -404,7 +404,7 @@ where
 		}
 	}
 	if state.skipped_carriage_return {
-		let _ = write!(pi_uutils_ctx::stdout(), "\r");
+		let _ = write!(airis_uutils_ctx::stdout(), "\r");
 	}
 	if error_messages.is_empty() {
 		Ok(())
@@ -429,7 +429,7 @@ fn get_input_type(path: &OsString) -> CatResult<InputType> {
 		return Ok(InputType::StdIn);
 	}
 
-	let ft = match metadata(pi_uutils_ctx::resolve(path)) {
+	let ft = match metadata(airis_uutils_ctx::resolve(path)) {
 		Ok(md) => md.file_type(),
 		Err(e) => {
 			if let Some(raw_error) = e.raw_os_error() {
@@ -465,10 +465,10 @@ fn get_input_type(path: &OsString) -> CatResult<InputType> {
 /// Writes handle to stdout with no configuration. This allows a
 /// simple memory copy.
 fn write_fast<R: FdReadable>(handle: &mut InputHandle<R>) -> CatResult<()> {
-	// pi-uutils: the Linux/Android splice() fast path needs real fds for both
+	// airis-uutils: the Linux/Android splice() fast path needs real fds for both
 	// the input reader and stdout; the context streams have neither, so always
 	// use the generic read/write copy loop below.
-	let stdout = pi_uutils_ctx::stdout();
+	let stdout = airis_uutils_ctx::stdout();
 	let mut stdout_lock = stdout.lock();
 	let mut buf = [0; 1024 * 64];
 	loop {
@@ -500,7 +500,7 @@ fn write_lines<R: FdReadable>(
 	state: &mut OutputState,
 ) -> CatResult<()> {
 	let mut in_buf = [0; 1024 * 31];
-	let stdout = pi_uutils_ctx::stdout();
+	let stdout = airis_uutils_ctx::stdout();
 	let stdout = stdout.lock();
 	// Add a 32K buffer for stdout - this greatly improves performance.
 	let mut writer = BufWriter::with_capacity(32 * 1024, stdout);
@@ -686,7 +686,7 @@ fn write_end_of_line<W: Write>(
 }
 
 fn handle_broken_pipe(_error: &io::Error) {
-	// pi-uutils: an in-process builtin must never call std::process::exit; a
+	// airis-uutils: an in-process builtin must never call std::process::exit; a
 	// broken pipe surfaces as a normal io::Error and propagates to the caller.
 }
 

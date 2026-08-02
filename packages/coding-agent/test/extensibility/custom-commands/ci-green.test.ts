@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import * as piCodingAgent from "@oh-my-pi/pi-coding-agent";
-import { GreenCommand } from "@oh-my-pi/pi-coding-agent/extensibility/custom-commands/bundled/ci-green";
-import type { CustomCommandAPI } from "@oh-my-pi/pi-coding-agent/extensibility/custom-commands/types";
-import type { HookCommandContext } from "@oh-my-pi/pi-coding-agent/extensibility/hooks/types";
-import type * as TypeBox from "@oh-my-pi/pi-coding-agent/extensibility/typebox";
-import * as git from "@oh-my-pi/pi-coding-agent/utils/git";
+import * as piCodingAgent from "@airis/airis-coding-agent";
+import { GreenCommand } from "@airis/airis-coding-agent/extensibility/custom-commands/bundled/ci-green";
+import type { CustomCommandAPI } from "@airis/airis-coding-agent/extensibility/custom-commands/types";
+import type { HookCommandContext } from "@airis/airis-coding-agent/extensibility/hooks/types";
+import type * as TypeBox from "@airis/airis-coding-agent/extensibility/typebox";
+import * as git from "@airis/airis-coding-agent/utils/git";
 import * as arktype from "arktype";
 import * as zod from "zod/v4";
 
@@ -24,7 +24,7 @@ function createApi(): CustomCommandAPI {
 		typebox: {} as unknown as typeof TypeBox,
 		arktype,
 		zod,
-		pi: piCodingAgent,
+		airs: piCodingAgent,
 	};
 }
 

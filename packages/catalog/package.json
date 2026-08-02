@@ -1,18 +1,18 @@
 {
   "type": "module",
-  "name": "@oh-my-pi/pi-catalog",
+  "name": "@airis/airis-catalog",
   "version": "17.2.1",
-  "description": "Model catalog for omp: bundled model database, provider discovery descriptors, model identity, classification, and equivalence",
-  "homepage": "https://omp.sh",
-  "author": "Can Boluk",
+  "description": "Model catalog for airis: bundled model database, provider discovery descriptors, model identity, classification, and equivalence",
+  "homepage": "https://airis.sh",
+  "author": "Umaiz Sufiyan",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/can1357/oh-my-pi.git",
+    "url": "git+https://github.com/sufiyan-sabeel/Alpha-AIRIS-CLI.git",
     "directory": "packages/catalog"
   },
   "bugs": {
-    "url": "https://github.com/can1357/oh-my-pi/issues"
+    "url": "https://github.com/sufiyan-sabeel/Alpha-AIRIS-CLI/issues"
   },
   "keywords": [
     "ai",
@@ -35,12 +35,12 @@
   },
   "dependencies": {
     "@bufbuild/protobuf": "catalog:",
-    "@oh-my-pi/pi-utils": "catalog:",
+    "@airis/airis-utils": "catalog:",
     "arktype": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@oh-my-pi/pi-ai": "catalog:",
+    "@airis/airis-ai": "catalog:",
     "@types/bun": "catalog:"
   },
   "engines": {

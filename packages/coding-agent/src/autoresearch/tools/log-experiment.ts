@@ -1,7 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 
-import { Text } from "@oh-my-pi/pi-tui";
+import { Text } from "@airis/airis-tui";
 import { type } from "arktype";
 import type { ToolDefinition } from "../../extensibility/extensions";
 import type { Theme } from "../../modes/theme/theme";
@@ -93,7 +93,7 @@ export function createLogExperimentTool(
 				flaggedRuns.push({ runId: flag.run_id, reason: flag.reason });
 			}
 
-			const branchName = await getCurrentAutoresearchBranch(options.pi, ctx.cwd);
+			const branchName = await getCurrentAutoresearchBranch(options.airis, ctx.cwd);
 			const onAutoresearchBranch = branchName !== null;
 
 			let allModified: string[];
@@ -245,12 +245,12 @@ export function createLogExperimentTool(
 			const segmentRunCount = currentResults(finalState.results, finalState.currentSegment).length;
 			if (finalState.maxExperiments !== null && segmentRunCount >= finalState.maxExperiments) {
 				runtime.autoresearchMode = false;
-				options.pi.appendEntry(
+				options.airis.appendEntry(
 					"autoresearch-control",
 					runtime.goal ? { mode: "off", goal: runtime.goal } : { mode: "off" },
 				);
-				await options.pi.setActiveTools(
-					options.pi.getActiveTools().filter(name => !EXPERIMENT_TOOL_NAMES.includes(name)),
+				await options.airis.setActiveTools(
+					options.airis.getActiveTools().filter(name => !EXPERIMENT_TOOL_NAMES.includes(name)),
 				);
 			}
 

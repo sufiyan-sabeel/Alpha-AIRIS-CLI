@@ -1,19 +1,19 @@
 import { describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import type { ImageContent } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { ExtensionRuntime, loadExtensionFromFactory } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import { InputController } from "@oh-my-pi/pi-coding-agent/modes/controllers/input-controller";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@airis/airis-agent-core";
+import type { ImageContent } from "@airis/airis-ai";
+import { getBundledModel } from "@airis/airis-catalog/models";
+import { ModelRegistry } from "@airis/airis-coding-agent/config/model-registry";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import { ExtensionRuntime, loadExtensionFromFactory } from "@airis/airis-coding-agent/extensibility/extensions/loader";
+import { ExtensionRunner } from "@airis/airis-coding-agent/extensibility/extensions/runner";
+import { InputController } from "@airis/airis-coding-agent/modes/controllers/input-controller";
+import type { InteractiveModeContext } from "@airis/airis-coding-agent/modes/types";
+import { AgentSession } from "@airis/airis-coding-agent/session/agent-session";
+import { AuthStorage } from "@airis/airis-coding-agent/session/auth-storage";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import { EventBus } from "@airis/airis-coding-agent/utils/event-bus";
+import { TempDir } from "@airis/airis-utils";
 
 /**
  * Regression: a submission arriving while the main loop has no input waiter
@@ -147,7 +147,7 @@ describe("InputController orphaned submit", () => {
 	});
 
 	it("starts a real idle session even when steer drain would be non-resumable", async () => {
-		const tempDir = TempDir.createSync("@pi-orphan-submit-");
+		const tempDir = TempDir.createSync("@airs-orphan-submit-");
 		let session: AgentSession | undefined;
 		let authStorage: AuthStorage | undefined;
 		try {
@@ -241,7 +241,7 @@ describe("InputController orphaned submit", () => {
 	it("skips automatic titles only for locally consumed extension commands", async () => {
 		const previousNoTitle = Bun.env.PI_NO_TITLE;
 		delete Bun.env.PI_NO_TITLE;
-		const tempDir = TempDir.createSync("@pi-extension-title-");
+		const tempDir = TempDir.createSync("@airs-extension-title-");
 		let session: AgentSession | undefined;
 		let authStorage: AuthStorage | undefined;
 		try {

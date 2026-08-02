@@ -2,18 +2,18 @@ import { Database } from "bun:sqlite";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { formatHashlineHeader, formatNumberedLine, formatNumberedLines } from "@oh-my-pi/hashline";
+import { formatHashlineHeader, formatNumberedLine, formatNumberedLines } from "@airis/airis-hashline";
 import type {
 	AgentTool,
 	AgentToolContext,
 	AgentToolResult,
 	AgentToolUpdateCallback,
 	ToolTier,
-} from "@oh-my-pi/pi-agent-core";
-import type { ImageContent, TextContent } from "@oh-my-pi/pi-ai";
-import { type SummaryResult, summarizeCode } from "@oh-my-pi/pi-natives";
-import type { Component } from "@oh-my-pi/pi-tui";
-import { Text } from "@oh-my-pi/pi-tui";
+} from "@airis/airis-agent-core";
+import type { ImageContent, TextContent } from "@airis/airis-ai";
+import { type SummaryResult, summarizeCode } from "@airis/airis-natives";
+import type { Component } from "@airis/airis-tui";
+import { Text } from "@airis/airis-tui";
 import {
 	getRemoteDir,
 	type ImageMetadata,
@@ -24,7 +24,7 @@ import {
 	prompt,
 	readImageMetadata,
 	untilAborted,
-} from "@oh-my-pi/pi-utils";
+} from "@airis/airis-utils";
 import { type } from "arktype";
 import { LRUCache } from "lru-cache/raw";
 import {
@@ -1127,7 +1127,7 @@ export class ReadTool implements AgentTool<typeof readSchema, ReadToolDetails> {
 			const sessionFile = this.session.getSessionFile();
 			root = sessionFile?.endsWith(".jsonl")
 				? sessionFile.slice(0, -6)
-				: path.join(os.tmpdir(), "omp-read-pdf-images");
+				: path.join(os.tmpdir(), "airis-read-pdf-images");
 		}
 		const basename = path
 			.basename(absolutePdfPath)
@@ -1138,7 +1138,7 @@ export class ReadTool implements AgentTool<typeof readSchema, ReadToolDetails> {
 	}
 
 	async #snapshotPdfSource(absolutePdfPath: string, signal?: AbortSignal): Promise<PdfImageSnapshot> {
-		const directory = await fs.mkdtemp(path.join(os.tmpdir(), "omp-read-pdf-"));
+		const directory = await fs.mkdtemp(path.join(os.tmpdir(), "airis-read-pdf-"));
 		try {
 			const bytes = await untilAborted(signal, () => Bun.file(absolutePdfPath).bytes());
 			signal?.throwIfAborted();
@@ -2301,7 +2301,7 @@ export class ReadTool implements AgentTool<typeof readSchema, ReadToolDetails> {
 			return executeReadUrl(this.session, { path: parsedUrlTarget.path, raw: urlRaw }, signal);
 		}
 
-		// Handle native OMP URLs and custom-scheme resources advertised by MCP servers.
+		// Handle native AIRIS URLs and custom-scheme resources advertised by MCP servers.
 		// Use the internal-URL-aware splitter so malformed selectors are peeled
 		// off the URL and surfaced via parseSel rather than confusing handlers.
 		const internalRouter = InternalUrlRouter.instance();

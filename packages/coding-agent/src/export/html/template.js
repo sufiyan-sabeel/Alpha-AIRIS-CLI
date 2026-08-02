@@ -1,7 +1,7 @@
     (function() {
       'use strict';
 
-      const THEME_STORAGE_KEY = 'omp-export-theme';
+      const THEME_STORAGE_KEY = 'airis-export-theme';
       const themeSelect = document.getElementById('theme-select');
       let themePreference = 'auto';
       try {
@@ -28,7 +28,7 @@
       //
       // Two boot paths share this template:
       //  - Static export: session JSON rides base64-embedded in #session-data.
-      //  - Share viewer: share-loader.js sets `window.__OMP_SESSION_DATA__` to
+      //  - Share viewer: share-loader.js sets `window.__AIRIS_SESSION_DATA__` to
       //    a promise resolving to the session JSON (fetched + decrypted).
       // The entire app lives in bootSession(); its body keeps the original
       // one-level indentation to avoid a whole-file reindent.
@@ -45,7 +45,7 @@
 
       // Parse URL parameters for deep linking: leafId and targetId
       // Check for injected params (when loaded in iframe via srcdoc) or use window.location
-      const injectedParams = document.querySelector('meta[name="pi-url-params"]');
+      const injectedParams = document.querySelector('meta[name="airis-url-params"]');
       const searchString = injectedParams ? injectedParams.content : window.location.search.substring(1);
       const urlParams = new URLSearchParams(searchString);
       const urlLeafId = urlParams.get('leafId');
@@ -756,13 +756,13 @@
       // TOOL CALL RENDERING
       // ============================================================
       //
-      // Tool calls render through the bundled <omp-tool-view> web component
+      // Tool calls render through the bundled <airis-tool-view> web component
       // (tool-views.generated.js — the same React renderers collab-web uses).
       // Payloads are handed over via a global store keyed by data-key, which
       // survives innerHTML serialization and cloneNode round trips.
 
       const TOOL_VIEW_DATA = new Map();
-      globalThis.__OMP_TOOL_VIEW_DATA = TOOL_VIEW_DATA;
+      globalThis.__AIRIS_TOOL_VIEW_DATA = TOOL_VIEW_DATA;
       let toolViewSeq = 0;
 
       function renderToolCall(call, sctx) {
@@ -778,7 +778,7 @@
             openAgent: (id) => openSubSession(joinKey(sctx.prefix, id)),
           },
         });
-        return '<omp-tool-view class="tool-execution ' + statusClass + '" data-key="' + key + '" open></omp-tool-view>';
+        return '<airis-tool-view class="tool-execution ' + statusClass + '" data-key="' + key + '" open></airis-tool-view>';
       }
 
       // ============================================================
@@ -980,7 +980,7 @@
        */
       function buildShareUrl(entryId) {
         // Check for injected base URL (used when loaded in iframe via srcdoc)
-        const baseUrlMeta = document.querySelector('meta[name="pi-share-base-url"]');
+        const baseUrlMeta = document.querySelector('meta[name="airis-share-base-url"]');
         const baseUrl = baseUrlMeta ? baseUrlMeta.content : window.location.href.split('?')[0];
 
         const url = new URL(window.location.href);
@@ -1459,7 +1459,7 @@
       const overlay = document.getElementById('sidebar-overlay');
       const hamburger = document.getElementById('hamburger');
       const sidebarResizer = document.getElementById('sidebar-resizer');
-      const SIDEBAR_WIDTH_STORAGE_KEY = 'pi-share:v1:sidebar-width';
+      const SIDEBAR_WIDTH_STORAGE_KEY = 'airis-share:v1:sidebar-width';
       const MIN_CONTENT_WIDTH = 320;
 
       function isMobileLayout() {
@@ -1656,7 +1656,7 @@
         messages.appendChild(div);
       }
 
-      const pending = window.__OMP_SESSION_DATA__;
+      const pending = window.__AIRIS_SESSION_DATA__;
       if (pending && typeof pending.then === 'function') {
         pending.then(bootSession, showLoadError);
       } else {

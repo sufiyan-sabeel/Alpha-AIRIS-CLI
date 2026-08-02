@@ -897,7 +897,7 @@ function parseCliArgs(args: readonly string[]): CliOptions {
 				options.recover = true;
 				break;
 			case "--pin":
-				options.pin = true;
+				options.airisn = true;
 				break;
 			case "--since": {
 				const value = args[index + 1];

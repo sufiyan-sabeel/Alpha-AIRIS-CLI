@@ -20,17 +20,17 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import { effectiveReserveTokens, estimateTokens, prepareCompaction } from "@oh-my-pi/pi-agent-core/compaction";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { computeNonMessageTokens } from "@oh-my-pi/pi-coding-agent/modes/utils/context-usage";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
-import * as snapcompact from "@oh-my-pi/snapcompact";
+import { Agent } from "@airis/airis-agent-core";
+import { effectiveReserveTokens, estimateTokens, prepareCompaction } from "@airis/airis-agent-core/compaction";
+import { getBundledModel } from "@airis/airis-catalog/models";
+import { ModelRegistry } from "@airis/airis-coding-agent/config/model-registry";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import { computeNonMessageTokens } from "@airis/airis-coding-agent/modes/utils/context-usage";
+import { AgentSession } from "@airis/airis-coding-agent/session/agent-session";
+import { AuthStorage } from "@airis/airis-coding-agent/session/auth-storage";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import { TempDir } from "@airis/airis-utils";
+import * as snapcompact from "@airis/airis-snapcompact";
 
 describe("AgentSession snapcompact frame-budget sizing", () => {
 	let tempDir: TempDir;
@@ -40,7 +40,7 @@ describe("AgentSession snapcompact frame-budget sizing", () => {
 	let modelRegistry: ModelRegistry;
 
 	beforeEach(async () => {
-		tempDir = TempDir.createSync("@pi-snapcompact-budget-");
+		tempDir = TempDir.createSync("@airs-snapcompact-budget-");
 
 		authStorage = await AuthStorage.create(path.join(tempDir.path(), "testauth.db"));
 		authStorage.setRuntimeApiKey("anthropic", "test-key");

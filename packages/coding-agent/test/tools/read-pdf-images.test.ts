@@ -10,12 +10,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { ReadTool, type ReadToolDetails } from "@oh-my-pi/pi-coding-agent/tools/read";
-import * as markit from "@oh-my-pi/pi-coding-agent/utils/markit";
-import { removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
+import type { AgentToolResult } from "@airis/airis-agent-core";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import type { ToolSession } from "@airis/airis-coding-agent/tools";
+import { ReadTool, type ReadToolDetails } from "@airis/airis-coding-agent/tools/read";
+import * as markit from "@airis/airis-coding-agent/utils/markit";
+import { removeSyncWithRetries, Snowflake } from "@airis/airis-utils";
 
 // 1x1 transparent PNG — small enough to pass through image loading untouched.
 const TINY_PNG = Buffer.from(

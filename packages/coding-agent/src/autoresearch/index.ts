@@ -1,7 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import type { AutocompleteItem } from "@oh-my-pi/pi-tui";
-import { logger, prompt } from "@oh-my-pi/pi-utils";
+import type { AutocompleteItem } from "@airis/airis-tui";
+import { logger, prompt } from "@airis/airis-utils";
 import type { ExtensionContext, ExtensionFactory } from "../extensibility/extensions";
 import * as git from "../utils/git";
 import commandResumeTemplate from "./command-resume.md" with { type: "text" };
@@ -118,10 +118,10 @@ export const createAutoresearchExtension: ExtensionFactory = api => {
 		api.appendEntry("autoresearch-control", goal ? { mode, goal } : { mode });
 	};
 
-	api.registerTool(createInitExperimentTool({ dashboard, getRuntime, pi: api }));
-	api.registerTool(createRunExperimentTool({ dashboard, getRuntime, pi: api }));
-	api.registerTool(createLogExperimentTool({ dashboard, getRuntime, pi: api }));
-	api.registerTool(createUpdateNotesTool({ dashboard, getRuntime, pi: api }));
+	api.registerTool(createInitExperimentTool({ dashboard, getRuntime, airs: api }));
+	api.registerTool(createRunExperimentTool({ dashboard, getRuntime, airs: api }));
+	api.registerTool(createLogExperimentTool({ dashboard, getRuntime, airs: api }));
+	api.registerTool(createUpdateNotesTool({ dashboard, getRuntime, airs: api }));
 
 	api.registerCommand("autoresearch", {
 		description: "Toggle builtin autoresearch mode, or pass off / clear, or a goal message.",

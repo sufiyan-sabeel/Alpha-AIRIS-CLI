@@ -1,17 +1,17 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { AsyncJobManager } from "@oh-my-pi/pi-coding-agent/async";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { HindsightSessionState } from "@oh-my-pi/pi-coding-agent/hindsight/state";
-import { MnemopiSessionState, setMnemopiSessionState } from "@oh-my-pi/pi-coding-agent/mnemopi/state";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { logger, TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@airis/airis-agent-core";
+import { createMockModel } from "@airis/airis-ai/providers/mock";
+import { getBundledModel } from "@airis/airis-catalog/models";
+import { AsyncJobManager } from "@airis/airis-coding-agent/async";
+import { ModelRegistry } from "@airis/airis-coding-agent/config/model-registry";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import { HindsightSessionState } from "@airis/airis-coding-agent/hindsight/state";
+import { MnemosyneSessionState, setMnemosyneSessionState } from "@airis/airis-coding-agent/mnemosyne/state";
+import { AgentSession } from "@airis/airis-coding-agent/session/agent-session";
+import { AuthStorage } from "@airis/airis-coding-agent/session/auth-storage";
+import { SessionManager } from "@airis/airis-coding-agent/session/session-manager";
+import { logger, TempDir } from "@airis/airis-utils";
 
 async function flushMicrotasks(): Promise<void> {
 	await Promise.resolve();
@@ -25,7 +25,7 @@ describe("AgentSession concurrent disposal", () => {
 	let session: AgentSession | undefined;
 
 	beforeEach(async () => {
-		tempDir = TempDir.createSync("@omp-dispose-concurrent-");
+		tempDir = TempDir.createSync("@airis-dispose-concurrent-");
 		authStorage = await AuthStorage.create(path.join(tempDir.path(), "auth.db"));
 		authStorage.setRuntimeApiKey("anthropic", "test-key");
 	});
@@ -65,7 +65,7 @@ describe("AgentSession concurrent disposal", () => {
 		const owned = new AsyncJobManager({ maxRunningJobs: 1, retentionMs: 1_000, onJobComplete: () => {} });
 		const asyncGate = Promise.withResolvers<void>();
 		const hindsightGate = Promise.withResolvers<void>();
-		const mnemopiGate = Promise.withResolvers<void>();
+		const mnemosyneGate = Promise.withResolvers<void>();
 		const asyncStarted = Promise.withResolvers<void>();
 		const order: string[] = [];
 		vi.spyOn(owned, "dispose").mockImplementation(async () => {
@@ -86,13 +86,13 @@ describe("AgentSession concurrent disposal", () => {
 		vi.spyOn(hindsight, "dispose").mockImplementation(() => {});
 		current.setHindsightSessionState(hindsight);
 
-		const mnemopi: MnemopiSessionState = Object.create(MnemopiSessionState.prototype);
-		vi.spyOn(mnemopi, "dispose").mockImplementation(async () => {
-			order.push("mnemopi:start");
-			await mnemopiGate.promise;
-			order.push("mnemopi:end");
+		const mnemosyne: MnemosyneSessionState = Object.create(MnemosyneSessionState.prototype);
+		vi.spyOn(mnemosyne, "dispose").mockImplementation(async () => {
+			order.push("mnemosyne:start");
+			await mnemosyneGate.promise;
+			order.push("mnemosyne:end");
 		});
-		setMnemopiSessionState(current, mnemopi);
+		setMnemosyneSessionState(current, mnemosyne);
 
 		let persistenceClosed = false;
 		vi.spyOn(current.sessionManager, "close").mockImplementation(async () => {
@@ -105,15 +105,15 @@ describe("AgentSession concurrent disposal", () => {
 			await asyncStarted.promise;
 			await Promise.resolve();
 			expect(order).toContain("hindsight:start");
-			expect(order).toContain("mnemopi:start");
+			expect(order).toContain("mnemosyne:start");
 			expect(order).not.toContain("async:end");
 			expect(order).not.toContain("hindsight:end");
-			expect(order).not.toContain("mnemopi:end");
+			expect(order).not.toContain("mnemosyne:end");
 			expect(persistenceClosed).toBe(false);
 		} finally {
 			asyncGate.resolve();
 			hindsightGate.resolve();
-			mnemopiGate.resolve();
+			mnemosyneGate.resolve();
 		}
 		await dispose;
 		session = undefined;
@@ -121,7 +121,7 @@ describe("AgentSession concurrent disposal", () => {
 		const closeAt = order.indexOf("session:close");
 		expect(closeAt).toBeGreaterThan(order.indexOf("async:end"));
 		expect(closeAt).toBeGreaterThan(order.indexOf("hindsight:end"));
-		expect(closeAt).toBeGreaterThan(order.indexOf("mnemopi:end"));
+		expect(closeAt).toBeGreaterThan(order.indexOf("mnemosyne:end"));
 	});
 
 	it("bounds post-prompt work that ignores abort", async () => {

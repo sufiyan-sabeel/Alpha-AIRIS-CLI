@@ -1,13 +1,13 @@
 import { afterEach, describe, expect, it, spyOn, vi } from "bun:test";
-import { DapClient } from "@oh-my-pi/pi-coding-agent/dap/client";
-import { DapSessionManager } from "@oh-my-pi/pi-coding-agent/dap/session";
+import { DapClient } from "@airis/airis-coding-agent/dap/client";
+import { DapSessionManager } from "@airis/airis-coding-agent/dap/session";
 import type {
 	DapCapabilities,
 	DapClientState,
 	DapEventMessage,
 	DapResolvedAdapter,
 	DapThread,
-} from "@oh-my-pi/pi-coding-agent/dap/types";
+} from "@airis/airis-coding-agent/dap/types";
 
 const TEST_ADAPTER: DapResolvedAdapter = {
 	name: "js-debug-adapter",

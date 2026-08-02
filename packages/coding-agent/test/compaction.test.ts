@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
+import type { AgentMessage } from "@airis/airis-agent-core";
 import {
 	type CompactionSettings,
 	calculateContextTokens,
@@ -13,21 +13,21 @@ import {
 	prepareCompaction,
 	resolveThresholdTokens,
 	shouldCompact,
-} from "@oh-my-pi/pi-agent-core/compaction/compaction";
-import * as ai from "@oh-my-pi/pi-ai";
-import { encodeTextSignatureV1 } from "@oh-my-pi/pi-ai/providers/openai-shared";
-import type { AssistantMessage, Model, ProviderPayload, Usage } from "@oh-my-pi/pi-ai/types";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { buildSessionContext } from "@oh-my-pi/pi-coding-agent/session/session-context";
+} from "@airis/airis-agent-core/compaction/compaction";
+import * as ai from "@airis/airis-ai";
+import { encodeTextSignatureV1 } from "@airis/airis-ai/providers/openai-shared";
+import type { AssistantMessage, Model, ProviderPayload, Usage } from "@airis/airis-ai/types";
+import { getBundledModel } from "@airis/airis-catalog/models";
+import { buildSessionContext } from "@airis/airis-coding-agent/session/session-context";
 import type {
 	CompactionEntry,
 	ModelChangeEntry,
 	SessionEntry,
 	SessionMessageEntry,
 	ThinkingLevelChangeEntry,
-} from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { parseSessionEntries } from "@oh-my-pi/pi-coding-agent/session/session-loader";
-import { migrateSessionEntries } from "@oh-my-pi/pi-coding-agent/session/session-migrations";
+} from "@airis/airis-coding-agent/session/session-entries";
+import { parseSessionEntries } from "@airis/airis-coding-agent/session/session-loader";
+import { migrateSessionEntries } from "@airis/airis-coding-agent/session/session-migrations";
 import { mockFetch } from "./helpers/fetch-mock";
 import { e2eApiKey } from "./utilities";
 

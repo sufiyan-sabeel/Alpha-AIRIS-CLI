@@ -3,12 +3,12 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import { stripVTControlCharacters } from "node:util";
-import { CURSOR_MARKER, TUI } from "@oh-my-pi/pi-tui";
-import { CombinedAutocompleteProvider } from "@oh-my-pi/pi-tui/autocomplete";
-import { Editor } from "@oh-my-pi/pi-tui/components/editor";
-import { KeybindingsManager, setKeybindings, TUI_KEYBINDINGS } from "@oh-my-pi/pi-tui/keybindings";
-import { setKittyProtocolActive } from "@oh-my-pi/pi-tui/keys";
-import { visibleWidth } from "@oh-my-pi/pi-tui/utils";
+import { CURSOR_MARKER, TUI } from "@airis/airis-tui";
+import { CombinedAutocompleteProvider } from "@airis/airis-tui/autocomplete";
+import { Editor } from "@airis/airis-tui/components/editor";
+import { KeybindingsManager, setKeybindings, TUI_KEYBINDINGS } from "@airis/airis-tui/keybindings";
+import { setKittyProtocolActive } from "@airis/airis-tui/keys";
+import { visibleWidth } from "@airis/airis-tui/utils";
 import { defaultEditorTheme } from "./test-themes";
 import { VirtualTerminal } from "./virtual-terminal";
 
@@ -909,7 +909,7 @@ describe("Editor component", () => {
 				expect(beforePreedit.slice(0, 3)).toEqual(["+------------------+", "|  ast", "+------------------+"]);
 
 				// macOS Terminal renders marked text locally in insertion mode before
-				// committed bytes reach OMP. The open cursor row must not carry right
+				// committed bytes reach AIRIS. The open cursor row must not carry right
 				// chrome that the marked text can shift onto another row.
 				terminal.write("\x1b[4hast，\x1b[4l");
 				const afterPreedit = terminal.getViewport().map(row => row.trimEnd());
@@ -2507,7 +2507,7 @@ describe("Editor component", () => {
 		// terminals render the precomposed syllable at 2 cells, so without
 		// normalization the cursor column drifts past the visible filename
 		// and subsequent input renders into the wrong row. The earlier fix
-		// landed on the legacy `Input` component; OMP's interactive prompt
+		// landed on the legacy `Input` component; AIRIS's interactive prompt
 		// uses `Editor`, so the fix has to live here too.
 
 		it("normalizes NFD Korean bracketed-paste to NFC", () => {

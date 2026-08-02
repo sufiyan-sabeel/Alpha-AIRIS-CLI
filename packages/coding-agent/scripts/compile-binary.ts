@@ -1,5 +1,5 @@
 import { buildDocsIndexPayload } from "./generate-docs-index";
-import { createLegacyPiVirtualModulePlugin } from "./legacy-pi-virtual-module";
+import { createLegacyAirisVirtualModulePlugin } from "./legacy-airis-virtual-module";
 
 /** Native runtime dependencies always resolved from the on-demand install instead of embedded into compiled binaries. */
 export const COMPILED_EXTERNAL_DEPENDENCIES: readonly string[] = Object.freeze(["fastembed", "onnxruntime-node"]);
@@ -37,7 +37,7 @@ export async function compileCodingAgent(options: CodingAgentCompileOptions): Pr
 			root: options.repoRoot,
 			external: [...COMPILED_EXTERNAL_DEPENDENCIES],
 			define: {
-				"process.env.PI_COMPILED": JSON.stringify("true"),
+				"process.env.AIRIS_COMPILED": JSON.stringify("true"),
 				"process.env.PI_TINY_TRANSFORMERS_VERSION": JSON.stringify(options.transformersVersion),
 				"process.env.PI_DOCS_EMBED": JSON.stringify((await buildDocsIndexPayload()).payload),
 			},
@@ -45,7 +45,7 @@ export async function compileCodingAgent(options: CodingAgentCompileOptions): Pr
 				identifiers: options.minifyIdentifiers ?? false,
 				keepNames: true,
 			},
-			plugins: [await createLegacyPiVirtualModulePlugin()],
+			plugins: [await createLegacyAirisVirtualModulePlugin()],
 			compile: {
 				...(options.target ? { target: options.target } : {}),
 				outfile: options.outfile,

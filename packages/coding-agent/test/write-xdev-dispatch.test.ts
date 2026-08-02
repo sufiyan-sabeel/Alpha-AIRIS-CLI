@@ -2,14 +2,14 @@ import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AgentTool } from "@oh-my-pi/pi-agent-core";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import * as themeModule from "@oh-my-pi/pi-coding-agent/modes/theme/theme";
-import { ToolChoiceQueue } from "@oh-my-pi/pi-coding-agent/session/tool-choice-queue";
-import { createTools, type Tool, type ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { githubToolRenderer } from "@oh-my-pi/pi-coding-agent/tools/gh-renderer";
-import { ToolError } from "@oh-my-pi/pi-coding-agent/tools/tool-errors";
-import { WriteTool, writeToolRenderer } from "@oh-my-pi/pi-coding-agent/tools/write";
+import type { AgentTool } from "@airis/airis-agent-core";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import * as themeModule from "@airis/airis-coding-agent/modes/theme/theme";
+import { ToolChoiceQueue } from "@airis/airis-coding-agent/session/tool-choice-queue";
+import { createTools, type Tool, type ToolSession } from "@airis/airis-coding-agent/tools";
+import { githubToolRenderer } from "@airis/airis-coding-agent/tools/gh-renderer";
+import { ToolError } from "@airis/airis-coding-agent/tools/tool-errors";
+import { WriteTool, writeToolRenderer } from "@airis/airis-coding-agent/tools/write";
 import {
 	listXdevTools,
 	resolveMountedXdevTool,
@@ -20,8 +20,8 @@ import {
 	xdevDocs,
 	xdevDocsAll,
 	xdevEntries,
-} from "@oh-my-pi/pi-coding-agent/tools/xdev";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+} from "@airis/airis-coding-agent/tools/xdev";
+import { removeWithRetries } from "@airis/airis-utils";
 import { type } from "arktype";
 
 // xdev mounting is default-on: discoverable tools like ast_edit unmount into

@@ -1,8 +1,8 @@
 /**
  * Hook runner - executes hooks and manages their lifecycle.
  */
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { Model } from "@oh-my-pi/pi-ai";
+import type { AgentMessage } from "@airis/airis-agent-core";
+import type { Model } from "@airis/airis-ai";
 import type { ModelRegistry } from "../../config/model-registry";
 import type { SessionManager } from "../../session/session-manager";
 import { createNoOpUIContext } from "../utils";
@@ -113,7 +113,7 @@ export class HookRunner {
 		if (options.navigateTreeHandler) {
 			this.#navigateTreeHandler = options.navigateTreeHandler;
 		}
-		// Set per-hook handlers for pi.sendMessage() and pi.appendEntry()
+		// Set per-hook handlers for airs.sendMessage() and airs.appendEntry()
 		for (const hook of this.hooks) {
 			hook.setSendMessageHandler(options.sendMessageHandler);
 			hook.setAppendEntryHandler(options.appendEntryHandler);
@@ -391,7 +391,7 @@ export class HookRunner {
 	 */
 	async emitBeforeAgentStart(
 		prompt: string,
-		images?: import("@oh-my-pi/pi-ai").ImageContent[],
+		images?: import("@airis/airis-ai").ImageContent[],
 	): Promise<BeforeAgentStartEventResult | undefined> {
 		const ctx = this.#createContext();
 		let result: BeforeAgentStartEventResult | undefined;

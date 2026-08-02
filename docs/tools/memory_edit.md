@@ -1,11 +1,11 @@
 # memory_edit
 
-> Update, forget, or invalidate Mnemopi long-term memories by id.
+> Update, forget, or invalidate Mnemosyne long-term memories by id.
 
 ## Source
 - Entry: `packages/coding-agent/src/tools/memory-edit.ts`
 - Model-facing prompt: `packages/coding-agent/src/prompts/tools/memory-edit.md`
-- Backend collaborator: `packages/coding-agent/src/mnemopi/state.ts` (`editScopedMemory(...)`)
+- Backend collaborator: `packages/coding-agent/src/mnemosyne/state.ts` (`editScopedMemory(...)`)
 
 ## Inputs
 
@@ -23,30 +23,30 @@
 - `details` is the backend edit result from `editScopedMemory(...)`, including status and location metadata when available.
 
 ## Flow
-1. `MemoryEditTool.createIf(...)` exposes the tool only when `memory.backend == "mnemopi"`.
-2. `execute(...)` fetches `session.getMnemopiSessionState()` and fails if the backend is not initialized.
+1. `MemoryEditTool.createIf(...)` exposes the tool only when `memory.backend == "mnemosyne"`.
+2. `execute(...)` fetches `session.getMnemosyneSessionState()` and fails if the backend is not initialized.
 3. `update` requires at least one of `content` or `importance`.
 4. `importance` is clamped to `0..1` before the backend call.
 5. The tool calls `state.editScopedMemory(op, id, { content, importance, replacementId })`.
 6. The backend status is rendered into a short text result and returned unchanged in `details`.
 
 ## Modes / Variants
-- `update` replaces memory text and/or importance in the scoped Mnemopi store.
+- `update` replaces memory text and/or importance in the scoped Mnemosyne store.
 - `forget` permanently deletes the addressed memory.
 - `invalidate` softly supersedes a memory and may point at `replacement_id`.
 
 ## Side Effects
-- Filesystem: mutates the local Mnemopi SQLite database for the active scoped bank.
+- Filesystem: mutates the local Mnemosyne SQLite database for the active scoped bank.
 - Network: none from the tool itself.
-- Session state: reads the active session's Mnemopi state.
+- Session state: reads the active session's Mnemosyne state.
 
 ## Limits & Caps
-- Availability requires `memory.backend = "mnemopi"`; Hindsight and local memory backends do not expose this tool.
+- Availability requires `memory.backend = "mnemosyne"`; Hindsight and local memory backends do not expose this tool.
 - `id` must come from `recall`; the tool does not search by content.
 - `update` with neither `content` nor `importance` is rejected before any backend write.
 
 ## Errors
-- `Mnemopi backend is not initialised for this session.` when the tool is exposed but session state is missing.
+- `Mnemosyne backend is not initialised for this session.` when the tool is exposed but session state is missing.
 - `memory_edit update requires content or importance.` for an empty update.
 - Missing ids are normal results, not thrown errors; the text says the memory was not found.
 

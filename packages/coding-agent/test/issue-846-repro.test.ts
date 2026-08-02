@@ -12,12 +12,12 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import type { Model } from "@oh-my-pi/pi-ai";
-import * as ai from "@oh-my-pi/pi-ai";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { startMemoryStartupTask } from "@oh-my-pi/pi-coding-agent/memories";
-import * as memoryStorage from "@oh-my-pi/pi-coding-agent/memories/storage";
-import { getAgentDbPath, logger, Snowflake, TempDir } from "@oh-my-pi/pi-utils";
+import type { Model } from "@airis/airis-ai";
+import * as ai from "@airis/airis-ai";
+import { Settings } from "@airis/airis-coding-agent/config/settings";
+import { startMemoryStartupTask } from "@airis/airis-coding-agent/memories";
+import * as memoryStorage from "@airis/airis-coding-agent/memories/storage";
+import { getAgentDbPath, logger, Snowflake, TempDir } from "@airis/airis-utils";
 
 interface SessionLike {
 	sessionManager: {

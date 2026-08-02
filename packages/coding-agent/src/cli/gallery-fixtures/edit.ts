@@ -220,7 +220,7 @@ export const editFixtures: Record<string, GalleryFixture> = {
 				applied: false,
 				limitReached: false,
 				scopePath: "packages/coding-agent/src",
-				searchPath: "/Users/dev/Projects/pi/packages/coding-agent/src",
+				searchPath: "/Users/dev/Projects/alpha-airis-cli/packages/coding-agent/src",
 				files: ["edit/renderer.ts", "tools/tool-result.ts"],
 				fileReplacements: [
 					{ path: "edit/renderer.ts", count: 2 },

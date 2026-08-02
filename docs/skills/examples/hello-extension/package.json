@@ -1,9 +1,9 @@
 {
   "name": "hello-extension",
   "version": "1.0.0",
-  "description": "Minimal oh-my-pi extension example",
-  "homepage": "https://omp.sh",
-  "omp": {
+  "description": "Minimal alpha-airis-cli extension example",
+  "homepage": "https://airis.sh",
+  "airis": {
     "extensions": ["./index.ts"]
   }
 }

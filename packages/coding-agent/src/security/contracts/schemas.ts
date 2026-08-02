@@ -4,7 +4,7 @@ const stringRecordSchema = type({ "[string]": "string" });
 const unknownRecordSchema = type({ "[string]": "unknown" });
 
 export const securityProducerSchema = type({
-	kind: "'omp-native' | 'codex-security-bundle' | 'codex-security-cloud' | 'sarif-import'",
+	kind: "'airis-native' | 'codex-security-bundle' | 'codex-security-cloud' | 'sarif-import'",
 	name: "string > 0",
 	"version?": "string",
 	"vendor?": "string",
@@ -132,7 +132,7 @@ export const securityTargetSchema = type({
 });
 
 export const securityScanPlanSchema = type({
-	documentType: "'omp-security.scan-plan'",
+	documentType: "'airis-security.scan-plan'",
 	schemaVersion: "'1.0'",
 	id: "string > 0",
 	createdAt: "string > 0",
@@ -173,7 +173,7 @@ export const securityScanMetricsSchema = type({
 });
 
 export const securityScanSchema = type({
-	documentType: "'omp-security.scan'",
+	documentType: "'airis-security.scan'",
 	schemaVersion: "'1.0'",
 	id: "string > 0",
 	projectKey: "string > 0",

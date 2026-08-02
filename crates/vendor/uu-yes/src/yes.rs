@@ -5,9 +5,9 @@
 
 // cSpell:ignore strs
 
-// pi-uutils: vendored from uutils/coreutils 0.8.0 and patched to run in-process
+// airis-uutils: vendored from uutils/coreutils 0.8.0 and patched to run in-process
 // as a shell builtin. All process-global stdio is routed through
-// `pi_uutils_ctx`, `translate!` strings are literalized, and the entry point no
+// `airis_uutils_ctx`, `translate!` strings are literalized, and the entry point no
 // longer calls `std::process::exit`. Because the utility runs inside the shell
 // process there is no SIGPIPE to terminate it when the consumer closes, so a
 // broken-pipe write error exits cleanly with code 0 (GNU behaviour) on every
@@ -21,7 +21,7 @@ use std::{
 };
 
 use clap::{Arg, ArgAction, Command, builder::ValueParser};
-use pi_uutils_ctx::format_usage;
+use airis_uutils_ctx::format_usage;
 use uucore::error::strip_errno;
 
 // it's possible that using a smaller or larger buffer might provide better
@@ -39,10 +39,10 @@ pub fn run(argv: Vec<OsString>) -> i32 {
 		Err(err) => {
 			let rendered = err.to_string();
 			if err.use_stderr() {
-				let _ = write!(pi_uutils_ctx::stderr(), "{rendered}");
+				let _ = write!(airis_uutils_ctx::stderr(), "{rendered}");
 				return 1;
 			}
-			let _ = write!(pi_uutils_ctx::stdout(), "{rendered}");
+			let _ = write!(airis_uutils_ctx::stdout(), "{rendered}");
 			return 0;
 		},
 	};
@@ -53,15 +53,15 @@ pub fn run(argv: Vec<OsString>) -> i32 {
 	prepare_buffer(&mut buffer);
 
 	match exec(&buffer) {
-		// pi-uutils: a broken pipe means the consumer closed its end; a
+		// airis-uutils: a broken pipe means the consumer closed its end; a
 		// process `yes` would die from SIGPIPE (or handle EPIPE on Windows),
 		// so the in-process builtin exits cleanly with 0 on every platform.
 		ExecStop::Io(err) if err.kind() == io::ErrorKind::BrokenPipe => 0,
 		ExecStop::Io(err) => {
-			let _ = writeln!(pi_uutils_ctx::stderr(), "yes: standard output: {}", strip_errno(&err));
+			let _ = writeln!(airis_uutils_ctx::stderr(), "yes: standard output: {}", strip_errno(&err));
 			1
 		},
-		// pi-uutils: the shell asked the scope to cancel (abort/timeout);
+		// airis-uutils: the shell asked the scope to cancel (abort/timeout);
 		// there is no signal-style exit status in-process, so return 1.
 		ExecStop::Cancelled => 1,
 	}
@@ -106,7 +106,7 @@ fn args_into_buffer<'a>(
 		for part in itertools::intersperse(i.map(|a| a.to_str()), Some(" ")) {
 			let bytes = match part {
 				Some(part) => part.as_bytes(),
-				// pi-uutils: literalized `translate!("yes-error-invalid-utf8")`.
+				// airis-uutils: literalized `translate!("yes-error-invalid-utf8")`.
 				None => return Err("arguments contain invalid UTF-8".into()),
 			};
 			buf.extend_from_slice(bytes);
@@ -133,7 +133,7 @@ fn prepare_buffer(buf: &mut Vec<u8>) {
 	}
 }
 
-/// pi-uutils: why the output loop stopped. Upstream's `exec` only ever returns
+/// airis-uutils: why the output loop stopped. Upstream's `exec` only ever returns
 /// an I/O error (the loop is infinite); in-process we also stop on scope
 /// cancellation.
 enum ExecStop {
@@ -141,15 +141,15 @@ enum ExecStop {
 	Cancelled,
 }
 
-/// pi-uutils: replacement for upstream's `exec` — writes to the context stdout
+/// airis-uutils: replacement for upstream's `exec` — writes to the context stdout
 /// instead of the process stdout and polls the scope cancel flag every
 /// iteration (each iteration writes a full [`BUF_SIZE`]-ish batch, so polling
 /// per iteration is cheap) so shell abort/timeout stops the loop promptly.
 fn exec(bytes: &[u8]) -> ExecStop {
-	let mut stdout = pi_uutils_ctx::stdout();
+	let mut stdout = airis_uutils_ctx::stdout();
 
 	loop {
-		if pi_uutils_ctx::is_cancelled() {
+		if airis_uutils_ctx::is_cancelled() {
 			return ExecStop::Cancelled;
 		}
 		if let Err(err) = stdout.write_all(bytes) {
@@ -163,7 +163,7 @@ mod tests {
 	use std::{collections::HashMap, io::Write, path::PathBuf, sync::Arc};
 
 	use parking_lot::Mutex;
-	use pi_uutils_ctx::ScopeIo;
+	use airis_uutils_ctx::ScopeIo;
 
 	use super::*;
 
@@ -234,7 +234,7 @@ mod tests {
 			.map(OsString::from)
 			.collect();
 
-		let code = pi_uutils_ctx::scope(io, || run(argv));
+		let code = airis_uutils_ctx::scope(io, || run(argv));
 
 		let out_str = String::from_utf8(stdout_buf.lock().clone()).unwrap();
 		let err_str = String::from_utf8(stderr_buf.lock().clone()).unwrap();

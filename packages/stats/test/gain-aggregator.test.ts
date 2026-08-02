@@ -1,13 +1,13 @@
 import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { initDb, insertMessageStats } from "@oh-my-pi/omp-stats/db";
-import { dedupeProjects, getGainDashboardStats, normalizeProjectPath } from "@oh-my-pi/omp-stats/gain-aggregator";
-import type { MessageStats } from "@oh-my-pi/omp-stats/types";
-import { getStatsDbPath } from "@oh-my-pi/pi-utils";
+import { initDb, insertMessageStats } from "@airis/airis-stats/db";
+import { dedupeProjects, getGainDashboardStats, normalizeProjectPath } from "@airis/airis-stats/gain-aggregator";
+import type { MessageStats } from "@airis/airis-stats/types";
+import { getStatsDbPath } from "@airis/airis-utils";
 import { installStatsTestIsolation } from "./helpers/temp-agent";
 
-installStatsTestIsolation("@pi-stats-gain-");
+installStatsTestIsolation("@airs-stats-gain-");
 
 function makeMessage(sessionFile: string, folder: string, entryId: string, timestamp: number): MessageStats {
 	return {

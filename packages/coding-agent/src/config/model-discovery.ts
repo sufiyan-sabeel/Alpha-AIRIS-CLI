@@ -3,26 +3,26 @@
  * llama.cpp, lm-studio, openai-models-list, and new-api/one-api-style proxies.
  * `ModelRegistry` owns the orchestration (status, state, caching) and calls
  * `discoverModelsByProviderType` with a `DiscoveryContext`; built-in provider
- * discovery lives in pi-catalog's provider-models.
+ * discovery lives in airis-catalog's provider-models.
  */
-import { type ApiKey, type FetchImpl, withAuth } from "@oh-my-pi/pi-ai";
-import type { Api, Model, RemoteCompactionConfig } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { type ApiKey, type FetchImpl, withAuth } from "@airis/airis-ai";
+import type { Api, Model, RemoteCompactionConfig } from "@airis/airis-ai/types";
+import { buildModel } from "@airis/airis-catalog/build";
 import {
 	getBundledModelReferenceIndex,
 	inheritReferenceThinking,
 	isQwenModelId,
 	resolveModelReference,
 	stripBracketedModelIdAffixes,
-} from "@oh-my-pi/pi-catalog/identity";
+} from "@airis/airis-catalog/identity";
 import {
 	fetchLiteLLMRichModels,
 	fetchLmStudioNativeModelMetadata,
 	OPENAI_COMPAT_DISCOVERY_DEFAULT_CONTEXT_WINDOW,
 	OPENAI_COMPAT_DISCOVERY_DEFAULT_MAX_TOKENS,
-} from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { ModelSpec, OpenAICompat } from "@oh-my-pi/pi-catalog/types";
-import { isRecord } from "@oh-my-pi/pi-utils";
+} from "@airis/airis-catalog/provider-models/openai-compat";
+import type { ModelSpec, OpenAICompat } from "@airis/airis-catalog/types";
+import { isRecord } from "@airis/airis-utils";
 import type { ProviderDiscovery } from "./models-config-schema";
 
 // Default cap on `max_tokens` for auto-discovered models that do not advertise
@@ -556,12 +556,12 @@ function isBonsaiQwenGguf(id: string): boolean {
  * turned off. Qwen ids and the Qwen3.6-based PrismLM Ternary Bonsai GGUFs are
  * routed through chat-completions (the implicit llama.cpp provider defaults to
  * `openai-responses`, whose disable path has no Qwen encoding) with the
- * `qwen-template-false` dialect; omp emits `preserve_thinking` inside
+ * `qwen-template-false` dialect; airis emits `preserve_thinking` inside
  * `chat_template_kwargs` for Qwen, so the toggle rides there too and history
  * `<think>` blocks survive (`qwenPreserveThinking`). The runtime base URL gets a
  * `/v1` suffix because the chat-completions request would otherwise POST to the
  * native root, which does not serve it. A model with a custom transport (e.g.
- * `pi-native`, whose client appends `/v1/pi/stream`) keeps its base URL so the
+ * `airis-native`, whose client appends `/v1/airis/stream`) keeps its base URL so the
  * suffix is not doubled. Non-Qwen models pass through unchanged. Applied on both
  * fresh discovery and cache load, so an upgraded cache is corrected without
  * waiting for re-discovery.

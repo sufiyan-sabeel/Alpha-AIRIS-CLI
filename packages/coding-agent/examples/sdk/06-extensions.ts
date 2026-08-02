@@ -5,21 +5,21 @@
  * They provide a unified system for extensions, custom tools, commands, and more.
  *
  * Extension files are discovered from:
- * - ~/.omp/agent/extensions/ (legacy: ~/.pi/agent/extensions/)
- * - <cwd>/.omp/extensions/ (legacy: <cwd>/.pi/extensions/)
+ * - ~/.airis/agent/extensions/ (legacy: ~/.airs/agent/extensions/)
+ * - <cwd>/.airis/extensions/ (legacy: <cwd>/.airs/extensions/)
  * - Paths specified in settings.json "extensions" array
  * - Paths passed via --extension CLI flag
  *
  * An extension is a TypeScript file that exports a default function:
- *   export default function (pi: ExtensionAPI) { ... }
+ *   export default function (airs: ExtensionAPI) { ... }
  */
-import { createAgentSession, SessionManager } from "@oh-my-pi/pi-coding-agent";
+import { createAgentSession, SessionManager } from "@airis/airis-coding-agent";
 
 // Extensions are loaded from disk, not passed inline to createAgentSession.
 // Use the discovery mechanism:
-//   1. Place extension files in ~/.omp/agent/extensions/ or .omp/extensions/
+//   1. Place extension files in ~/.airis/agent/extensions/ or .airis/extensions/
 //   2. Add paths to settings.json: { "extensions": ["./my-extension.ts"] }
-//   3. Use --extension flag: pi --extension ./my-extension.ts
+//   3. Use --extension flag: airs --extension ./my-extension.ts
 
 // To add additional extension paths beyond discovery:
 const { session } = await createAgentSession({
@@ -38,27 +38,27 @@ console.log();
 
 // Example extension file (./my-logging-extension.ts):
 /*
-import type { ExtensionAPI } from "@oh-my-pi/pi-coding-agent";
+import type { ExtensionAPI } from "@airis/airis-coding-agent";
 
-export default function (pi: ExtensionAPI) {
-	const { z } = pi.zod;
+export default function (airs: ExtensionAPI) {
+	const { z } = airs.zod;
 
-	pi.on("agent_start", async () => {
+	airs.on("agent_start", async () => {
 		console.log("[Extension] Agent starting");
 	});
 
-	pi.on("tool_call", async (event) => {
+	airs.on("tool_call", async (event) => {
 		console.log(\`[Extension] Tool: \${event.toolName}\`);
 		// Return { block: true, reason: "..." } to block execution
 		return undefined;
 	});
 
-	pi.on("agent_end", async (event) => {
+	airs.on("agent_end", async (event) => {
 		console.log(\`[Extension] Done, \${event.messages.length} messages\`);
 	});
 
 	// Register a custom tool
-	pi.registerTool({
+	airs.registerTool({
 		name: "my_tool",
 		label: "My Tool",
 		description: "Does something useful",
@@ -72,7 +72,7 @@ export default function (pi: ExtensionAPI) {
 	});
 
 	// Register a command
-	pi.registerCommand("mycommand", {
+	airs.registerCommand("mycommand", {
 		description: "Do something",
 		handler: async (args, ctx) => {
 			ctx.ui.notify(\`Command executed with: \${args}\`);

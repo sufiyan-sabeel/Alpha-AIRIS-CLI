@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { type Component, TUI } from "@oh-my-pi/pi-tui";
+import { type Component, TUI } from "@airis/airis-tui";
 import { VirtualTerminal } from "./virtual-terminal";
 
-// Regression probe for https://github.com/can1357/oh-my-pi/issues/4863
+// Regression probe for https://github.com/sufiyan-sabeel/Alpha-AIRIS-CLI/issues/4863
 //
 // On ConPTY hosts (native Windows + WSL) a full paint over a large transcript
 // is bounded by #truncateLargeConptyFrame: it keeps only the tail and replaces

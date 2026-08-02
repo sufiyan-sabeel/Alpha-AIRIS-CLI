@@ -1,12 +1,12 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { syncAllSessions } from "@oh-my-pi/omp-stats/aggregator";
-import { getOverallStats } from "@oh-my-pi/omp-stats/db";
-import { getSessionsDir } from "@oh-my-pi/pi-utils";
+import { syncAllSessions } from "@airis/airis-stats/aggregator";
+import { getOverallStats } from "@airis/airis-stats/db";
+import { getSessionsDir } from "@airis/airis-utils";
 import { installStatsTestIsolation } from "./helpers/temp-agent";
 
-installStatsTestIsolation("@pi-stats-sync-serial-");
+installStatsTestIsolation("@airs-stats-sync-serial-");
 
 afterEach(() => {
 	vi.restoreAllMocks();

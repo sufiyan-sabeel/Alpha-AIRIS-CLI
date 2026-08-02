@@ -3,7 +3,7 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import * as tls from "node:tls";
-import { Effort } from "@oh-my-pi/pi-ai";
+import { Effort } from "@airis/airis-ai";
 import {
 	applyClaudeToolPrefix,
 	buildAnthropicClientOptions,
@@ -17,10 +17,10 @@ import {
 	mapStainlessArch,
 	streamAnthropic,
 	stripClaudeToolPrefix,
-} from "@oh-my-pi/pi-ai/providers/anthropic";
-import type { MessageCreateParamsStreaming } from "@oh-my-pi/pi-ai/providers/anthropic-wire";
-import { claudeCodeVersion } from "@oh-my-pi/pi-ai/providers/claude-code-fingerprint";
-import { getEnvApiKey, streamSimple } from "@oh-my-pi/pi-ai/stream";
+} from "@airis/airis-ai/providers/anthropic";
+import type { MessageCreateParamsStreaming } from "@airis/airis-ai/providers/anthropic-wire";
+import { claudeCodeVersion } from "@airis/airis-ai/providers/claude-code-fingerprint";
+import { getEnvApiKey, streamSimple } from "@airis/airis-ai/stream";
 import type {
 	AssistantMessage,
 	Context,
@@ -29,9 +29,9 @@ import type {
 	TJsonSchema,
 	TokenTaskBudget,
 	Tool,
-} from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { removeSyncWithRetries } from "@oh-my-pi/pi-utils";
+} from "@airis/airis-ai/types";
+import { buildModel } from "@airis/airis-catalog/build";
+import { removeSyncWithRetries } from "@airis/airis-utils";
 import { type as arkType } from "arktype";
 import { withEnv } from "./helpers";
 
@@ -2118,7 +2118,7 @@ describe("Anthropic request fingerprint alignment", () => {
 	});
 
 	it("loads Foundry mTLS and CA material from file paths", async () => {
-		const tmpDir = path.join(os.tmpdir(), `pi-ai-foundry-${Date.now()}-${Math.random().toString(16).slice(2)}`);
+		const tmpDir = path.join(os.tmpdir(), `airis-ai-foundry-${Date.now()}-${Math.random().toString(16).slice(2)}`);
 		fs.mkdirSync(tmpDir, { recursive: true });
 		const caPath = path.join(tmpDir, "ca.pem");
 		const certPath = path.join(tmpDir, "client-cert.pem");
