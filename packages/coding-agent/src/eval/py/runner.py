@@ -1174,7 +1174,7 @@ def _start_parent_watchdog() -> None:
     SIGKILL mid-execution (or any way that skips graceful shutdown) the
     runner would otherwise outlive its parent and keep holding kernel
     state. Poll ``os.getppid()`` instead and ``os._exit`` the moment we get
-    reparented — covers POSIX hosts. Windows has no reliable ppid
+    reparented \u2014 covers POSIX hosts. Windows has no reliable ppid
     equivalent; there we still bail out on the next stdin read.
     """
     if os.name != "posix":
