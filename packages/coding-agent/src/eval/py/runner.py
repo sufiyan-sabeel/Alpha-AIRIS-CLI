@@ -47,6 +47,7 @@ import threading
 import time
 import traceback
 from pathlib import Path
+from types import SimpleNamespace
 from typing import Any, Callable
 
 # ---------------------------------------------------------------------------
@@ -820,7 +821,7 @@ class _ShellResult(list):
         return " ".join(self)
 
 
-def __airis.shell(cmd: str) -> _ShellResult:
+def __airis_shell(cmd: str) -> _ShellResult:
     proc = subprocess.Popen(
         cmd,
         shell=True,
@@ -1002,7 +1003,10 @@ def _install_builtins(ns: dict) -> None:
     ns["__airis_display"] = __airis_display
     ns["__airis_magic"] = __airis_magic
     ns["__airis_magic_cell"] = __airis_magic_cell
-    ns["__airis.shell"] = __airis.shell
+    ns["__airis_shell"] = __airis_shell
+    # Generated shell-magic code calls ``__airis.shell(...)``; bind the object
+    # that attribute access actually resolves against.
+    ns["__airis"] = SimpleNamespace(shell=__airis_shell)
     ns["__airis_current_run_id__"] = lambda: _CURRENT_RID.get()
 
 
@@ -1170,7 +1174,7 @@ def _start_parent_watchdog() -> None:
     SIGKILL mid-execution (or any way that skips graceful shutdown) the
     runner would otherwise outlive its parent and keep holding kernel
     state. Poll ``os.getppid()`` instead and ``os._exit`` the moment we get
-    reparented \u2014 covers POSIX hosts. Windows has no reliable ppid
+    reparented — covers POSIX hosts. Windows has no reliable ppid
     equivalent; there we still bail out on the next stdin read.
     """
     if os.name != "posix":
